@@ -147,15 +147,14 @@ if (isset($Foperacion)){
    	  
 	//echo "<br><br><div align = 'center'>".$itObj->Log."</div>";
 	
+	// <?php
 
+	// echo translateLine("X","87.112.252,00","8","bollitos de canela");
 	
-
-
-	// echo translateLine("X","125,00","8","bollitos de canela");
-
 	// // Ejemplos comandos:
 	// //detalle de 1
-	// // ! 1000005809 10000512 Harina
+	// // real:  !100000580910000512Harina
+	// // descompuesto: ! 1000005809 10000512 Harina
 	// // (!) - tasa fiscal
 	// // 10.000.058,09 - precio max cant de cifras 2 dec
 	// // 10.000,512 - cant max cifras 3 decimales
@@ -175,24 +174,87 @@ if (isset($Foperacion)){
 	//   // de momento tengo entendido 4 tipos de tasa
 	//   // (falta copiar de manuak, pero en ejemplo tengo)// (!), ("), (#), ( )
 	
-	//  $tasas = ["\"","!","#"," "];
-	//  $tasa = $tasas[array_rand($tasas, 1)];
+	//   switch ($tasa) {
+	// 	  case "Exento":
+	// 		  echo "Exento\n";
+	// 		  $comando = " ";
+	// 		  break;
+	// 	  case "Tasa 1":
+	// 		  echo "Tasa 1\n";
+	// 		  $comando = "!";
+	// 		  break;
+	// 	  case "Tasa 2":
+	// 		  echo "Tasa 2\n";
+	// 		  $comando = "\"";
+	// 		  break;
+	// 	  case "tasa 3":
+	// 		  echo "Tasa 3\n";
+	// 		  $comando = "#";
+	// 		  break;
+	// 	  default:
+	// 		echo "Tasa no reconocida\n";
+	// 		//  $comando = false;
+	// 		$tasas = ["\"","!","#"," "];
+	// 		$tasa = $tasas[array_rand($tasas, 1)];
+	// 		$comando = $tasa;
+			
+	//   }
 	
-	//  $comando = $tasa;
-	 
 	//  return  $comando;
 	// }
 	
+	// // buscar expresion regular compatible con la mision de
+	// // verificar si un numero es valido
+	// // verificar si es valido sin decimales
+	// // verificar si es valido con comas
+	// // verificar si es valido con puntos
+	// function validador_numerico($value){
+	// 	 return (preg_match ('~^((?:\+|-)?[0-9]+)$~' ,$value) == 1);
+	// }
+	
 	// function translatePrecio( $precio = ""){
-	
-	
 	//   //validaciones de tipo precio
 	//   // Precio del ítem (8 enteros + 2 decimales)
 	
+	//   // pico el numero en 2, quizas no se pique por ser un entero
+	//   $precio = "12.6";
 	
-	//  $comando =  $precio;
-	 
-	//  return  $comando;
+	//   if (is_numeric($precio) == false){
+	// 	echo("valor invalido cifras\n");
+	// 	return false;
+	//   }else{
+	// 	echo("valor numerico\n");
+	//   }
+	
+	//   $cifras_separadas = explode(",",$precio); 
+	
+	  
+	//   echo("valor entero \n". $cifras_separadas[0]. "\n");
+	//   echo("valor decimal \n". $cifras_separadas[1]. "\n");
+	
+	//   $cant_cifras = count($cifras_separadas);
+	  
+	//   echo("cant cifras \n" . $cant_cifras."\n");
+	//   if ($cant_cifras == 1){
+	// 	echo("verificando cifras" . $cant_cifras);
+	  
+	
+	//   }
+	//   //else if()
+	
+	//   // strlen()
+	
+	
+	//   var_dump($cifras_separadas);
+	//   var_dump($cant_cifras);
+	
+	
+	//   // to num from string
+	//   //floatval($cifras_separadas);
+	
+	//  //$comando = floatval($cifras_separadas);
+	
+	//  return  $precio;
 	// }
 	
 	// function translateCantidad($cant = ""){
@@ -214,13 +276,12 @@ if (isset($Foperacion)){
 	
 	//  $comando = translateTasa($tasa, $tipo_doc) .translatePrecio($precio) . translateCantidad($cant) .translateDescription($desc);
 	
+	//   echo "\n\nComando Final\n"; 
+	
 	//  return  $comando;
 	// }
-
-
-}
 	
-?>
+	
  </div>
 
 </BODY>
