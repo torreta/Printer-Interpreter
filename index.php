@@ -409,7 +409,10 @@ if (isset($Foperacion)){
 	//   return  $comando;
 	//  }
 
-	
+	  }
+		
+	?>
+
  </div>
 
 </BODY>
