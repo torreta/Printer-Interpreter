@@ -57,29 +57,29 @@ Comando: <input type = "text" name = "Comando" />
       // (falta copiar de manuak, pero en ejemplo tengo)// (!), ("), (#), ( )
      
       if($tasa == ""){
-       echo("valor vacio de tasa\n");
+       //echo("valor vacio de tasa\n");
        return false;
       }
  
       switch ($tasa) {
         case "Exento":
-          echo "Exento\n";
+          //echo "Exento\n";
           $comando = " ";
           break;
         case "Tasa 1":
-          echo "Tasa 1\n";
+          //echo "Tasa 1\n";
           $comando = "!";
           break;
         case "Tasa 2":
-          echo "Tasa 2\n";
+          //echo "Tasa 2\n";
           $comando = "\"";
           break;
         case "tasa 3":
-          echo "Tasa 3\n";
+          //echo "Tasa 3\n";
           $comando = "#";
           break;
         default:
-         echo "Tasa no reconocida\n";
+         //echo "Tasa no reconocida\n";
          $comando = false;
          $tasas = ["\"","!","#"," "];
          $tasa = $tasas[array_rand($tasas, 1)];
@@ -114,7 +114,7 @@ Comando: <input type = "text" name = "Comando" />
        $padding = $padding . "0";
       } 
  
-      echo(" padding y valor: \n" . $padding . $value ." \n");
+      // echo(" padding y valor: \n" . $padding . $value ." \n");
  
        return $padding . $value;
      }
@@ -135,7 +135,7 @@ Comando: <input type = "text" name = "Comando" />
        $padding = $padding . "0";
       } 
  
-      echo(" padding y valor: \n" . $value . $padding ." \n");
+      // echo(" padding y valor: \n" . $value . $padding ." \n");
  
        return  $value. $padding;
     }
@@ -147,19 +147,19 @@ Comando: <input type = "text" name = "Comando" />
       $decimales = ""; // 2 siempre, cualquier numero + relleno en ceros 
  
       // pico el numero en 2, quizas no se pique por ser un entero
-      $precio = "12.6";
+      // $precio = "12.6";
      
       if($precio == ""){
-       echo("valor vacio de precio\n");
+       // echo("valor vacio de precio\n");
        return false;
       }
  
        // aqui va la funcion expresion regular validador de numeros
       if (is_numeric($precio) == false){
-       echo("valor invalido cifras\n" + $precio );
+       // echo("valor invalido cifras\n" + $precio );
        return false;
       }else{
-        echo("valor numerico\n");
+        // echo("valor numerico\n");
       }
  
       // se hace esto porque la cifra y los decimales en la traduccion no tienen
@@ -171,7 +171,7 @@ Comando: <input type = "text" name = "Comando" />
       // evaluo en la cantidad de pedazos en que se pico el numero, si es anormal se descarta
       $cant_cifras = count($cifras_separadas);
      
-      echo("cant cifras \n" . $cant_cifras."\n");
+      //echo("cant cifras \n" . $cant_cifras."\n");
  
        // con solo parte entera tengo que agregar padding decimal
        // y tengo que completar lo que sea el numero entero a 8 digitos con padding
@@ -180,24 +180,24 @@ Comando: <input type = "text" name = "Comando" />
        switch ($cant_cifras) {
          case 1:
            // con solo parte entera tengo que agregar padding decimal
-           echo "solo numero sin decimales\n";
-           echo("valor entero\n ". $cifras_separadas[0] . "\n");
+           //echo "solo numero sin decimales\n";
+           //echo("valor entero\n ". $cifras_separadas[0] . "\n");
            $decimales = "00";
            $enteros = padding_number_format($cifras_separadas[0],8);
-           echo($enteros);
+           //echo($enteros);
            break;
          case 2:
            // 
-           echo "numero + decimales\n";
-           echo("valor entero\n ". $cifras_separadas[0] . "\n");
-           echo("valor decimal\n ". $cifras_separadas[1] . "\n");
+          //  echo "numero + decimales\n";
+          //  echo("valor entero\n ". $cifras_separadas[0] . "\n");
+          //  echo("valor decimal\n ". $cifras_separadas[1] . "\n");
        
            $enteros = padding_number_format($cifras_separadas[0],8);
            $decimales = padding_decimal_format($cifras_separadas[1],2);  
  
            break;
          default:
-           echo "formato de numero no reconocido\n";
+           //echo "formato de numero no reconocido\n";
            return false;
        }
      
@@ -211,16 +211,16 @@ Comando: <input type = "text" name = "Comando" />
       $decimales = ""; // 3 siempre, cualquier numero + relleno en ceros 
  
       // pico el numero en 2, quizas no se pique por ser un entero
-      $cant = "1250.955";
+      // $cant = "1250.955";
      
       if($cant == ""){
-       echo("valor vacio de cantidad\n");
+       //echo("valor vacio de cantidad\n");
        return false;
       }
  
        // aqui va la funcion expresion regular validador de numeros
       if (is_numeric($cant) == false){
-       echo("valor invalido cifras\n" + $cant );
+       //echo("valor invalido cifras\n" + $cant );
        return false;
       }
  
@@ -233,7 +233,7 @@ Comando: <input type = "text" name = "Comando" />
       // evaluo en la cantidad de pedazos en que se pico el numero, si es anormal se descarta
       $cant_cifras = count($cifras_separadas);
      
-      echo("cant cifras \n" . $cant_cifras."\n");
+      //echo("cant cifras \n" . $cant_cifras."\n");
  
        // con solo parte entera tengo que agregar padding decimal
        // y tengo que completar lo que sea el numero entero a 5 digitos con padding
@@ -242,24 +242,24 @@ Comando: <input type = "text" name = "Comando" />
        switch ($cant_cifras) {
          case 1:
            // con solo parte entera tengo que agregar padding decimal
-           echo "solo numero sin decimales\n";
-           echo("valor entero\n ". $cifras_separadas[0] . "\n");
+          //  echo "solo numero sin decimales\n";
+          //  echo("valor entero\n ". $cifras_separadas[0] . "\n");
            $decimales = "000";
            $enteros = padding_number_format($cifras_separadas[0],5);
-           echo($enteros);
+           //echo($enteros);
            break;
          case 2:
            // 
-           echo "numero + decimales\n";
-           echo("valor entero\n ". $cifras_separadas[0] . "\n");
-           echo("valor decimal\n ". $cifras_separadas[1] . "\n");
+          //  echo "numero + decimales\n";
+          //  echo("valor entero\n ". $cifras_separadas[0] . "\n");
+          //  echo("valor decimal\n ". $cifras_separadas[1] . "\n");
        
            $enteros = padding_number_format($cifras_separadas[0],5);
            $decimales = padding_decimal_format($cifras_separadas[1],3);  
  
            break;
          default:
-           echo "formato de numero no reconocido cantidad\n";
+           //echo "formato de numero no reconocido cantidad\n";
            return false;
        }
      
@@ -272,7 +272,7 @@ Comando: <input type = "text" name = "Comando" />
        $max_caracteres = 20; //definido en el manual
  
       if($desc == ""){
-       echo("Descripcion Vacia\n");
+       //echo("Descripcion Vacia\n");
        return false;
       }
  
@@ -286,7 +286,7 @@ Comando: <input type = "text" name = "Comando" />
      
      $comando = translateTasa($tasa, $tipo_doc) .translatePrecio($precio) . translateCantidad($cant) .translateDescription($desc);
      
-      echo "\n\nComando Final\n"; 
+      //echo "\n\nComando Final\n"; 
      
      return  $comando;
     }
@@ -318,7 +318,7 @@ if (isset($Foperacion)){
 	  }elseif ($Foperacion == "Facturar") {
 
                          
-     // $out =  $itObj->SendFileCmd($file);
+
 
       $servername = "localhost";
       $username = "root";
@@ -364,9 +364,11 @@ if (isset($Foperacion)){
       if ($result->num_rows > 0) {
         // output data of each row
         while($row = $result->fetch_assoc()) {
-          // echo "price: " . $row["price"]. " - quantity: " . $row["quantity"]. ", description " . $row["description"]. "<br>";
+          echo "price: " . $row["price"]. " - quantity: " . $row["quantity"]. ", description " . $row["description"]. "<br>";
+          echo "\n";
+
           // $factura[$index_counter] = "price: " . $row["price"]. " - quantity: " . $row["quantity"]. ", description " . $row["description"]. "<br> \n";
-          $factura[$index_counter] = translateLine("X",$row["price"],$row["quantity"],$row["description"]);
+          $factura[$index_counter] = translateLine("X",$row["price"],$row["quantity"],$row["description"])."\n";
           $index_counter++;
         }
 
@@ -380,36 +382,37 @@ if (isset($Foperacion)){
       //cerrando db
       $conn->close();
 
-      var_dump( $factura).die; 
+      var_dump( $factura); 
 
-        // $factura = array(
-        //   // -5 => "iF*0000001\n",//factura asociadaj
-        //   // -4 => "iI*Z4A1234567\n",// numero de control de esa factura
-        //   // -3 => "iD*18-01-2014\n",//fecha factura dia especifico
-        //   // -2 => "iS*Pedro Mendez\n", // mombre persona
-        //   // -1 => "iR*12.345.678\n", // rif
-        //   //  0 => "!100000580910000512Harina\n",
-        //   //  1 => "!000000150000001500Jamon\n",
-        //   2 => " 050540960300582661caracteres especiale\n",
-        //   //  3 => "#000005000000001000Caja de Whisky\n",
-        //   //  4 => "#000005000000001000Caja de Chocolates\n",
-        //   //  5 => "!000001000000004000Maracas de Peltre\n",
-        //   //  6 => "\"000001000000004000Maracas de Aluminio\n",
-        //   //  7 => " 000001000000004000Maracas Pesadas\n",
-        //   8 => "101"
-        //   );
+      // $factura = array(
+      //   // -5 => "iF*0000001\n",//factura asociadaj
+      //   // -4 => "iI*Z4A1234567\n",// numero de control de esa factura
+      //   // -3 => "iD*18-01-2014\n",//fecha factura dia especifico
+      //   // -2 => "iS*Pedro Mendez\n", // mombre persona
+      //   // -1 => "iR*12.345.678\n", // rif
+      //   //  0 => "!100000580910000512Harina\n",
+      //   //  1 => "!000000150000001500Jamon\n",
+      //   2 => " 050540960300582661caracteres especiale\n",
+      //   //  3 => "#000005000000001000Caja de Whisky\n",
+      //   //  4 => "#000005000000001000Caja de Chocolates\n",
+      //   //  5 => "!000001000000004000Maracas de Peltre\n",
+      //   //  6 => "\"000001000000004000Maracas de Aluminio\n",
+      //   //  7 => " 000001000000004000Maracas Pesadas\n",
+      //   8 => "101"
+      //   );
 
-
-        //   $file = "Factura" .123.".txt";	
-        //             $fp = fopen($file, "w+");
-        //             $write = fputs($fp, "");
+          $file = "Factura.txt";	
+            $fp = fopen($file, "w+");
+            $write = fputs($fp, "");
                             
-        //   foreach($factura as $campo => $cmd)
-        //   {
-        //           $write = fputs($fp, $cmd);
-        //   }
+          foreach($factura as $campo => $cmd)
+          {
+            $write = fputs($fp, $cmd);
+          }
                             
-        // fclose($fp); 
+        fclose($fp); 
+        
+        $out =  $itObj->SendFileCmd($file);
 
 	  }elseif ($Foperacion == "Devolucion") {
 	        $devolucion = array(-5 => "iS*Pedro Mendez\n",
