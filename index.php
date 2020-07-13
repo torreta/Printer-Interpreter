@@ -24,22 +24,25 @@
             <input name ="EnviarComando" type = "submit"  value="SetPort" /></br></br>
 Comando: <input type = "text" name = "Comando" />
 <input name ="EnviarComando" type = "submit" value = "Enviar" /></br></br>
-<!-- <input name ="EnviarComando" type = "submit"  value="SubirS1" />
+<input name ="EnviarComando" type = "submit"  value="SubirS1" />
 <input name ="EnviarComando" type = "submit"  value="SubirS2" />
 <input name ="EnviarComando" type = "submit"  value="SubirS3"  />
 <input name ="EnviarComando" type = "submit"  value="SubirS4" />
 <input name ="EnviarComando" type = "submit"  value="SubirS5" />
 <input name ="EnviarComando" type = "submit"  value="SubirS6"  />
 <input name ="EnviarComando" type = "submit"  value="SubirU0X" />
-<input name ="EnviarComando" type = "submit"  value="SubirU0Z" /> -->
+<input name ="EnviarComando" type = "submit"  value="SubirU0Z" />
 </br>
 </br>
 <input name ="EnviarComando" type = "submit"  value="Facturar" />
-<!-- <input name ="EnviarComando" type = "submit"  value="Devolucion" /> -->
+<input name ="EnviarComando" type = "submit"  value="Devolucion" />
 </br>
 </br>
-<!-- <input name ="EnviarComando" type = "submit"  value="ReporteX" />
-<input name ="EnviarComando" type = "submit"  value="ReporteZ" /> -->
+<input name ="EnviarComando" type = "submit"  value="ReporteX" />
+<input name ="EnviarComando" type = "submit"  value="ReporteZ" />
+</br>
+</br>
+<input name ="EnviarComando" type = "submit"  value="fpstatus" />
 </form>
 </div>
 <?php
@@ -291,10 +294,6 @@ Comando: <input type = "text" name = "Comando" />
      return  $comando;
     }
  
-
-
-
-
 if (isset($Foperacion)){
   $out = "";
    if ($Foperacion == "Enviar") {
@@ -314,11 +313,11 @@ if (isset($Foperacion)){
 	  }elseif ($Foperacion == "SubirU0X") {
 			$out =  $itObj->UploadReportCmd("U0X" , "ReportData.txt");
 	  }elseif ($Foperacion == "SubirU0Z") {
-			$out =  $itObj->UploadReportCmd("U0Z" , "ReportData.txt");
+      $out =  $itObj->UploadReportCmd("U0Z" , "ReportData.txt");
+    }elseif ($Foperacion == "fpstatus") {
+      var_dump("entro aca");
+			$out =  $itObj->ReadFpStatus();
 	  }elseif ($Foperacion == "Facturar") {
-
-                         
-
 
       $servername = "localhost";
       $username = "root";
@@ -382,24 +381,132 @@ if (isset($Foperacion)){
       //cerrando db
       $conn->close();
 
-      var_dump( $factura); 
+      // var_dump( $factura); 
 
-      // $factura = array(
-      //   // -5 => "iF*0000001\n",//factura asociadaj
-      //   // -4 => "iI*Z4A1234567\n",// numero de control de esa factura
-      //   // -3 => "iD*18-01-2014\n",//fecha factura dia especifico
-      //   // -2 => "iS*Pedro Mendez\n", // mombre persona
-      //   // -1 => "iR*12.345.678\n", // rif
-      //   //  0 => "!100000580910000512Harina\n",
-      //   //  1 => "!000000150000001500Jamon\n",
-      //   2 => " 050540960300582661caracteres especiale\n",
-      //   //  3 => "#000005000000001000Caja de Whisky\n",
-      //   //  4 => "#000005000000001000Caja de Chocolates\n",
-      //   //  5 => "!000001000000004000Maracas de Peltre\n",
-      //   //  6 => "\"000001000000004000Maracas de Aluminio\n",
-      //   //  7 => " 000001000000004000Maracas Pesadas\n",
-      //   8 => "101"
-      //   );
+      $factura = array(
+        -5 => "iF*0000001\n",//factura asociadaj
+        -4 => "iI*Z4A1234567\n",// numero de control de esa factura
+        -3 => "iD*18-01-2014\n",//fecha factura dia especifico
+        -2 => "iS*Pedro Mendez\n", // mombre persona
+        -1 => "iR*12.345.678\n", // rif
+         0 => "!000001000000001000Harina\n",
+         1 => "!000001000000001000Jamon\n",
+         2 => " 000001000000001000caracteres especiale\n",
+         3 => "#000001000000001000Caja de Whisky\n",
+         4 => "#000001000000001000Caja de Chocolates\n",
+         5 => "!000001000000001000Maracas de Peltre\n",
+         6 => "\"000001000000001000Maracas de Aluminio\n",
+         7 => " 000001000000001000Maracas Pesadas\n",
+         8 => "#000001000000001000Caja de vainilla\n",
+         9 => "!000001000000001000Maracas de goma\n",
+
+        //  10 => "!100000580910000512Harina\n",
+        //  11 => "!000000150000001500Jamon\n",
+        //  12 => " 050540960300582661caracteres especiale\n",
+        //  13 => "#000005000000001000Caja de Whisky\n",
+        //  14 => "#000005000000001000Caja de Chocolates\n",
+        //  15 => "!000001000000004000Maracas de Peltre\n",
+        //  16 => "\"000001000000004000Maracas de Aluminio\n",
+        //  17 => " 000001000000004000Maracas Pesadas\n",
+        //  18 => "#000005000000001000Caja de vainilla\n",
+        //  19 => "!000001000000004000Maracas de goma\n",
+         
+        //  20 => "!100000580910000512Harina\n",
+        //  21 => "!000000150000001500Jamon\n",
+        //  22 => " 050540960300582661caracteres especiale\n",
+        //  23 => "#000005000000001000Caja de Whisky\n",
+        //  24 => "#000005000000001000Caja de Chocolates\n",
+        //  25 => "!000001000000004000Maracas de Peltre\n",
+        //  26 => "\"000001000000004000Maracas de Aluminio\n",
+        //  27 => " 000001000000004000Maracas Pesadas\n",
+        //  28 => "#000005000000001000Caja de vainilla\n",
+        //  29 => "!000001000000004000Maracas de goma\n",
+
+        //  30 => "!100000580910000512Harina\n",
+        //  31 => "!000000150000001500Jamon\n",
+        //  32 => " 050540960300582661caracteres especiale\n",
+        //  33 => "#000005000000001000Caja de Whisky\n",
+        //  34 => "#000005000000001000Caja de Chocolates\n",
+        //  35 => "!000001000000004000Maracas de Peltre\n",
+        //  36 => "\"000001000000004000Maracas de Aluminio\n",
+        //  37 => " 000001000000004000Maracas Pesadas\n",
+        //  38 => "#000005000000001000Caja de vainilla\n",
+        //  39 => "!000001000000004000Maracas de goma\n",
+
+        //  40 => "!100000580910000512Harina\n",
+        //  41 => "!000000150000001500Jamon\n",
+        //  42 => " 050540960300582661caracteres especiale\n",
+        //  43 => "#000005000000001000Caja de Whisky\n",
+        //  44 => "#000005000000001000Caja de Chocolates\n",
+        //  45 => "!000001000000004000Maracas de Peltre\n",
+        //  46 => "\"000001000000004000Maracas de Aluminio\n",
+        //  47 => " 000001000000004000Maracas Pesadas\n",
+        //  48 => "#000005000000001000Caja de vainilla\n",
+        //  49 => "!000001000000004000Maracas de goma\n",
+
+        //  50 => "!100000580910000512Harina\n",
+        //  51 => "!000000150000001500Jamon\n",
+        //  52 => " 050540960300582661caracteres especiale\n",
+        //  53 => "#000005000000001000Caja de Whisky\n",
+        //  54 => "#000005000000001000Caja de Chocolates\n",
+        //  55 => "!000001000000004000Maracas de Peltre\n",
+        //  56 => "\"000001000000004000Maracas de Aluminio\n",
+        //  57 => " 000001000000004000Maracas Pesadas\n",
+        //  58 => "#000005000000001000Caja de vainilla\n",
+        //  59 => "!000001000000004000Maracas de goma\n",
+
+        //  60 => "!100000580910000512Harina\n",
+        //  61 => "!000000150000001500Jamon\n",
+        //  62 => " 050540960300582661caracteres especiale\n",
+        //  63 => "#000005000000001000Caja de Whisky\n",
+        //  64 => "#000005000000001000Caja de Chocolates\n",
+        //  65 => "!000001000000004000Maracas de Peltre\n",
+        //  66 => "\"000001000000004000Maracas de Aluminio\n",
+        //  67 => " 000001000000004000Maracas Pesadas\n",
+        //  68 => "#000005000000001000Caja de vainilla\n",
+        //  69 => "!000001000000004000Maracas de goma\n",
+
+        //  70 => "!100000580910000512Harina\n",
+        //  71 => "!000000150000001500Jamon\n",
+        //  72 => " 050540960300582661caracteres especiale\n",
+        //  73 => "#000005000000001000Caja de Whisky\n",
+        //  74 => "#000005000000001000Caja de Chocolates\n",
+        //  75 => "!000001000000004000Maracas de Peltre\n",
+        //  76 => "\"000001000000004000Maracas de Aluminio\n",
+        //  77 => " 000001000000004000Maracas Pesadas\n",
+        //  78 => "#000005000000001000Caja de vainilla\n",
+        //  79 => "!000001000000004000Maracas de goma\n",
+
+        //  80 => "!100000580910000512Harina\n",
+        //  81 => "!000000150000001500Jamon\n",
+        //  82 => " 050540960300582661caracteres especiale\n",
+        //  83 => "#000005000000001000Caja de Whisky\n",
+        //  84 => "#000005000000001000Caja de Chocolates\n",
+        //  85 => "!000001000000004000Maracas de Peltre\n",
+        //  86 => "\"000001000000004000Maracas de Aluminio\n",
+        //  87 => " 000001000000004000Maracas Pesadas\n",
+        //  88 => "#000005000000001000Caja de vainilla\n",
+        //  89 => "!000001000000004000Maracas de goma\n",
+
+        //  90 => "!100000580910000512Harina\n",
+        //  91 => "!000000150000001500Jamon\n",
+        //  92 => " 050540960300582661caracteres especiale\n",
+        //  93 => "#000005000000001000Caja de Whisky\n",
+        //  94 => "#000005000000001000Caja de Chocolates\n",
+        //  95 => "!000001000000004000Maracas de Peltre\n",
+        //  96 => "\"000001000000004000Maracas de Aluminio\n",
+        //  97 => " 000001000000004000Maracas Pesadas\n",
+        //  98 => "#000005000000001000Caja de vainilla\n",
+        //  99 => "!000001000000004000Maracas de goma\n",
+
+        //  100 => "!100000580910000512Harina\n",
+        //  101 => "!000000150000001500Jamon\n",
+        //  102 => " 050540960300582661caracteres especiale\n",
+         
+         10 => "101"
+        );
+
+        var_dump( $factura); 
 
           $file = "Factura.txt";	
             $fp = fopen($file, "w+");
@@ -411,9 +518,11 @@ if (isset($Foperacion)){
           }
                             
         fclose($fp); 
-        
+      
         $out =  $itObj->SendFileCmd($file);
-
+  
+        var_dump($out);
+  
 	  }elseif ($Foperacion == "Devolucion") {
 	        $devolucion = array(-5 => "iS*Pedro Mendez\n",
 							-4 => "iR*12.345.678\n",
@@ -435,10 +544,8 @@ if (isset($Foperacion)){
 		     	   $write = fputs($fp, $cmd);
 			}
                         
-                         fclose($fp); 
-                         
-                         $out =  $itObj->SendFileCmd($file);
-                         
+      fclose($fp); 
+
 	  }elseif ($Foperacion == "ReporteX") {
 			$out =  $itObj->SendCmd("I0X");
 	  }elseif ($Foperacion == "ReporteZ") {
