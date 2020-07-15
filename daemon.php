@@ -7,6 +7,246 @@ if (PHP_SAPI != "cli") {
 
 include_once ("TfhkaPHP.php"); 
 
+function translateTasa($tasa=""){
+    // de momento tengo entendido 4 tipos de tasa
+    // (falta copiar de manuak, pero en ejemplo tengo)// (!), ("), (#), ( )
+   
+    if($tasa == ""){
+     //echo("valor vacio de tasa\n");
+     return false;
+    }
+
+    switch ($tasa) {
+      case "Exento":
+        //echo "Exento\n";
+        $comando = " ";
+        break;
+      case "Tasa 1":
+        //echo "Tasa 1\n";
+        $comando = "!";
+        break;
+      case "Tasa 2":
+        //echo "Tasa 2\n";
+        $comando = "\"";
+        break;
+      case "tasa 3":
+        //echo "Tasa 3\n";
+        $comando = "#";
+        break;
+      default:
+       //echo "Tasa no reconocida\n";
+       $comando = false;
+       $tasas = ["\"","!","#"," "];
+       $tasa = $tasas[array_rand($tasas, 1)];
+       $comando = $tasa;
+    }
+   
+   return  $comando;
+  }
+   
+  // buscar expresion regular compatible con la mision de
+  // verificar si un numero es valido
+  // verificar si es valido sin decimales
+  // verificar si es valido con comas
+  // verificar si es valido con puntos
+  function validador_numerico($value){
+     return (preg_match ('~^((?:\+|-)?[0-9]+)$~' ,$value) == 1);
+  }
+   
+  function padding_number_format($value="", $max_cifras="" ){
+
+    // echo("valor precio\n" . $value . "\n");
+    // echo("valor cifras\n" . $max_cifras . "\n");
+
+    $cifras_padding = $max_cifras - strlen($value) ;
+    // echo("padding cifras \n" . $cifras_padding . "\n");
+    if( $cifras_padding < 0){echo "numero de cifras permitidas excedido"; }
+
+    $padding ="";
+
+    // construyo cuantos ceros falten para completar el padding 
+    for ($i = 1; $i <= $cifras_padding; $i++) {
+     $padding = $padding . "0";
+    } 
+
+    // echo(" padding y valor: \n" . $padding . $value ." \n");
+
+     return $padding . $value;
+   }
+
+   function padding_decimal_format($value="", $max_cifras="" ){
+
+   //  echo("valor precio\n" . $value . "\n");
+   //  echo("valor cifras\n" . $max_cifras . "\n");
+
+    $cifras_padding = $max_cifras - strlen($value) ;
+   // echo("padding cifras \n" . $cifras_padding . "\n");
+   if( $cifras_padding < 0){echo "numero de cifras decimales permitidas excedido"; }
+
+    $padding ="";
+
+    // construyo cuantos ceros falten para completar el padding 
+    for ($i = 1; $i <= $cifras_padding; $i++) {
+     $padding = $padding . "0";
+    } 
+
+    // echo(" padding y valor: \n" . $value . $padding ." \n");
+
+     return  $value. $padding;
+  }
+
+  function translatePrecio( $precio = ""){
+    //validaciones de tipo precio
+    // Precio del ítem (8 enteros + 2 decimales)
+    $enteros = "";   // 8 siempre, cualquier numero + relleno en ceros
+    $decimales = ""; // 2 siempre, cualquier numero + relleno en ceros 
+
+    // pico el numero en 2, quizas no se pique por ser un entero
+    // $precio = "12.6";
+   
+    if($precio == ""){
+     // echo("valor vacio de precio\n");
+     return false;
+    }
+
+     // aqui va la funcion expresion regular validador de numeros
+    if (is_numeric($precio) == false){
+     // echo("valor invalido cifras\n" + $precio );
+     return false;
+    }else{
+      // echo("valor numerico\n");
+    }
+
+    // se hace esto porque la cifra y los decimales en la traduccion no tienen
+    // ningun tipo de marcacion, solo se asume que son los ultimos 2 digitos los decimales
+ 
+    // separo la cifra en 2 pedazos, entero y decimal para poder evaluarlo aparte
+    $cifras_separadas = explode(".",$precio); 
+
+    // evaluo en la cantidad de pedazos en que se pico el numero, si es anormal se descarta
+    $cant_cifras = count($cifras_separadas);
+   
+    //echo("cant cifras \n" . $cant_cifras."\n");
+
+     // con solo parte entera tengo que agregar padding decimal
+     // y tengo que completar lo que sea el numero entero a 8 digitos con padding
+     // de ceros.
+
+     switch ($cant_cifras) {
+       case 1:
+         // con solo parte entera tengo que agregar padding decimal
+         //echo "solo numero sin decimales\n";
+         //echo("valor entero\n ". $cifras_separadas[0] . "\n");
+         $decimales = "00";
+         $enteros = padding_number_format($cifras_separadas[0],8);
+         //echo($enteros);
+         break;
+       case 2:
+         // 
+        //  echo "numero + decimales\n";
+        //  echo("valor entero\n ". $cifras_separadas[0] . "\n");
+        //  echo("valor decimal\n ". $cifras_separadas[1] . "\n");
+     
+         $enteros = padding_number_format($cifras_separadas[0],8);
+         $decimales = padding_decimal_format($cifras_separadas[1],2);  
+
+         break;
+       default:
+         //echo "formato de numero no reconocido\n";
+         return false;
+     }
+   
+     return  $enteros.$decimales;
+  }
+   
+  function translateCantidad($cant = ""){
+    //validaciones de cantidad
+    // cantidad del ítem (5 enteros + 3 decimales)
+    $enteros = "";   // 5 siempre, cualquier numero + relleno en ceros
+    $decimales = ""; // 3 siempre, cualquier numero + relleno en ceros 
+
+    // pico el numero en 2, quizas no se pique por ser un entero
+    // $cant = "1250.955";
+   
+    if($cant == ""){
+     //echo("valor vacio de cantidad\n");
+     return false;
+    }
+
+     // aqui va la funcion expresion regular validador de numeros
+    if (is_numeric($cant) == false){
+     //echo("valor invalido cifras\n" + $cant );
+     return false;
+    }
+
+    // se hace esto porque la cifra y los decimales en la traduccion no tienen
+    // ningun tipo de marcacion, solo se asume que son los ultimos 3 digitos son decimales
+ 
+    // separo la cifra en 2 pedazos, entero y decimal para poder evaluarlo aparte
+    $cifras_separadas = explode(".",$cant); 
+
+    // evaluo en la cantidad de pedazos en que se pico el numero, si es anormal se descarta
+    $cant_cifras = count($cifras_separadas);
+   
+    //echo("cant cifras \n" . $cant_cifras."\n");
+
+     // con solo parte entera tengo que agregar padding decimal
+     // y tengo que completar lo que sea el numero entero a 5 digitos con padding
+     // de ceros.
+
+     switch ($cant_cifras) {
+       case 1:
+         // con solo parte entera tengo que agregar padding decimal
+        //  echo "solo numero sin decimales\n";
+        //  echo("valor entero\n ". $cifras_separadas[0] . "\n");
+         $decimales = "000";
+         $enteros = padding_number_format($cifras_separadas[0],5);
+         //echo($enteros);
+         break;
+       case 2:
+         // 
+        //  echo "numero + decimales\n";
+        //  echo("valor entero\n ". $cifras_separadas[0] . "\n");
+        //  echo("valor decimal\n ". $cifras_separadas[1] . "\n");
+     
+         $enteros = padding_number_format($cifras_separadas[0],5);
+         $decimales = padding_decimal_format($cifras_separadas[1],3);  
+
+         break;
+       default:
+         //echo "formato de numero no reconocido cantidad\n";
+         return false;
+     }
+   
+     return  $enteros.$decimales;
+
+  }
+   
+  function translateDescription($desc = ""){
+ 
+     $max_caracteres = 20; //definido en el manual
+
+    if($desc == ""){
+     //echo("Descripcion Vacia\n");
+     return false;
+    }
+
+     $comando = substr($desc,0,$max_caracteres);
+
+   return  $comando;
+  }
+   
+   
+  function translateLine( $tasa="", $precio = "", $cant = "", $desc = "",$tipo_doc=""){
+   
+   $comando = translateTasa($tasa, $tipo_doc) .translatePrecio($precio) . translateCantidad($cant) .translateDescription($desc);
+   
+    //echo "\n\nComando Final\n"; 
+   
+   return  $comando;
+  }
+
+
 /*** (B) SETTINGS ***/
 // Database settings - change these to your own
 define('DB_HOST', 'localhost');
@@ -14,6 +254,8 @@ define('DB_NAME', 'pos_development');
 define('DB_CHARSET', 'utf8');
 define('DB_USER', 'root');
 define('DB_PASSWORD', null);
+
+define('PRINTER_ID', 1); //la impresora en uso
 
 // $servername = "localhost";
 // $username = "root";
@@ -33,121 +275,45 @@ function addlog ($message="") {
 }
 
 // Cycle
-define('LOOP_CYCLE', 4); // Loop every 60 secs
-define('EMAIL_ADMIN', "john@doe.com");
+define('LOOP_CYCLE', 6); // Loop every 60 secs
 
 /*** (C) CONNECT DATABASE ***/
-try {
-  $_PDO = new PDO(
-    "mysql:host=" . DB_HOST . ";charset=" . DB_CHARSET . ";dbname=" . DB_NAME, 
-    DB_USER, DB_PASSWORD, [
-      PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-      PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-      PDO::ATTR_EMULATE_PREPARES => false,
-      PDO::ATTR_PERSISTENT => true
-    ]
-  );
-}
-catch (Exception $ex) {
-  if (LOG_KEEP) { addlog($ex->getMessage()); }
-  die("Error connecting to the database");
-}
+  $servername = "localhost";
+  $username = "root";
+  $password = null;
+  $dbname = "pos_development";
+
+  // Create connection
+  $conn = new mysqli($servername, $username, $password, $dbname);
+
+  // Check connection
+  if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+  }
 
 /*** (D) LOOP CHECK ***/
 while (true) {
-  // Check for new orders
-  $_STMT = $_PDO->prepare("
-        SELECT
-        dbo_administration_invoices_items.id,
-        dbo_administration_invoices_items.price,
-        dbo_administration_invoices_items.quantity, 
-        dbo_administration_invoices_items.tax_id,
-        dbo_config_taxes.percentage,
-        dbo_config_taxes.observation,
-        dbo_administration_invoices_items.exchange_rate_id,
-        dbo_config_exchange_rates.exchange_rate,
-        dbo_config_currencies.abbreviation,
-        dbo_config_currencies.`name`,
-        dbo_storage_products.`code`,
-        dbo_storage_products.description
-      FROM `dbo_administration_invoices_items`
-      join dbo_config_taxes on dbo_administration_invoices_items.tax_id = dbo_config_taxes.id
-      join dbo_config_exchange_rates on dbo_administration_invoices_items.exchange_rate_id = dbo_config_exchange_rates.id
-      join dbo_config_currencies on dbo_config_exchange_rates.currency_id = dbo_config_currencies.id
-      join dbo_storage_products on dbo_administration_invoices_items.product_id = dbo_storage_products.id;
-  ");
-  $_STMT->execute();
-  $orders = $_STMT->fetchAll();
 
+  // Check for invoices current, if so, then
+  $facturas = "SELECT * from dbo_printer_current WHERE printer_id = ".PRINTER_ID.";";
+  $result = $conn->query($facturas);
+
+  // counter for translation
   $factura = array();
   $index_counter = 0;
 
-
-  // Email notification to admin
-  // if (count($orders)>0) {
-  //   $email = "Orders received<br>";
-  //   foreach ($orders as $o) {
-  //     $email .= $o["order_name"] . "<br>";
-  //   }
-  //   if (@mail(EMAIL_ADMIN, "Orders received", $email)) {
-  //     $_STMT = $_PDO->prepare("UPDATE `orders` SET `order_status`=2 WHERE `order_status`=1");
-  //     $_STMT->execute();
-  //   } else {
-  //     if (LOG_KEEP) { addlog("Email notification failed!"); }
-  //   }
-  // }
-
-  if ($result->num_rows > 0) {
-    // output data of each row
-    while($row = $result->fetch_assoc()) {
-      echo "price: " . $row["price"]. " - quantity: " . $row["quantity"]. ", description " . $row["description"]. "<br>";
-      echo "\n";
-
-      // $factura[$index_counter] = "price: " . $row["price"]. " - quantity: " . $row["quantity"]. ", description " . $row["description"]. "<br> \n";
-      $factura[$index_counter] = translateLine("X",$row["price"],$row["quantity"],$row["description"])."\n";
-      $index_counter++;
-    }
-
-    //cierre de factura
-    $factura[$index_counter] = "101";
-
-    // $factura = array(
-    //   -5 => "iF*0000001\n",//factura asociadaj
-    //   -4 => "iI*Z4A1234567\n",// numero de control de esa factura
-    //   -3 => "iD*18-01-2014\n",//fecha factura dia especifico
-    //   -2 => "iS*Pedro Mendez\n", // mombre persona
-    //   -1 => "iR*12.345.678\n", // rif
-    //    0 => "!000001000000001000Harina\n",
-    //    1 => "!000001000000001000Jamon\n",
-    //    2 => " 000001000000001000caracteres especiale\n",
-    //    3 => "#000001000000001000Caja de Whisky\n",
-    //    4 => "101"
-    //   );
-    
-  } else {
-    echo "0 results";
-  }
-
-      var_dump( $factura); 
-
-      $file = "Factura.txt";  
-        $fp = fopen($file, "w+");
-        $write = fputs($fp, "");
-                        
-      foreach($factura as $campo => $cmd)
-      {
-        $write = fputs($fp, $cmd);
-      }
-                        
-    fclose($fp); 
-
-    $out =  $itObj->SendFileCmd($file);
-
-    var_dump($out);
-
-
+  echo "\n";
+  echo "items";
+  var_dump( $result );
+  var_dump( $result->num_rows );
+  var_dump( $result->num_rows > 0);
+  echo "\n";
 
   // Sleep
   sleep(LOOP_CYCLE);
 }
+
+    // cd C:\xampp\htdocs\Printer-Interpreter && php daemon.php
+    // php daemon.php
+
 ?>
