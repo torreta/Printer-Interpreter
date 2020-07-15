@@ -309,6 +309,56 @@ while (true) {
   var_dump( $result->num_rows > 0);
   echo "\n";
 
+  // (0) verifico si hay facturas en la tabla current (1)
+
+  // (1) (true) de haber tomo el documento y lo imprimo (...desarrollar ++) (3)
+
+  // (1) (false) de no haber, busco en pendientes (2)
+
+  // (2) (true) de haber en pendientes (para la impresora especificada), tomo el siguiente en orden FIFO de la cola
+  // ... y lo coloco en current ese invoice. (END)
+
+  // (2) (false) de no existir pendientes, no hay que hacer mas nada, solo esperar (Sleep) (END)
+
+  // (3) (true) verifico el mensaje del controlador al imprimir, (condiciones de parseo), si todo sale exitoso
+  // ... se toma el individuo en current y se copia a history. 
+  // ... se borra de current
+  // ... se sobrescribe el mensaje para la impresora de mensajes 
+  // ... se coloca el mensaje en la tabla log de mensajes (END)
+
+  // (3) (false)  verifico el mensaje del controlador al imprimir, (condiciones de parseo), si sale un error
+  // ... se mantiene la factura en current (sin cambios)
+  // ... se sobrescribe el mensaje para la impresora de mensajes, indicando que hay un error
+  // ... se coloca el mensaje en la tabla log de mensajes (END)
+
+
+  // PASITO A PASITO
+
+  // (0) verifico si hay facturas en la tabla current (1)
+
+  // (1) (true) de haber tomo el documento y lo imprimo (...desarrollar ++) (3)
+
+  // (1) (false) de no haber, busco en pendientes (2)
+
+  // (2) (true) de haber en pendientes (para la impresora especificada), tomo el siguiente en orden FIFO de la cola
+  // ... y lo coloco en current ese invoice. (END)
+
+  // (2) (false) de no existir pendientes, no hay que hacer mas nada, solo esperar (Sleep) (END)
+
+  // (3) (true) verifico el mensaje del controlador al imprimir, (condiciones de parseo), si todo sale exitoso
+  // ... se toma el individuo en current y se copia a history. 
+  // ... se borra de current
+  // ... se sobrescribe el mensaje para la impresora de mensajes 
+  // ... se coloca el mensaje en la tabla log de mensajes (END)
+
+  // (3) (false)  verifico el mensaje del controlador al imprimir, (condiciones de parseo), si sale un error
+  // ... se mantiene la factura en current (sin cambios)
+  // ... se sobrescribe el mensaje para la impresora de mensajes, indicando que hay un error
+  // ... se coloca el mensaje en la tabla log de mensajes (END)
+
+
+
+
   // Sleep
   sleep(LOOP_CYCLE);
 }
