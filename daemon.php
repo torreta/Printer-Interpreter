@@ -68,7 +68,8 @@ while (true) {
   // (1) (false) de no haber, busco en pendientes (2)
 
   // (2) (true) de haber en pendientes (para la impresora especificada), tomo el siguiente en orden FIFO de la cola
-  // ... y lo coloco en current ese invoice. (END)
+  // ... y lo coloco en current ese invoice.
+  // ... y lo borro el seleccionado de pendientes  (END)
 
   // (2) (false) de no existir pendientes, no hay que hacer mas nada, solo esperar (Sleep) (END)
 
@@ -88,6 +89,7 @@ while (true) {
   // (0) verifico si hay documentos en la tabla current (1)
   //.. en esto particular para la impresora en particular.
   $query_documentos_imprimiendo = "SELECT * from dbo_printer_current WHERE printer_id = ".PRINTER_ID.";";
+  $documentos_imprimiendo = null;
   $documentos_imprimiendo = $conn->query($query_documentos_imprimiendo);
 
   // contador para la traduccion (quizas mal puesto aqui)
@@ -98,12 +100,15 @@ while (true) {
   if ($documentos_imprimiendo->num_rows > 0) { // aqui chequeo si tengo almenos 1
 
     // solo debe haber una por impresora en la tabla current
+    $documento_imprimiendo = null;
     $documento_imprimiendo = $documentos_imprimiendo->fetch_assoc();
-
+    var_dump($documento_imprimiendo);
+    
     // segun el tipo de documento (solo facturas de momentos)
     switch ($documento_imprimiendo["document_type_id"]) {
       case "1": // Factura (unico caso de momento)
         // tomo el id de la factura
+        $invoice_id = null;
         $invoice_id = $documento_imprimiendo["document_id"];
         
         // inicializo una instancia de interprete para el tipo de doc.
@@ -112,6 +117,7 @@ while (true) {
 
         // detalles de documento
         $query_info_factura = "SELECT * FROM dbo_administration_invoices WHERE id = ".$invoice_id.";";
+        $info_factura = null;
         $info_factura = $conn->query($query_info_factura);
 
         if ($info_factura->num_rows == 0) { die("factura con ese id no existe"); }
@@ -147,6 +153,7 @@ while (true) {
           WHERE 	dbo_administration_invoices_items.invoice_id = " .$invoice_id.";
         ";
 
+        $items_factura = null;
         $items_factura = $conn->query($query_items_factura);
 
           if ($items_factura->num_rows > 0) {
@@ -283,28 +290,69 @@ while (true) {
   }else{ 
     // ... reviso que no haya documentos en pendientes
     $query_documentos_pendientes = "SELECT * from dbo_printer_pending WHERE printer_id = ".PRINTER_ID.";";
+    $documentos_pendientes = null;
     $documentos_pendientes = $conn->query($query_documentos_pendientes);
   
+     // (2) (true) de haber en pendientes (para la impresora especificada), 
+     // ...tomo el siguiente en orden FIFO de la cola
     if ($documentos_pendientes->num_rows > 0) {
     
+      // datos de la factura pendiente
       $documento_pendiente = $documentos_pendientes->fetch_assoc();
 
-      echo("documento en pendiente. \n");
-      var_dump($documento_pendiente);
+      // ... y lo coloco en current ese invoice.
+      $query_a_imprimiendo = 
+        "INSERT INTO dbo_printer_current(
+              document_type_id, 
+              document_id, 
+              printer_id, 
+              user_id, 
+              cashier_name) 
+          VALUES ("
+          .$documento_pendiente["document_type_id"].","
+          .$documento_pendiente["document_id"].", "
+          .$documento_pendiente["printer_id"].", "
+          .$documento_pendiente["user_id"].", '"
+          .$documento_pendiente["cashier_name"]."');";
+      
+        // puedes validar el query aca
+        // echo ( $query_a_imprimiendo );
+
+        $insertar_registro = $conn->prepare($query_a_imprimiendo);
+
+      if ($insertar_registro->execute()) {
+        echo "Se ha registrado una factura a imprimiendo \n";
+      } else {
+        echo "(al insertar a imrpimiendo) Error: " . $sql . "\n" . mysqli_error($conn);
+      }
+
+      // ... se borra de dicha factura de pendiente (END)
+      $query_delete_pending = 
+        " DELETE 
+            FROM dbo_printer_pending
+          WHERE
+            document_type_id = ".$documento_pendiente["document_type_id"]." && 
+            document_id = ".$documento_pendiente["document_id"]." && 
+            printer_id = ".$documento_pendiente["printer_id"].";
+          ";
+      
+        // puedes validar el query aca
+        // echo ( $query_delete_pending );
+
+        $borrar_pendiente_registro = $conn->prepare($query_delete_pending);
+
+      if ($borrar_pendiente_registro->execute()) {
+        echo "Se ha borrado la factura pendientes, por haber sido llevada a imprimir. \n";
+      } else {
+        echo "(al borrar de pendientes) Error: " . $sql . "\n" . mysqli_error($conn);
+      }
 
     }else{
+      // (2) (false) de no existir pendientes, no hay que hacer mas nada, solo esperar (Sleep) (END)
       echo("no hay documentos en pendientes, me tomo una siesta. \n");
     }
 
   }
-
-
-  // (2) (true) de haber en pendientes (para la impresora especificada), tomo el siguiente en orden FIFO de la cola
-  // ... y lo coloco en current ese invoice. (END)
-
-  // (2) (false) de no existir pendientes, no hay que hacer mas nada, solo esperar (Sleep) (END)
-
-
 
 
   // Sleep
