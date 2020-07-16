@@ -103,7 +103,7 @@ while (true) {
     $documento_imprimiendo = null;
     $documento_imprimiendo = $documentos_imprimiendo->fetch_assoc();
     var_dump($documento_imprimiendo);
-    
+
     // segun el tipo de documento (solo facturas de momentos)
     switch ($documento_imprimiendo["document_type_id"]) {
       case "1": // Factura (unico caso de momento)
@@ -283,6 +283,7 @@ while (true) {
         case "4":// Nota no Fiscal
           break;
         default: // Documento indeterminado
+          die("Documento indeterminado"); 
       }
 
     
