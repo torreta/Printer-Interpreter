@@ -294,23 +294,8 @@ define('LOOP_CYCLE', 6); // Loop every 60 secs
 /*** (D) LOOP CHECK ***/
 while (true) {
 
-  // Check for invoices current, if so, then
-  $facturas = "SELECT * from dbo_printer_current WHERE printer_id = ".PRINTER_ID.";";
-  $result = $conn->query($facturas);
-
-  // counter for translation
-  $factura = array();
-  $index_counter = 0;
-
-  echo "\n";
-  echo "items";
-  var_dump( $result );
-  var_dump( $result->num_rows );
-  var_dump( $result->num_rows > 0);
-  echo "\n";
-
-  // (0) verifico si hay facturas en la tabla current (1)
-
+  // (0) verifico si hay documentos en la tabla current (1)
+  
   // (1) (true) de haber tomo el documento y lo imprimo (...desarrollar ++) (3)
 
   // (1) (false) de no haber, busco en pendientes (2)
@@ -327,17 +312,62 @@ while (true) {
   // ... se coloca el mensaje en la tabla log de mensajes (END)
 
   // (3) (false)  verifico el mensaje del controlador al imprimir, (condiciones de parseo), si sale un error
-  // ... se mantiene la factura en current (sin cambios)
+  // ... se mantiene la documento en current (sin cambios)
   // ... se sobrescribe el mensaje para la impresora de mensajes, indicando que hay un error
   // ... se coloca el mensaje en la tabla log de mensajes (END)
 
 
   // PASITO A PASITO
-  // (0) verifico si hay facturas en la tabla current (1)
+  // (0) verifico si hay documentos en la tabla current (1)
+  //.. en esto particular para la impresora en particular.
+  $query_documentos_imprimiendo = "SELECT * from dbo_printer_current WHERE printer_id = ".PRINTER_ID.";";
+  $documentos_imprimiendo = $conn->query($query_documentos_imprimiendo);
+
+  // contador para la traduccion (quizas mal puesto aqui)
+  $documento = array();
+  $index_counter = 0;
 
   // (1) (true) de haber tomo el documento y lo imprimo (...desarrollar ++) (3)
+  if ($documentos_imprimiendo->num_rows > 0) { // aqui chequeo si tengo almenos 1
 
+    // solo debe haber una por impresora en la tabla current
+    $documento_imprimiendo = $documentos_imprimiendo->fetch_assoc();
+
+    echo "\n";
+    var_dump( $documento_imprimiendo );
+    echo "\n";
+
+    // segun el tipo de documento (solo facturas de momentos)
+    switch ($documento_imprimiendo["document_type_id"]) {
+      case 1: // Factura (unico caso de momento)
+        echo "\n";
+        var_dump( $documento_imprimiendo );
+        echo "\n";
+
+
+        break;
+      case 2:// Devolucion
+        break;
+      case 3:// Nota de Entrega
+        break;
+      case 4:// Nota no Fiscal
+        break;
+      default: // Documento indeterminado
+
+    }
+
+
+    
   // (1) (false) de no haber, busco en pendientes (2)
+  } else { // casi de no haber
+
+
+
+
+  }
+
+
+
 
   // (2) (true) de haber en pendientes (para la impresora especificada), tomo el siguiente en orden FIFO de la cola
   // ... y lo coloco en current ese invoice. (END)
@@ -355,164 +385,6 @@ while (true) {
   // ... se sobrescribe el mensaje para la impresora de mensajes, indicando que hay un error
   // ... se coloca el mensaje en la tabla log de mensajes (END)
 
-
-
-  // if (  $result->num_rows > 0) { //significa que hay almenos 1 factura
-
-  //   // output data of each row
-  //  /*  while($row = $result->fetch_assoc()) {
-  //     echo "\n";
-  //     echo "factura de id: " . $row["invoice_id"]." esta imprimiendo acturalmente;";
-  //     echo "\n";
-  //     // id de la factura en cuestion
-  //     $invoice_id = $row["invoice_id"];
-
-  //     $items_factura = "SELECT * from dbo_printer_current WHERE printer_id = ".PRINTER_ID.";";
-
-  //     $result = $conn->query($items_factura); */
-
-
-  //     // if (count($items_factura) > 0) {
-  //     //   // output data of each row
-  //     //   while($row = $items_factura->fetch_assoc()) {
-  //     //     echo "\n";
-  //     //     echo "price: " . $row["price"]. " - quantity: " . $row["quantity"]. ", description " . $row["description"]. "<br>";
-  //     //     echo "\n";
-
-  //     //     // $factura[$index_counter] = "price: " . $row["price"]. " - quantity: " . $row["quantity"]. ", description " . $row["description"]. "<br> \n";
-  //     //     $factura[$index_counter] = translateLine("X",$row["price"],$row["quantity"],$row["description"])."\n";
-  //     //     $index_counter++;
-  //     //   }
-
-  //     //   //cierre de factura
-  //     //   $factura[$index_counter] = "101";
-  //     //       echo "\n";
-  //     //       echo "factura generada";
-  //     //       echo "\n";
-
-  //     //       var_dump( $factura); 
-
-  //     //     //   $file = "Factura.txt";  
-  //     //     //     $fp = fopen($file, "w+");
-  //     //     //     $write = fputs($fp, "");
-                              
-  //     //     //   foreach($factura as $campo => $cmd)
-  //     //     //   {
-  //     //     //     $write = fputs($fp, $cmd);
-  //     //     //   }
-                              
-  //     //     // fclose($fp); 
-
-  //     //     //revisar resultados de dispositivo
-  //     //     // $out =  $itObj->SendFileCmd($file);
-  //     //     // var_dump($out);
-
-
-  //     // } else {
-  //     //   echo "0 results for items";
-  //     //   // log para algo serio
-  //     // }
-      
-  //   }
-
-  //     //cerrando db
-  //      $conn->close();
-
-  
-  //   // while($row = $result->fetch_assoc()) {
-  //   //   echo "price: " . $row["price"]. " - quantity: " . $row["quantity"]. ", description " . $row["description"]. "<br>";
-  //   //   echo "\n";
-
-  //   //   // $factura[$index_counter] = "price: " . $row["price"]. " - quantity: " . $row["quantity"]. ", description " . $row["description"]. "<br> \n";
-  //   //   $factura[$index_counter] = translateLine("X",$row["price"],$row["quantity"],$row["description"])."\n";
-  //   //   $index_counter++;
-  //   // }
-
-  //   // if ($result->num_rows > 0) {
-  //   //   // output data of each row
-  //   //   while($row = $result->fetch_assoc()) {
-  //   //     echo "price: " . $row["price"]. " - quantity: " . $row["quantity"]. ", description " . $row["description"]. "<br>";
-  //   //     echo "\n";
-
-  //   //     // $factura[$index_counter] = "price: " . $row["price"]. " - quantity: " . $row["quantity"]. ", description " . $row["description"]. "<br> \n";
-  //   //     $factura[$index_counter] = translateLine("X",$row["price"],$row["quantity"],$row["description"])."\n";
-  //   //     $index_counter++;
-  //   //   }
-
-  //   //   //cierre de factura
-  //   //   $factura[$index_counter] = "101";
-
-  //   // } else {
-  //   //   echo "0 results";
-  //   // }
-
-
-
-  //   // $_query = $_PDO->prepare("
-  //   //       SELECT
-  //   //         dbo_administration_invoices_items.id,
-  //   //         dbo_administration_invoices_items.invoice_id,
-  //   //         dbo_administration_invoices_items.price,
-  //   //         dbo_administration_invoices_items.quantity, 
-  //   //         dbo_administration_invoices_items.tax_id,
-  //   //         dbo_config_taxes.percentage,
-  //   //         dbo_config_taxes.observation,
-  //   //         dbo_administration_invoices_items.exchange_rate_id,
-  //   //         dbo_config_exchange_rates.exchange_rate,
-  //   //         dbo_config_currencies.abbreviation,
-  //   //         dbo_config_currencies.`name`,
-  //   //         dbo_storage_products.`code`,
-  //   //         dbo_storage_products.description
-  //   //       FROM `dbo_administration_invoices_items`
-  //   //       join dbo_config_taxes on dbo_administration_invoices_items.tax_id = dbo_config_taxes.id
-  //   //       join dbo_config_exchange_rates on dbo_administration_invoices_items.exchange_rate_id = dbo_config_exchange_rates.id
-  //   //       join dbo_config_currencies on dbo_config_exchange_rates.currency_id = dbo_config_currencies.id
-  //   //       join dbo_storage_products on dbo_administration_invoices_items.product_id = dbo_storage_products.id
-  //   //       WHERE 	dbo_administration_invoices_items.invoice_id = " .."
-  //   //       ;
-  //   //     ");
-  //   // $_query->execute();
-  //   // $facturas = $_query->fetchAll();
-
-
-
-
-
-  //   // while($row = $result->fetch_assoc()) {
-  //   //   echo "price: " . $row["price"]. " - quantity: " . $row["quantity"]. ", description " . $row["description"]. "<br>";
-  //   //   echo "\n";
-
-  //   //   // $factura[$index_counter] = "price: " . $row["price"]. " - quantity: " . $row["quantity"]. ", description " . $row["description"]. "<br> \n";
-  //   //   $factura[$index_counter] = translateLine("X",$row["price"],$row["quantity"],$row["description"])."\n";
-  //   //   $index_counter++;
-  //   // }
-
-  //   // //cierre de factura
-  //   // $factura[$index_counter] = "101";
-
-  // } else {
-  //   echo "nothing currently printing, cheking pending";
-
-  //   //busco pendientes
-
-  // }
-
-  // //     var_dump( $factura); 
-
-  // //     $file = "Factura.txt";  
-  // //       $fp = fopen($file, "w+");
-  // //       $write = fputs($fp, "");
-                        
-  // //     foreach($factura as $campo => $cmd)
-  // //     {
-  // //       $write = fputs($fp, $cmd);
-  // //     }
-                        
-  // //   fclose($fp); 
-
-  //   //revisar resultados de dispositivo
-  //   // $out =  $itObj->SendFileCmd($file);
-  //   // var_dump($out);
 
 
   // Sleep
@@ -521,5 +393,6 @@ while (true) {
 
     // cd C:\xampp\htdocs\Printer-Interpreter && php daemon.php
     // php daemon.php
-
+    // cd  d:\xamp\htdocs\Printer-Interpreter && php daemon.php
+    // D:\xamp\htdocs\Printer-Interpreter
 ?>
