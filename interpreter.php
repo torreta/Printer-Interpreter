@@ -134,7 +134,7 @@ class interpreter
             //echo "solo numero sin decimales\n";
             //echo("valor entero\n ". $cifras_separadas[0] . "\n");
             $decimales = "00";
-            $enteros = padding_number_format($cifras_separadas[0],8);
+            $enteros = $this->padding_number_format($cifras_separadas[0],8);
             //echo($enteros);
             break;
         case 2:
@@ -143,8 +143,8 @@ class interpreter
         //  echo("valor entero\n ". $cifras_separadas[0] . "\n");
         //  echo("valor decimal\n ". $cifras_separadas[1] . "\n");
         
-            $enteros = padding_number_format($cifras_separadas[0],8);
-            $decimales = padding_decimal_format($cifras_separadas[1],2);  
+            $enteros = $this->padding_number_format($cifras_separadas[0],8);
+            $decimales = $this->padding_decimal_format($cifras_separadas[1],2);  
 
             break;
         default:
@@ -193,20 +193,19 @@ class interpreter
         switch ($cant_cifras) {
         case 1:
             // con solo parte entera tengo que agregar padding decimal
-        //  echo "solo numero sin decimales\n";
-        //  echo("valor entero\n ". $cifras_separadas[0] . "\n");
+            //  echo "solo numero sin decimales\n";
+            //  echo("valor entero\n ". $cifras_separadas[0] . "\n");
             $decimales = "000";
-            $enteros = padding_number_format($cifras_separadas[0],5);
+            $enteros = $this->padding_number_format($cifras_separadas[0],5);
             //echo($enteros);
             break;
         case 2:
-            // 
-        //  echo "numero + decimales\n";
-        //  echo("valor entero\n ". $cifras_separadas[0] . "\n");
-        //  echo("valor decimal\n ". $cifras_separadas[1] . "\n");
-        
-            $enteros = padding_number_format($cifras_separadas[0],5);
-            $decimales = padding_decimal_format($cifras_separadas[1],3);  
+            //  echo "numero + decimales\n";
+            //  echo("valor entero\n ". $cifras_separadas[0] . "\n");
+            //  echo("valor decimal\n ". $cifras_separadas[1] . "\n");
+            
+            $enteros = $this->padding_number_format($cifras_separadas[0],5);
+            $decimales = $this->padding_decimal_format($cifras_separadas[1],3);  
 
             break;
         default:
@@ -222,25 +221,30 @@ class interpreter
     
         $max_caracteres = 20; //definido en el manual
 
-    if($desc == ""){
-        //echo("Descripcion Vacia\n");
-        return false;
-    }
+        if($desc == ""){
+            //echo("Descripcion Vacia\n");
+            return false;
+        }
 
         $comando = substr($desc,0,$max_caracteres);
 
-    return  $comando;
+        return  $comando;
     }
     
     
     function translateLine( $tasa="", $precio = "", $cant = "", $desc = "",$tipo_doc=""){
     
-    $comando = translateTasa($tasa, $tipo_doc) .translatePrecio($precio) . translateCantidad($cant) .translateDescription($desc);
+    $comando = $this->translateTasa($tasa, $tipo_doc) .$this->translatePrecio($precio) . $this->translateCantidad($cant) .$this->translateDescription($desc);
     
     //echo "\n\nComando Final\n"; 
     
     return  $comando;
     }
 
+    function test(){
+
+      return  "importado con exito";
+    }
+  
 }
 ?>
