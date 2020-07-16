@@ -228,30 +228,38 @@ while (true) {
             if ($insertar_registro->execute()) {
               echo "Se ha registrado la factura en el historial \n";
             } else {
-              echo "Error: " . $sql . "\n" . mysqli_error($conn);
+              echo "(al insertar a historial) Error: " . $sql . "\n" . mysqli_error($conn);
             }
 
             // ... se borra de current
-            // ... se sobrescribe el mensaje para la impresora de mensajes 
-            // ... se coloca el mensaje en la tabla log de mensajes (END)
+            $query_delete_current = 
+              " DELETE 
+                  FROM dbo_printer_current 
+                WHERE
+                  document_type_id = ".$documento_imprimiendo["document_type_id"]." && 
+                  document_id = ".$documento_imprimiendo["document_id"]." && 
+                  printer_id = ".$documento_imprimiendo["printer_id"].";
+                ";
             
+              // puedes validar el query aca
+              echo ( $query_delete_current );
 
+              $borrar_current_registro = $conn->prepare($query_delete_current);
 
+            // if ($borrar_current_registro->execute()) {
+            //   echo "Se ha borrado la factura de las imprimiendo, por haber sido completada. \n";
+            // } else {
+            //   echo "(al borrar de current) Error: " . $sql . "\n" . mysqli_error($conn);
+            // }
+            // ... se sobrescribe el mensaje para la impresora de mensajes 
+
+            // ... se coloca el mensaje en la tabla log de mensajes (END)
 
           }
-
-
-            
-
-
-
 
         } else {
           echo "no hay items asociados a esa factura \n";
         }
-
-
-
 
         break;
       case "2":// Devolucion
@@ -262,8 +270,15 @@ while (true) {
         break;
       default: // Documento indeterminado
 
-    }
+    }else{
+      // (3) (false)  verifico el mensaje del controlador al imprimir, (condiciones de parseo), si sale un error
+      // ... se mantiene la factura en current (sin cambios)
+      // ... se sobrescribe el mensaje para la impresora de mensajes, indicando que hay un error
+      // ... se coloca el mensaje en la tabla log de mensajes (END)
 
+
+
+    }
 
     
   // (1) (false) de no haber, busco en pendientes (2)
@@ -282,12 +297,6 @@ while (true) {
 
   // (2) (false) de no existir pendientes, no hay que hacer mas nada, solo esperar (Sleep) (END)
 
-
-
-  // (3) (false)  verifico el mensaje del controlador al imprimir, (condiciones de parseo), si sale un error
-  // ... se mantiene la factura en current (sin cambios)
-  // ... se sobrescribe el mensaje para la impresora de mensajes, indicando que hay un error
-  // ... se coloca el mensaje en la tabla log de mensajes (END)
 
 
 
