@@ -149,147 +149,154 @@ while (true) {
 
         $items_factura = $conn->query($query_items_factura);
 
-        if ($items_factura->num_rows > 0) {
-          // counter for translation
-          $factura_en_contruccion = array();
-          $index_counter = 0;
+          if ($items_factura->num_rows > 0) {
+            // counter for translation
+            $factura_en_contruccion = array();
+            $index_counter = 0;
 
-          // consultar informacion fiscal de la factura antes de armarla
-          // .............. (FALTA)
+            // consultar informacion fiscal de la factura antes de armarla
+            // .............. (FALTA)
 
 
-          // output data of each row
-          while($item = $items_factura->fetch_assoc()) {
-            // echo "\n";
-            // echo "price: " . $item["price"]. " - quantity: " . $item["quantity"]. ", description " . $item["description"];
-            // echo "\n";
+            // output data of each row
+            while($item = $items_factura->fetch_assoc()) {
+              // echo "\n";
+              // echo "price: " . $item["price"]. " - quantity: " . $item["quantity"]. ", description " . $item["description"];
+              // echo "\n";
 
-            // proximamente al interpreter
-            // .. el tax rate, deberia pasarse en texto (FALTA)
-            $factura_en_contruccion[$index_counter] = $interpreter->translateLine("X",$item["price"],$item["quantity"],$item["description"])."\n";
-            $index_counter++;
-          }
-
-          //cierre de factura
-          $factura_en_contruccion[$index_counter] = "101";
-
-          echo "\n";
-          var_dump($factura_en_contruccion) ;
-          echo "\n";
-          
-          // escribo en un archivo el contenido de la factura en contruccion
-          // ... puedo pasar esto a un controlador aparte (FALTA)
-          $file = "Factura".$numero_factura.".txt";	
-            $fp = fopen($file, "w+");
-            $write = fputs($fp, "");
-                            
-          foreach($factura_en_contruccion as $campo => $cmd)
-          {
-            $write = fputs($fp, $cmd);
-          }
-          
-          //cierro dicho archivo
-          fclose($fp);
-
-          // enviarlo a imprimir (PROBARLO Y EJECUTARLO IMPRESORA)(FALTA)
-          // ... interpretar la respuesta tambien (FALTA)
-          // $respuesta_impresora =  $itObj->SendFileCmd($file);
-          // echo "\n";
-          // echo("respuesta de la impresora") ;
-          // var_dump($respuesta_impresora);
-          // echo "\n";
-
-          // ... para probar voy a decir que la impresora dijo algo (FALTA)
-          $respuestas_impresora = ["true","false"];
-          $respuesta_impresora = $respuestas_impresora[array_rand($respuestas_impresora, 1)];
-
-          // (3) (true) verifico el mensaje del controlador al imprimir, (condiciones de parseo), si todo sale exitoso
-          if($respuesta_impresora == "true"){
-            // ... se toma el individuo en current y se copia a history.
-            $query_a_historico = 
-              "INSERT INTO dbo_printer_history(
-                    document_type_id, 
-                    document_id, 
-                    printer_id, 
-                    user_id, 
-                    cashier_name) 
-                VALUES ("
-                .$documento_imprimiendo["document_type_id"].","
-                .$documento_imprimiendo["document_id"].", "
-                .$documento_imprimiendo["printer_id"].", "
-                .$documento_imprimiendo["user_id"].", '"
-                .$documento_imprimiendo["cashier_name"]."');";
-            
-              // puedes validar el query aca
-              // echo ( $query_a_historico );
-
-              $insertar_registro = $conn->prepare($query_a_historico);
-
-            if ($insertar_registro->execute()) {
-              echo "Se ha registrado la factura en el historial \n";
-            } else {
-              echo "(al insertar a historial) Error: " . $sql . "\n" . mysqli_error($conn);
+              // proximamente al interpreter
+              // .. el tax rate, deberia pasarse en texto (FALTA)
+              $factura_en_contruccion[$index_counter] = $interpreter->translateLine("X",$item["price"],$item["quantity"],$item["description"])."\n";
+              $index_counter++;
             }
 
-            // ... se borra de current
-            $query_delete_current = 
-              " DELETE 
-                  FROM dbo_printer_current 
-                WHERE
-                  document_type_id = ".$documento_imprimiendo["document_type_id"]." && 
-                  document_id = ".$documento_imprimiendo["document_id"]." && 
-                  printer_id = ".$documento_imprimiendo["printer_id"].";
-                ";
+            //cierre de factura
+            $factura_en_contruccion[$index_counter] = "101";
+
+            echo "\n";
+            var_dump($factura_en_contruccion) ;
+            echo "\n";
             
-              // puedes validar el query aca
-              echo ( $query_delete_current );
+            // escribo en un archivo el contenido de la factura en contruccion
+            // ... puedo pasar esto a un controlador aparte (FALTA)
+            $file = "Factura".$numero_factura.".txt";	
+              $fp = fopen($file, "w+");
+              $write = fputs($fp, "");
+                              
+            foreach($factura_en_contruccion as $campo => $cmd)
+            {
+              $write = fputs($fp, $cmd);
+            }
+            
+            //cierro dicho archivo
+            fclose($fp);
 
-              $borrar_current_registro = $conn->prepare($query_delete_current);
+            // enviarlo a imprimir (PROBARLO Y EJECUTARLO IMPRESORA)(FALTA)
+            // ... interpretar la respuesta tambien (FALTA)
+            // $respuesta_impresora =  $itObj->SendFileCmd($file);
+            // echo "\n";
+            // echo("respuesta de la impresora") ;
+            // var_dump($respuesta_impresora);
+            // echo "\n";
 
-            // if ($borrar_current_registro->execute()) {
-            //   echo "Se ha borrado la factura de las imprimiendo, por haber sido completada. \n";
-            // } else {
-            //   echo "(al borrar de current) Error: " . $sql . "\n" . mysqli_error($conn);
-            // }
-            // ... se sobrescribe el mensaje para la impresora de mensajes 
+            // ... para probar voy a decir que la impresora dijo algo (FALTA)
+            $respuestas_impresora = ["true","false"];
+            $respuesta_impresora = $respuestas_impresora[array_rand($respuestas_impresora, 1)];
 
-            // ... se coloca el mensaje en la tabla log de mensajes (END)
+            // (3) (true) verifico el mensaje del controlador al imprimir, (condiciones de parseo), si todo sale exitoso
+            if($respuesta_impresora == "true"){
+              // ... se toma el individuo en current y se copia a history.
+              $query_a_historico = 
+                "INSERT INTO dbo_printer_history(
+                      document_type_id, 
+                      document_id, 
+                      printer_id, 
+                      user_id, 
+                      cashier_name) 
+                  VALUES ("
+                  .$documento_imprimiendo["document_type_id"].","
+                  .$documento_imprimiendo["document_id"].", "
+                  .$documento_imprimiendo["printer_id"].", "
+                  .$documento_imprimiendo["user_id"].", '"
+                  .$documento_imprimiendo["cashier_name"]."');";
+              
+                // puedes validar el query aca
+                // echo ( $query_a_historico );
 
+                $insertar_registro = $conn->prepare($query_a_historico);
+
+              if ($insertar_registro->execute()) {
+                echo "Se ha registrado la factura en el historial \n";
+              } else {
+                echo "(al insertar a historial) Error: " . $sql . "\n" . mysqli_error($conn);
+              }
+
+              // ... se borra de current
+              $query_delete_current = 
+                " DELETE 
+                    FROM dbo_printer_current 
+                  WHERE
+                    document_type_id = ".$documento_imprimiendo["document_type_id"]." && 
+                    document_id = ".$documento_imprimiendo["document_id"]." && 
+                    printer_id = ".$documento_imprimiendo["printer_id"].";
+                  ";
+              
+                // puedes validar el query aca
+                echo ( $query_delete_current );
+
+                $borrar_current_registro = $conn->prepare($query_delete_current);
+
+              if ($borrar_current_registro->execute()) {
+                echo "Se ha borrado la factura de las imprimiendo, por haber sido completada. \n";
+              } else {
+                echo "(al borrar de current) Error: " . $sql . "\n" . mysqli_error($conn);
+              }
+
+              // ... se sobrescribe el mensaje para la impresora de mensajes 
+
+              // ... se coloca el mensaje en la tabla log de mensajes (END)
+
+            }else{
+              // (3) (false)  verifico el mensaje del controlador al imprimir, (condiciones de parseo), si sale un error
+              // ... se mantiene la factura en current (sin cambios)
+              // ... se sobrescribe el mensaje para la impresora de mensajes, indicando que hay un error
+              // ... se coloca el mensaje en la tabla log de mensajes (END)
+
+            }
+
+          } else {
+            echo "no hay items asociados a esa factura \n";
           }
 
-        } else {
-          echo "no hay items asociados a esa factura \n";
-        }
-
-        break;
-      case "2":// Devolucion
-        break;
-      case "3":// Nota de Entrega
-        break;
-      case "4":// Nota no Fiscal
-        break;
-      default: // Documento indeterminado
-
-    }else{
-      // (3) (false)  verifico el mensaje del controlador al imprimir, (condiciones de parseo), si sale un error
-      // ... se mantiene la factura en current (sin cambios)
-      // ... se sobrescribe el mensaje para la impresora de mensajes, indicando que hay un error
-      // ... se coloca el mensaje en la tabla log de mensajes (END)
-
-
-
-    }
+          break;
+        case "2":// Devolucion
+          break;
+        case "3":// Nota de Entrega
+          break;
+        case "4":// Nota no Fiscal
+          break;
+        default: // Documento indeterminado
+      }
 
     
   // (1) (false) de no haber, busco en pendientes (2)
-  } else { // casi de no haber
+  }else{ 
+    // ... reviso que no haya documentos en pendientes
+    $query_documentos_pendientes = "SELECT * from dbo_printer_pending WHERE printer_id = ".PRINTER_ID.";";
+    $documentos_pendientes = $conn->query($query_documentos_pendientes);
+  
+    if ($documentos_pendientes->num_rows > 0) {
+    
+      $documento_pendiente = $documentos_pendientes->fetch_assoc();
 
+      echo("documento en pendiente. \n");
+      var_dump($documento_pendiente);
 
-
+    }else{
+      echo("no hay documentos en pendientes, me tomo una siesta. \n");
+    }
 
   }
-
-
 
 
   // (2) (true) de haber en pendientes (para la impresora especificada), tomo el siguiente en orden FIFO de la cola
