@@ -6,246 +6,9 @@ if (PHP_SAPI != "cli") {
 }
 
 include_once ("TfhkaPHP.php"); 
+include_once ("interpreter.php"); 
 
-function translateTasa($tasa=""){
-    // de momento tengo entendido 4 tipos de tasa
-    // (falta copiar de manuak, pero en ejemplo tengo)// (!), ("), (#), ( )
-   
-    if($tasa == ""){
-     //echo("valor vacio de tasa\n");
-     return false;
-    }
-
-    switch ($tasa) {
-      case "Exento":
-        //echo "Exento\n";
-        $comando = " ";
-        break;
-      case "Tasa 1":
-        //echo "Tasa 1\n";
-        $comando = "!";
-        break;
-      case "Tasa 2":
-        //echo "Tasa 2\n";
-        $comando = "\"";
-        break;
-      case "tasa 3":
-        //echo "Tasa 3\n";
-        $comando = "#";
-        break;
-      default:
-       //echo "Tasa no reconocida\n";
-       $comando = false;
-       $tasas = ["\"","!","#"," "];
-       $tasa = $tasas[array_rand($tasas, 1)];
-       $comando = $tasa;
-    }
-   
-   return  $comando;
-  }
-   
-  // buscar expresion regular compatible con la mision de
-  // verificar si un numero es valido
-  // verificar si es valido sin decimales
-  // verificar si es valido con comas
-  // verificar si es valido con puntos
-  function validador_numerico($value){
-     return (preg_match ('~^((?:\+|-)?[0-9]+)$~' ,$value) == 1);
-  }
-   
-  function padding_number_format($value="", $max_cifras="" ){
-
-    // echo("valor precio\n" . $value . "\n");
-    // echo("valor cifras\n" . $max_cifras . "\n");
-
-    $cifras_padding = $max_cifras - strlen($value) ;
-    // echo("padding cifras \n" . $cifras_padding . "\n");
-    if( $cifras_padding < 0){echo "numero de cifras permitidas excedido"; }
-
-    $padding ="";
-
-    // construyo cuantos ceros falten para completar el padding 
-    for ($i = 1; $i <= $cifras_padding; $i++) {
-     $padding = $padding . "0";
-    } 
-
-    // echo(" padding y valor: \n" . $padding . $value ." \n");
-
-     return $padding . $value;
-   }
-
-   function padding_decimal_format($value="", $max_cifras="" ){
-
-   //  echo("valor precio\n" . $value . "\n");
-   //  echo("valor cifras\n" . $max_cifras . "\n");
-
-    $cifras_padding = $max_cifras - strlen($value) ;
-   // echo("padding cifras \n" . $cifras_padding . "\n");
-   if( $cifras_padding < 0){echo "numero de cifras decimales permitidas excedido"; }
-
-    $padding ="";
-
-    // construyo cuantos ceros falten para completar el padding 
-    for ($i = 1; $i <= $cifras_padding; $i++) {
-     $padding = $padding . "0";
-    } 
-
-    // echo(" padding y valor: \n" . $value . $padding ." \n");
-
-     return  $value. $padding;
-  }
-
-  function translatePrecio( $precio = ""){
-    //validaciones de tipo precio
-    // Precio del ítem (8 enteros + 2 decimales)
-    $enteros = "";   // 8 siempre, cualquier numero + relleno en ceros
-    $decimales = ""; // 2 siempre, cualquier numero + relleno en ceros 
-
-    // pico el numero en 2, quizas no se pique por ser un entero
-    // $precio = "12.6";
-   
-    if($precio == ""){
-     // echo("valor vacio de precio\n");
-     return false;
-    }
-
-     // aqui va la funcion expresion regular validador de numeros
-    if (is_numeric($precio) == false){
-     // echo("valor invalido cifras\n" + $precio );
-     return false;
-    }else{
-      // echo("valor numerico\n");
-    }
-
-    // se hace esto porque la cifra y los decimales en la traduccion no tienen
-    // ningun tipo de marcacion, solo se asume que son los ultimos 2 digitos los decimales
- 
-    // separo la cifra en 2 pedazos, entero y decimal para poder evaluarlo aparte
-    $cifras_separadas = explode(".",$precio); 
-
-    // evaluo en la cantidad de pedazos en que se pico el numero, si es anormal se descarta
-    $cant_cifras = count($cifras_separadas);
-   
-    //echo("cant cifras \n" . $cant_cifras."\n");
-
-     // con solo parte entera tengo que agregar padding decimal
-     // y tengo que completar lo que sea el numero entero a 8 digitos con padding
-     // de ceros.
-
-     switch ($cant_cifras) {
-       case 1:
-         // con solo parte entera tengo que agregar padding decimal
-         //echo "solo numero sin decimales\n";
-         //echo("valor entero\n ". $cifras_separadas[0] . "\n");
-         $decimales = "00";
-         $enteros = padding_number_format($cifras_separadas[0],8);
-         //echo($enteros);
-         break;
-       case 2:
-         // 
-        //  echo "numero + decimales\n";
-        //  echo("valor entero\n ". $cifras_separadas[0] . "\n");
-        //  echo("valor decimal\n ". $cifras_separadas[1] . "\n");
-     
-         $enteros = padding_number_format($cifras_separadas[0],8);
-         $decimales = padding_decimal_format($cifras_separadas[1],2);  
-
-         break;
-       default:
-         //echo "formato de numero no reconocido\n";
-         return false;
-     }
-   
-     return  $enteros.$decimales;
-  }
-   
-  function translateCantidad($cant = ""){
-    //validaciones de cantidad
-    // cantidad del ítem (5 enteros + 3 decimales)
-    $enteros = "";   // 5 siempre, cualquier numero + relleno en ceros
-    $decimales = ""; // 3 siempre, cualquier numero + relleno en ceros 
-
-    // pico el numero en 2, quizas no se pique por ser un entero
-    // $cant = "1250.955";
-   
-    if($cant == ""){
-     //echo("valor vacio de cantidad\n");
-     return false;
-    }
-
-     // aqui va la funcion expresion regular validador de numeros
-    if (is_numeric($cant) == false){
-     //echo("valor invalido cifras\n" + $cant );
-     return false;
-    }
-
-    // se hace esto porque la cifra y los decimales en la traduccion no tienen
-    // ningun tipo de marcacion, solo se asume que son los ultimos 3 digitos son decimales
- 
-    // separo la cifra en 2 pedazos, entero y decimal para poder evaluarlo aparte
-    $cifras_separadas = explode(".",$cant); 
-
-    // evaluo en la cantidad de pedazos en que se pico el numero, si es anormal se descarta
-    $cant_cifras = count($cifras_separadas);
-   
-    //echo("cant cifras \n" . $cant_cifras."\n");
-
-     // con solo parte entera tengo que agregar padding decimal
-     // y tengo que completar lo que sea el numero entero a 5 digitos con padding
-     // de ceros.
-
-     switch ($cant_cifras) {
-       case 1:
-         // con solo parte entera tengo que agregar padding decimal
-        //  echo "solo numero sin decimales\n";
-        //  echo("valor entero\n ". $cifras_separadas[0] . "\n");
-         $decimales = "000";
-         $enteros = padding_number_format($cifras_separadas[0],5);
-         //echo($enteros);
-         break;
-       case 2:
-         // 
-        //  echo "numero + decimales\n";
-        //  echo("valor entero\n ". $cifras_separadas[0] . "\n");
-        //  echo("valor decimal\n ". $cifras_separadas[1] . "\n");
-     
-         $enteros = padding_number_format($cifras_separadas[0],5);
-         $decimales = padding_decimal_format($cifras_separadas[1],3);  
-
-         break;
-       default:
-         //echo "formato de numero no reconocido cantidad\n";
-         return false;
-     }
-   
-     return  $enteros.$decimales;
-
-  }
-   
-  function translateDescription($desc = ""){
- 
-     $max_caracteres = 20; //definido en el manual
-
-    if($desc == ""){
-     //echo("Descripcion Vacia\n");
-     return false;
-    }
-
-     $comando = substr($desc,0,$max_caracteres);
-
-   return  $comando;
-  }
-   
-   
-  function translateLine( $tasa="", $precio = "", $cant = "", $desc = "",$tipo_doc=""){
-   
-   $comando = translateTasa($tasa, $tipo_doc) .translatePrecio($precio) . translateCantidad($cant) .translateDescription($desc);
-   
-    //echo "\n\nComando Final\n"; 
-   
-   return  $comando;
-  }
-
+$itObj = new Tfhka();
 
 /*** (B) SETTINGS ***/
 // Database settings - change these to your own
@@ -291,6 +54,10 @@ define('LOOP_CYCLE', 6); // Loop every 60 secs
     die("Connection failed: " . $conn->connect_error);
   }
 
+  // cerrando db (FALTA COLOCARLO EN UN MEJOR LUGAR)
+  // $conn->close();
+
+
 /*** (D) LOOP CHECK ***/
 while (true) {
 
@@ -333,24 +100,165 @@ while (true) {
     // solo debe haber una por impresora en la tabla current
     $documento_imprimiendo = $documentos_imprimiendo->fetch_assoc();
 
-    echo "\n";
-    var_dump( $documento_imprimiendo );
-    echo "\n";
-
     // segun el tipo de documento (solo facturas de momentos)
     switch ($documento_imprimiendo["document_type_id"]) {
-      case 1: // Factura (unico caso de momento)
+      case "1": // Factura (unico caso de momento)
+        // tomo el id de la factura
+        $invoice_id = $documento_imprimiendo["document_id"];
+        
+        // inicializo una instancia de interprete para el tipo de doc.
+        // ...(hago una instancia del interprete del tipo de doc)
+        $interpreter = new interpreter();
+
+        // detalles de documento
+        $query_info_factura = "SELECT * FROM dbo_administration_invoices WHERE id = ".$invoice_id.";";
+        $info_factura = $conn->query($query_info_factura);
+
+        if ($info_factura->num_rows == 0) { die("factura con ese id no existe"); }
+
+        $factura_actual = $info_factura->fetch_assoc();
+
+        $numero_factura = $factura_actual["invoice_number"];
+
         echo "\n";
-        var_dump( $documento_imprimiendo );
+        echo "el documento a imprimir es la factura " . $numero_factura ."\n";
         echo "\n";
+
+        $query_items_factura = "
+          SELECT
+            dbo_administration_invoices_items.id,
+            dbo_administration_invoices_items.invoice_id,
+            dbo_administration_invoices_items.price,
+            dbo_administration_invoices_items.quantity, 
+            dbo_administration_invoices_items.tax_id,
+            dbo_config_taxes.percentage,
+            dbo_config_taxes.observation,
+            dbo_administration_invoices_items.exchange_rate_id,
+            dbo_config_exchange_rates.exchange_rate,
+            dbo_config_currencies.abbreviation,
+            dbo_config_currencies.`name`,
+            dbo_storage_products.`code`,
+            dbo_storage_products.description
+          FROM `dbo_administration_invoices_items`
+          join dbo_config_taxes on dbo_administration_invoices_items.tax_id = dbo_config_taxes.id
+          join dbo_config_exchange_rates on dbo_administration_invoices_items.exchange_rate_id = dbo_config_exchange_rates.id
+          join dbo_config_currencies on dbo_config_exchange_rates.currency_id = dbo_config_currencies.id
+          join dbo_storage_products on dbo_administration_invoices_items.product_id = dbo_storage_products.id
+          WHERE 	dbo_administration_invoices_items.invoice_id = " .$invoice_id.";
+        ";
+
+        $items_factura = $conn->query($query_items_factura);
+
+        if ($items_factura->num_rows > 0) {
+          // counter for translation
+          $factura_en_contruccion = array();
+          $index_counter = 0;
+
+          // consultar informacion fiscal de la factura antes de armarla
+          // .............. (FALTA)
+
+
+          // output data of each row
+          while($item = $items_factura->fetch_assoc()) {
+            // echo "\n";
+            // echo "price: " . $item["price"]. " - quantity: " . $item["quantity"]. ", description " . $item["description"];
+            // echo "\n";
+
+            // proximamente al interpreter
+            // .. el tax rate, deberia pasarse en texto (FALTA)
+            $factura_en_contruccion[$index_counter] = $interpreter->translateLine("X",$item["price"],$item["quantity"],$item["description"])."\n";
+            $index_counter++;
+          }
+
+          //cierre de factura
+          $factura_en_contruccion[$index_counter] = "101";
+
+          echo "\n";
+          var_dump($factura_en_contruccion) ;
+          echo "\n";
+          
+          // escribo en un archivo el contenido de la factura en contruccion
+          // ... puedo pasar esto a un controlador aparte (FALTA)
+          $file = "Factura".$numero_factura.".txt";	
+            $fp = fopen($file, "w+");
+            $write = fputs($fp, "");
+                            
+          foreach($factura_en_contruccion as $campo => $cmd)
+          {
+            $write = fputs($fp, $cmd);
+          }
+          
+          //cierro dicho archivo
+          fclose($fp);
+
+          // enviarlo a imprimir (PROBARLO Y EJECUTARLO IMPRESORA)(FALTA)
+          // ... interpretar la respuesta tambien (FALTA)
+          // $respuesta_impresora =  $itObj->SendFileCmd($file);
+          // echo "\n";
+          // echo("respuesta de la impresora") ;
+          // var_dump($respuesta_impresora);
+          // echo "\n";
+
+          // ... para probar voy a decir que la impresora dijo algo (FALTA)
+          $respuestas_impresora = ["true","false"];
+          $respuesta_impresora = $respuestas_impresora[array_rand($respuestas_impresora, 1)];
+
+          // (3) (true) verifico el mensaje del controlador al imprimir, (condiciones de parseo), si todo sale exitoso
+          if($respuesta_impresora == "true"){
+            // ... se toma el individuo en current y se copia a history.
+            $query_a_historico = 
+              "INSERT INTO dbo_printer_history(
+                    document_type_id, 
+                    document_id, 
+                    printer_id, 
+                    user_id, 
+                    cashier_name) 
+                VALUES ("
+                .$documento_imprimiendo["document_type_id"].","
+                .$documento_imprimiendo["document_id"].", "
+                .$documento_imprimiendo["printer_id"].", "
+                .$documento_imprimiendo["user_id"].", '"
+                .$documento_imprimiendo["cashier_name"]."');";
+            
+              // puedes validar el query aca
+              // echo ( $query_a_historico );
+
+              $insertar_registro = $conn->prepare($query_a_historico);
+
+            if ($insertar_registro->execute()) {
+              echo "Se ha registrado la factura en el historial \n";
+            } else {
+              echo "Error: " . $sql . "\n" . mysqli_error($conn);
+            }
+
+            // ... se borra de current
+            // ... se sobrescribe el mensaje para la impresora de mensajes 
+            // ... se coloca el mensaje en la tabla log de mensajes (END)
+            
+
+
+
+          }
+
+
+            
+
+
+
+
+        } else {
+          echo "no hay items asociados a esa factura \n";
+        }
+
+
 
 
         break;
-      case 2:// Devolucion
+      case "2":// Devolucion
         break;
-      case 3:// Nota de Entrega
+      case "3":// Nota de Entrega
         break;
-      case 4:// Nota no Fiscal
+      case "4":// Nota no Fiscal
         break;
       default: // Documento indeterminado
 
@@ -374,11 +282,7 @@ while (true) {
 
   // (2) (false) de no existir pendientes, no hay que hacer mas nada, solo esperar (Sleep) (END)
 
-  // (3) (true) verifico el mensaje del controlador al imprimir, (condiciones de parseo), si todo sale exitoso
-  // ... se toma el individuo en current y se copia a history. 
-  // ... se borra de current
-  // ... se sobrescribe el mensaje para la impresora de mensajes 
-  // ... se coloca el mensaje en la tabla log de mensajes (END)
+
 
   // (3) (false)  verifico el mensaje del controlador al imprimir, (condiciones de parseo), si sale un error
   // ... se mantiene la factura en current (sin cambios)
