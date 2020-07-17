@@ -104,17 +104,18 @@ function SendFileCmd($ruta = "")
 
 $sentencia = "IntTFHKA.exe SendFileCmd(".$ruta;
 
-shell_exec($sentencia);
+// shell_exec($sentencia);
 
 $rep = ""; 
-$repuesta = file('Retorno.txt');
-$lineas = count($repuesta);
-for($i=0; $i < $lineas; $i++)
-{
- $rep = $repuesta[$i];
- } 
- 
- 
+$rep = shell_exec($sentencia);
+
+// $repuesta = file('Retorno.txt');
+// $lineas = count($repuesta);
+// for($i=0; $i < $lineas; $i++)
+// {
+//  $rep = $repuesta[$i];
+// } 
+  
  return $rep;
 }
 //Funci�n que sube al PC un tipo de estado de  la impresora
