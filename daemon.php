@@ -102,7 +102,7 @@ while (true) {
     // solo debe haber una por impresora en la tabla current
     $documento_imprimiendo = null;
     $documento_imprimiendo = $documentos_imprimiendo->fetch_assoc();
-    var_dump($documento_imprimiendo);
+    // var_dump($documento_imprimiendo);
 
     // segun el tipo de documento (solo facturas de momentos)
     switch ($documento_imprimiendo["document_type_id"]) {
@@ -125,9 +125,10 @@ while (true) {
         $factura_actual = $info_factura->fetch_assoc();
 
         $numero_factura = $factura_actual["invoice_number"];
+        $nombre_cajero = $documento_imprimiendo["cashier_name"];
 
         echo "\n";
-        echo "el documento a imprimir es la factura " . $numero_factura ."\n";
+        echo "el documento a imprimir es la factura " . $numero_factura .", por cajero ". $nombre_cajero. "\n ";
         echo "\n";
 
         $query_items_factura = "
@@ -199,16 +200,15 @@ while (true) {
             fclose($fp);
 
             // enviarlo a imprimir (PROBARLO Y EJECUTARLO IMPRESORA)(FALTA)
-            // ... interpretar la respuesta tambien (FALTA)
-            // $respuesta_impresora =  $itObj->SendFileCmd($file);
-            // echo "\n";
-            // echo("respuesta de la impresora") ;
-            // var_dump($respuesta_impresora);
-            // echo "\n";
+            // ... enviar a imprimir
+            $respuesta_impresora =  $itObj->SendFileCmd($file);
 
-            // ... para probar voy a decir que la impresora dijo algo (FALTA)
-            $respuestas_impresora = ["true","false"];
-            $respuesta_impresora = $respuestas_impresora[array_rand($respuestas_impresora, 1)];
+            // ... para probar voy a decir que la impresora dijo algo 
+            // $respuestas_impresora = ["true","false"];
+            //$respuesta_impresora = $respuestas_impresora[array_rand($respuestas_impresora, 1)];
+
+            // interpretar la respuesta de la impresora
+            $respuesta_impresora = $interpreter->respuesta_impresora($respuesta_impresora);
 
             // (3) (true) verifico el mensaje del controlador al imprimir, (condiciones de parseo), si todo sale exitoso
             if($respuesta_impresora == "true"){
@@ -249,7 +249,7 @@ while (true) {
                   ";
               
                 // puedes validar el query aca
-                echo ( $query_delete_current );
+                // echo ( $query_delete_current );
 
                 $borrar_current_registro = $conn->prepare($query_delete_current);
 
@@ -268,7 +268,7 @@ while (true) {
               // ... se mantiene la factura en current (sin cambios)
               // ... se sobrescribe el mensaje para la impresora de mensajes, indicando que hay un error
               // ... se coloca el mensaje en la tabla log de mensajes (END)
-
+              echo "la impresora fallo... (hay que colocar los errores en log)\n";
             }
 
           } else {
@@ -333,7 +333,8 @@ while (true) {
             FROM dbo_printer_pending
           WHERE
             document_type_id = ".$documento_pendiente["document_type_id"]." && 
-            document_id = ".$documento_pendiente["document_id"]." && 
+            document_id = ".$documento_pendiente["document_id"]." &&
+            id = ".$documento_pendiente["id"]." &&  
             printer_id = ".$documento_pendiente["printer_id"].";
           ";
       
