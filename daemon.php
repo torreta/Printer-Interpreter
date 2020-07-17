@@ -260,8 +260,34 @@ while (true) {
               }
 
               // ... se sobrescribe el mensaje para la impresora de mensajes 
+              $mensaje_al_log = "la factura " . $numero_factura .", por cajero ". $nombre_cajero. "ha impreso con exito.";
 
-              // ... se coloca el mensaje en la tabla log de mensajes (END)
+              $query_update_message = 
+              "INSERT OR UPDATE INTO dbo_printer_messages(
+                    id, 
+                    message, 
+                    printer_id, 
+                    user_id, 
+                    cashier_name) 
+                VALUES ("
+                .$documento_imprimiendo["printer_id"].","
+                .$mensaje_al_log.", "
+                .$documento_imprimiendo["printer_id"].", "
+                .$documento_imprimiendo["user_id"].", '"
+                .$documento_imprimiendo["cashier_name"]."');";
+
+              // puedes validar el query aca
+              // echo ( $query_update_message );
+
+              $actualizar_mensaje_impresora = $conn->prepare($query_update_message);
+
+            if ($actualizar_mensaje_impresora->execute()) {
+              echo "se ha actualizado el mensaje de la impresora. \n";
+            } else {
+              echo "(al actualizar mensaje de la impresora) Error: " . $sql . "\n" . mysqli_error($conn);
+            }
+            
+            // ... se coloca el mensaje en la tabla log de mensajes (END)
 
             }else{
               // (3) (false)  verifico el mensaje del controlador al imprimir, (condiciones de parseo), si sale un error
@@ -269,6 +295,8 @@ while (true) {
               // ... se sobrescribe el mensaje para la impresora de mensajes, indicando que hay un error
               // ... se coloca el mensaje en la tabla log de mensajes (END)
               echo "la impresora fallo... (hay que colocar los errores en log)\n";
+              // ... busco en checkprinter cual puede ser la razon del error.
+
             }
 
           } else {
