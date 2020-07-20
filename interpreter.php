@@ -285,5 +285,43 @@ class interpreter
 
     }
   
+    function check_impresora_encendida( $respuesta=""){
+
+        if($respuesta == ""){
+            echo("respuesta respuesta_impresora_encendida Vacia\n");
+            return false;
+        }
+  
+        // entrada ejemplo
+        // $respuesta = "Retorno: TRUE   Status: 0       Error: 0";
+  
+        // la siguiente expresion es para eliminar multiples espaciosy hacerlo 1 solo
+        // ... ej entrada: "Retorno: 3 Status: 0       Error: 0";
+        // ... ej salida: "Retorno: 3 Status: 0 Error: 0";
+        $respuesta = preg_replace('/\s+/',' ',$respuesta);
+  
+        echo("Mensaje de la impresora real: \n");
+        echo($respuesta."\n");
+  
+        // ahora por el caracter de espacio, pico el string para obtener un arreglo ordenado
+        // ... ej salida:
+        // [0]=>string(8) "Retorno:"
+        // [1]=>string(1) "TRUE"
+        // [2]=>string(7) "Status:"
+        // [3]=>string(1) "0"
+        // [4]=>string(6) "Error:"
+        // [5]=>string(1) "0"
+        $respuesta_fragmentada = explode(" ",$respuesta); 
+  
+        // ya que tengo la respuesta en un arreglo. interpreto si tengo errores
+        if($respuesta_fragmentada[1] == "TRUE"){ 
+          // si el strig del arreglo en el retorno tiene algo diferente a true se considera apagada o con errores
+          return  "true";
+        }else{
+          return  "false";
+        }
+  
+      }
+
 }
 ?>
