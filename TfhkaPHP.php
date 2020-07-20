@@ -27,25 +27,32 @@ function CheckFprinter()
 {
 $sentencia = "IntTFHKA.exe CheckFprinter()";
 
-shell_exec($sentencia);
+    shell_exec($sentencia);
 
-$rep = ""; 
-$repuesta = file('Retorno.txt');
-$lineas = count($repuesta);
-for($i=0; $i < $lineas; $i++)
-{
- $rep = $repuesta[$i];
- } 
- $this->StatusError = $rep;
- if (substr($rep,0,1) == "T")
-{
-$this->IndPort = true;
-return $this->IndPort;
-}else
-{
-$this->IndPort = false;
-return $this->IndPort;
-}
+    $rep = ""; 
+
+    // $repuesta = file('Retorno.txt');
+    // $lineas = count($repuesta);
+    // for($i=0; $i < $lineas; $i++)
+    // {
+    //  $rep = $repuesta[$i];
+    //  } 
+    //  $this->StatusError = $rep;
+    //  if (substr($rep,0,1) == "T")
+    // {
+    // $this->IndPort = true;
+    // return $this->IndPort;
+    // }else
+    // {
+    // $this->IndPort = false;
+    // return $this->IndPort;
+    // }
+
+
+    $rep = ""; 
+    $rep = shell_exec($sentencia);
+
+    return $rep;
 }
 //Funci�n que envia un comando a la impresora
 //Par�metro: Comando en cadena de caracteres ASCII
@@ -82,19 +89,25 @@ function ReadFpStatus()
 $sentencia = "IntTFHKA.exe ReadFpStatus()";
 
 
-shell_exec($sentencia);
+// shell_exec($sentencia);
 
-$rep = ""; 
-$repuesta = file('status_error.txt');
-$lineas = count($repuesta);
-for($i=0; $i < $lineas; $i++)
-{
- $rep = $repuesta[$i];
- } 
+// $rep = ""; 
+// $repuesta = file('status_error.txt');
+// $lineas = count($repuesta);
+// for($i=0; $i < $lineas; $i++)
+// {
+//  $rep = $repuesta[$i];
+//  } 
  
- $this->StatusError = $rep;
+//  $this->StatusError = $rep;
  
- return $this->StatusError;
+//  return $this->StatusError;
+
+
+ $rep = ""; 
+ $rep = shell_exec($sentencia);
+
+ return $rep;
 }
 // Funci�n que ejecuta comandos desde un archivo de texto plano
 //Par�metro: Ruta del archivo con extenci�n .txt � .bat
