@@ -202,6 +202,24 @@ while (true) {
             //cierro dicho archivo
             fclose($fp);
 
+            // verifico si la impresora esta encendida
+            // ... colocar condicionales para proceder (FALTA)
+            $impresora_encendida =  $itObj->CheckFprinter();
+            $impresora_encendida = $interpreter->check_impresora_encendida($impresora_encendida);
+                          
+            // puedes validar el query aca
+            echo ( "impresora encendida \n");
+            echo ( $impresora_encendida );
+            echo ( "\n");
+
+            // verifico estados de la impresora
+            $respuesta_impresora_estado =  $itObj->ReadFpStatus();
+                          
+            // puedes validar el query aca
+            echo ( "impresora estado de impresora aparte \n");
+            echo ( $respuesta_impresora_estado );
+            echo ( "\n");
+
             // enviarlo a imprimir (PROBARLO Y EJECUTARLO IMPRESORA)(FALTA)
             // ... enviar a imprimir
             $respuesta_impresora =  $itObj->SendFileCmd($file);
