@@ -57,6 +57,9 @@ define('LOOP_CYCLE', 6); // Loop every 60 secs
   // cerrando db (FALTA COLOCARLO EN UN MEJOR LUGAR)
   // $conn->close();
 
+  // con esta variable verifico si debo imprimir varias veces el error de impresion
+  $print_error = false;
+
 
 /*** (D) LOOP CHECK ***/
 while (true) {
@@ -212,6 +215,9 @@ while (true) {
 
             // (3) (true) verifico el mensaje del controlador al imprimir, (condiciones de parseo), si todo sale exitoso
             if($respuesta_impresora == "true"){
+              // ...si habia un mensaje de error, ahora que se pudo imprimir, deja volver a imprimir mensajes de error
+              $print_error = false;
+
               // ... se toma el individuo en current y se copia a history.
               $query_a_historico = 
                 "INSERT INTO dbo_printer_history(
@@ -357,29 +363,39 @@ while (true) {
               }
               
               // ... se coloca el mensaje en la tabla log de mensajes (END)
-              $query_log_message = 
-              "INSERT INTO dbo_printer_log(
+              // ... pero chequeo si aun no ha sido ya colocado en el log, para que no repita el mismo error varias veces
+
+              // con esta variable verifico si debo imprimir varias veces el error de impresion
+              if(!$print_error){
+
+                $query_log_message = 
+                "INSERT INTO dbo_printer_log(
                   message, 
                   printer_id, 
                   user_id, 
                   cashier_name) 
-              VALUES ('"
-              .$mensaje_al_log."', "
-              .$documento_imprimiendo["printer_id"].", "
-              .$documento_imprimiendo["user_id"].", '"
-              .$documento_imprimiendo["cashier_name"]."');";
+                VALUES ('"
+                .$mensaje_al_log."', "
+                .$documento_imprimiendo["printer_id"].", "
+                .$documento_imprimiendo["user_id"].", '"
+                .$documento_imprimiendo["cashier_name"]."');";
+  
+                // puedes validar el query aca
+                // echo ( $query_log_message );
+  
+                $actualizar_mensaje_impresora = $conn->prepare($query_log_message);
+  
+                if ($actualizar_mensaje_impresora->execute()) {
+                echo "se ha escrito un registro nuevo en log de impresiones.  \n";
+                
+                // esta variable la modifico para indicar que el error ya fue impreso 
+                // ... y asi no repetirlo.
+                $print_error = true; 
 
-              // puedes validar el query aca
-              // echo ( $query_log_message );
-
-              $actualizar_mensaje_impresora = $conn->prepare($query_log_message);
-
-              if ($actualizar_mensaje_impresora->execute()) {
-              echo "se ha escrito un registro nuevo en log de impresiones.  \n";
-              } else {
-              echo "(al actualizar mensaje de la impresora)(error impresion)Error: " . $sql . "\n" . mysqli_error($conn);
+                } else {
+                  echo "(al actualizar mensaje de la impresora)(error impresion)Error: " . $sql . "\n" . mysqli_error($conn);
+                }
               }
-
               
             }
 
