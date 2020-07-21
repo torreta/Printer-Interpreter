@@ -168,6 +168,13 @@ while (true) {
             // consultar informacion fiscal de la factura antes de armarla
             // .............. (FALTA)
 
+            // ... ejemplo
+            // -5 => "iF*0000001\n",//factura asociadaj
+            // -4 => "iI*Z4A1234567\n",// numero de control de esa factura
+            // -3 => "iD*18-01-2014\n",//fecha factura dia especifico
+            // -2 => "iS*Pedro Mendez\n", // mombre persona
+            // -1 => "iR*12.345.678\n", // rif
+
 
             // output data of each row
             while($item = $items_factura->fetch_assoc()) {
