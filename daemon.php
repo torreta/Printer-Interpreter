@@ -125,6 +125,43 @@ while (true) {
 
         if ($info_factura->num_rows == 0) { die("factura con ese id no existe"); }
 
+        // detalles fiscales del documento
+        $query_info_fiscal_factura = 
+          "SELECT
+            dbo_administration_invoices.invoice_number,
+            dbo_administration_invoices.tax_id,
+            dbo_administration_invoices.exchange_rate,
+            dbo_administration_invoices.createdAt,
+            dbo_sales_clients.name,
+            dbo_sales_clients.last_name,
+            dbo_sales_clients.telephone,
+            dbo_sales_clients.identification_number,
+            dbo_sales_clients.identification_type_id,
+            dbo_sales_clients.direction,
+            dbo_config_identifications_types.`name`  as identification_type_name,
+            dbo_system_users.name as user_name,
+            dbo_system_users.last_name as user_lastname,
+            dbo_system_users.rol_id 
+          FROM 
+            dbo_administration_invoices
+          join dbo_sales_clients on dbo_administration_invoices.client_id = dbo_sales_clients.id
+          join dbo_config_identifications_types on dbo_sales_clients.identification_type_id = dbo_config_identifications_types.id
+          join dbo_system_users on dbo_administration_invoices.user_id = dbo_system_users.id
+          WHERE dbo_administration_invoices.id = ".$invoice_id.";";
+
+        $info_fiscal_factura = null;
+        $info_fiscal_factura = $conn->query($query_info_fiscal_factura);
+
+        if ($info_fiscal_factura->num_rows == 0) { die("factura con info fiscal con ese id no existe"); }
+
+        $factura_fiscal_actual = $info_fiscal_factura->fetch_assoc();
+
+        // $factura_despues_interprete = //
+
+        // var_dump($query_info_fiscal_factura);
+        var_dump($factura_fiscal_actual);
+
+
         $factura_actual = $info_factura->fetch_assoc();
 
         $numero_factura = $factura_actual["invoice_number"];
@@ -164,9 +201,18 @@ while (true) {
             // counter for translation
             $factura_en_contruccion = array();
             $index_counter = 0;
+            $index_inverse_counter = 0;
 
             // consultar informacion fiscal de la factura antes de armarla
-            // .............. (FALTA)
+            // .............. (FALTA) (info desde manual)
+            // MODELO IMPRESORA  SRP-812
+            // ENCABEZADOS X (Y) : 40 (8 líneas)
+            // PIE DE PÁGINA X (Y): 40 (8 líneas)         
+            // RIF/C.I X: 40
+            // RAZÓN SOCIAL X: 40
+            // INFORMACIÓN ADICIONAL X (Y):40 (10 líneas)
+            // COMENTARIO X:40
+            // DESCRIPCIÓN PRODUCTO X:  127
 
             // ... ejemplo
             // -5 => "iF*0000001\n",//factura asociadaj
@@ -174,6 +220,9 @@ while (true) {
             // -3 => "iD*18-01-2014\n",//fecha factura dia especifico
             // -2 => "iS*Pedro Mendez\n", // mombre persona
             // -1 => "iR*12.345.678\n", // rif
+
+
+
 
 
             // output data of each row
