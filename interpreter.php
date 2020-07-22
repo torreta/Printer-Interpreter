@@ -13,11 +13,11 @@ class interpreter
     }
 
     switch ($tasa) {
-        case "Exento":
+        case "Sin IVA":
         //echo "Exento\n";
         $comando = " ";
         break;
-        case "Tasa 1":
+        case "IVA 16%":
         //echo "Tasa 1\n";
         $comando = "!";
         break;
@@ -234,7 +234,7 @@ class interpreter
     
     function translateLine( $tasa="", $precio = "", $cant = "", $desc = "",$tipo_doc=""){
     
-    $comando = $this->translateTasa($tasa, $tipo_doc) .$this->translatePrecio($precio) . $this->translateCantidad($cant) .$this->translateDescription($desc);
+    $comando = $this->translateTasa($tasa) .$this->translatePrecio($precio) . $this->translateCantidad($cant) .$this->translateDescription($desc);
     
     //echo "\n\nComando Final\n"; 
     

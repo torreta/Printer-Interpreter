@@ -183,8 +183,8 @@ while (true) {
               // echo "\n";
 
               // proximamente al interpreter
-              // .. el tax rate, deberia pasarse en texto (FALTA)
-              $factura_en_contruccion[$index_counter] = $interpreter->translateLine("X",$item["price"],$item["quantity"],$item["description"])."\n";
+              // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
+              $factura_en_contruccion[$index_counter] = $interpreter->translateLine($item["observation"],$item["price"],$item["quantity"],$item["description"])."\n";
               $index_counter++;
             }
 
@@ -221,6 +221,8 @@ while (true) {
 
             // verifico estados de la impresora
             $respuesta_impresora_estado =  $itObj->ReadFpStatus();
+            $respuesta_impresora_estado = $interpreter->check_estado_impresora($respuesta_impresora_estado);
+
                           
             // puedes validar el query aca
             echo ( "impresora estado de impresora aparte \n");
