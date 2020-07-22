@@ -314,13 +314,134 @@ class interpreter
         $respuesta_fragmentada = explode(" ",$respuesta); 
   
         // ya que tengo la respuesta en un arreglo. interpreto si tengo errores
-        if($respuesta_fragmentada[1] == "TRUE"){ 
-          // si el strig del arreglo en el retorno tiene algo diferente a true se considera apagada o con errores
-          return  "true";
-        }else{
-          return  "false";
+        switch ($respuesta_fragmentada[1]) {
+          case "TRUE": 
+                // si el strig del arreglo en el retorno tiene algo diferente a true se considera apagada o con errores
+                return  "true";
+          break;
+          case "FALSE":
+              // signigica que la impresora esta apagada
+              return  "false";
+            break;
+          default: 
+            echo("respuesta del estado encendido de la impresora, no esta dentro de los parametros esperados");
+            echo($respuesta_fragmentada[1]);
+            echo("\n");
+            die("respuesta inesperada, buscar error (cambio API?)"); 
+        }
+
+      }
+
+      function check_estado_impresora( $respuesta=""){
+
+        if($respuesta == ""){
+            echo("respuesta extraccion de estado Vacia\n");
+            return false;
         }
   
+        // entrada ejemplo
+        // $respuesta = "Retorno: TRUE   Status: 0       Error: 0";
+  
+        // la siguiente expresion es para eliminar multiples espaciosy hacerlo 1 solo
+        // ... ej entrada: "Retorno: 3 Status: 0       Error: 0";
+        // ... ej salida: "Retorno: 3 Status: 0 Error: 0";
+        $respuesta = preg_replace('/\s+/',' ',$respuesta);
+  
+        echo("Mensaje de la impresora real: \n");
+        echo($respuesta."\n");
+  
+        // ahora por el caracter de espacio, pico el string para obtener un arreglo ordenado
+        // ... ej salida:
+        // [0]=>string(8) "Retorno:"
+        // [1]=>string(1) "TRUE"
+        // [2]=>string(7) "Status:"
+        // [3]=>string(1) "0"
+        // [4]=>string(6) "Error:"
+        // [5]=>string(1) "0"
+        $respuesta_fragmentada = explode(" ",$respuesta); 
+  
+        // ejemplo: 
+        // Retorno: TRUE Status: 4 Error: 0         // normal
+        // Retorno: TRUE Status: 4 Error: 1         // sin rollo
+        // Retorno: TRUE Status: 4 Error: 2         // tapa abierta
+        // Retorno: TRUE Status: 4 Error: 96        // memoria fiscal casi llena
+        // Retorno: TRUE Status: 3 Error: 100       // error mefisc
+        // Retorno: FALSE Status: 0 Error: 137      // apagada pero normal
+
+        // ya que tengo la respuesta en un arreglo. interpreto si tengo errores
+        switch ($respuesta_fragmentada[1]) {
+          case "TRUE": 
+            // encendida
+            switch ($respuesta_fragmentada[3]) {
+              case "3": 
+                // modo no fiscal
+                if($respuesta_fragmentada[5] == "100"){
+                  return  "Error Memoria Fiscal.";
+                }else{
+                  echo("respuesta del estado  impresora, no esta dentro de las respuesas esperadas");
+                  echo("status: ".$respuesta_fragmentada[3]);
+                  echo("Error: ".$respuesta_fragmentada[5]);
+                  echo("\n");
+                  die("respuesta inesperada al consultar estado, buscar error "); 
+                }
+              break;
+              case "4":
+                // modo fiscal
+                  switch ($respuesta_fragmentada[5]) {
+                    case "0": 
+                      // Retorno: TRUE Status: 4 Error: 0         // normal
+                      return  "OK";
+                    break;
+                    case "1":
+                      // Retorno: TRUE Status: 4 Error: 1         // sin rollo
+                      return  "Sin Rollo de Papel.";
+                      break;
+                    case "2":
+                      // Retorno: TRUE Status: 4 Error: 2         // tapa abierta
+                      return  "Tapa de la impresora abierta.";
+                      break;
+                    case "96":
+                      // Retorno: TRUE Status: 4 Error: 96        // memoria fiscal casi llena
+                      return  "OK. (Memoria Fiscal Casi LLena)";
+                      break;
+                    default: 
+                      echo("error del estado de  impresora, no esta dentro de las respuesas esperadas");
+                      echo("error: ". $respuesta_fragmentada[5]);
+                      echo("\n");
+                      die("respuesta inesperada al consultar estado, buscar error."); 
+                  }
+                break;
+              default: 
+                echo("respuesta del estado  impresora, no esta dentro de las respuesas esperadas");
+                echo("status: ". $respuesta_fragmentada[3]);
+                echo("\n");
+                die("respuesta inesperada al consultar estado, buscar error."); 
+            }
+
+          break;
+          case "FALSE":
+              // signigica que la impresora esta apagada
+              if($respuesta_fragmentada[3] == "0" && $respuesta_fragmentada[5] == "137"){
+                return  "Impresora Apagada.";
+              }else{
+                echo("respuesta del estado  impresora, no esta dentro de las respuesas esperadas");
+                echo("status: ".$respuesta_fragmentada[3]);
+                echo("Error: ".$respuesta_fragmentada[5]);
+                echo("\n");
+                die("respuesta inesperada al consultar estado, buscar error (cambio API?)"); 
+              }
+            break;
+          default: 
+            echo("respuesta del estado  impresora, no esta dentro de las respuesas esperadas");
+            echo($respuesta_fragmentada[1]);
+            echo("\n");
+            die("respuesta inesperada al consultar estado, buscar error (cambio API?)"); 
+        }
+
+
+
+
+
       }
 
 }
