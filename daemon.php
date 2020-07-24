@@ -131,7 +131,7 @@ while (true) {
             dbo_administration_invoices.invoice_number,
             dbo_administration_invoices.tax_id,
             dbo_administration_invoices.exchange_rate,
-            dbo_administration_invoices.createdAt,
+            DATE_FORMAT( dbo_administration_invoices.createdAt, "%d-%m-%y") as createdAt,
             dbo_sales_clients.name,
             dbo_sales_clients.last_name,
             dbo_sales_clients.telephone,
