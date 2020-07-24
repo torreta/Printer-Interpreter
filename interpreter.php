@@ -367,6 +367,7 @@ class interpreter
         // Retorno: TRUE Status: 4 Error: 96        // memoria fiscal casi llena
         // Retorno: TRUE Status: 3 Error: 100       // error mefisc
         // Retorno: FALSE Status: 0 Error: 137      // apagada pero normal
+        // Retorno: TRUE Status: 5 Error: 0         // error de formato de linea
 
         // ya que tengo la respuesta en un arreglo. interpreto si tengo errores
         switch ($respuesta_fragmentada[1]) {
@@ -411,6 +412,20 @@ class interpreter
                       die("respuesta inesperada al consultar estado, buscar error."); 
                   }
                 break;
+                case "5":
+                  // modo fiscal
+                    switch ($respuesta_fragmentada[5]) {
+                      case "0": 
+                        // Retorno: TRUE Status: 5 Error: 0         // error de formato de linea
+                        return  "Error de formato de linea a imprimir (comando).";
+                      break;
+                      default: 
+                        echo("error del estado de  impresora, no esta dentro de las respuesas esperadas");
+                        echo("error: ". $respuesta_fragmentada[5]);
+                        echo("\n");
+                        die("respuesta inesperada al consultar estado, buscar error."); 
+                    }
+                  break;
               default: 
                 echo("respuesta del estado  impresora, no esta dentro de las respuesas esperadas");
                 echo("status: ". $respuesta_fragmentada[3]);
@@ -438,10 +453,61 @@ class interpreter
             die("respuesta inesperada al consultar estado, buscar error (cambio API?)"); 
         }
 
+      }
 
+      function translateFiscalInfoArray( $InfoFiscal = []){
+        // MODELO IMPRESORA  SRP-812
+        // ENCABEZADOS X (Y) : 40 (8 líneas)
+        // PIE DE PÁGINA X (Y): 40 (8 líneas)         
+        // RIF/C.I X: 40
+        // RAZÓN SOCIAL X: 40
+        // INFORMACIÓN ADICIONAL X (Y):40 (10 líneas)
+        // COMENTARIO X:40
+        // DESCRIPCIÓN PRODUCTO X:  127
 
+        // ... ejemplo
+        // -5 => "iF*0000001\n",//factura asociadaj
+        // -4 => "iI*Z4A1234567\n",// numero de control de esa factura
+        // -3 => "iD*18-01-2014\n",//fecha factura dia especifico
+        // -2 => "iS*Pedro Mendez\n", // mombre persona
+        // -1 => "iR*12.345.678\n", // rif
 
+        // ["invoice_number"]=>string(3) "112"
+        // ["tax_id"]=> string(1) "1"
+        // ["exchange_rate"]=> string(1) "2"
+        // ["createdAt"]=> string(19) "22-07-2020"
+        // ["name"]=> string(12) "VENMATEX S A"
+        // ["last_name"]=> NULL
+        // ["telephone"]=> string(11) "02122427233"
+        // ["identification_number"]=> string(9) "002985321"
+        // ["identification_type_id"]=> string(1) "2"
+        // ["direction"]=> string(17) "LA URBINA CARACAS"
+        // ["identification_type_name"]=> string(1) "J"
+        // ["user_name"]=> string(10) "SUPERVISOR"
+        // ["user_lastname"]=> string(10) "SUPERVISOR"
+        // ["rol_id"]=> string(1) "2"
+        // ["complete_identification"]=> string(xx) "J002985321"
+        $contador_inverso = -4;
+        $InfoFiscalTraducida = [];
+        $max_caracteres = 40; //definido en el manual
 
+        echo("dentro del interprete \n");
+        var_dump($InfoFiscal);
+        // -5 => "iF*0000001\n",//factura asociadaj
+        // $InfoFiscalTraducida[$contador_inverso] = "iF*".$InfoFiscal["invoice_number"];
+        $InfoFiscalTraducida[$contador_inverso] = "iF*".$InfoFiscal["invoice_number"]."\n";
+        $contador_inverso++;
+        // -3 => "iD*18-01-2014\n",//fecha factura dia especifico
+        $InfoFiscalTraducida[$contador_inverso] = "iD*".$InfoFiscal["createdAt"]."\n";
+        $contador_inverso++;
+        // -2 => "iS*Pedro Mendez\n", // mombre persona
+        $InfoFiscalTraducida[$contador_inverso] =  substr("iS*".$InfoFiscal["name"].$InfoFiscal["last_name"],0,$max_caracteres)."\n";
+        $contador_inverso++;
+        // -1 => "iR*12.345.678\n", // rif
+        $InfoFiscalTraducida[$contador_inverso] = "iR*".$InfoFiscal["complete_identification"]."\n";
+        $contador_inverso++;
+        
+        return  $InfoFiscalTraducida;
       }
 
 }
