@@ -131,7 +131,7 @@ while (true) {
             dbo_administration_invoices.invoice_number,
             dbo_administration_invoices.tax_id,
             dbo_administration_invoices.exchange_rate,
-            DATE_FORMAT( dbo_administration_invoices.createdAt, "%d-%m-%y") as createdAt,
+            DATE_FORMAT( dbo_administration_invoices.createdAt, '%d-%m-%Y') as createdAt,
             dbo_sales_clients.name,
             dbo_sales_clients.last_name,
             dbo_sales_clients.telephone,
@@ -139,14 +139,11 @@ while (true) {
             dbo_sales_clients.identification_type_id,
             dbo_sales_clients.direction,
             dbo_config_identifications_types.`name`  as identification_type_name,
-            dbo_system_users.name as user_name,
-            dbo_system_users.last_name as user_lastname,
-            dbo_system_users.rol_id 
+            concat(dbo_config_identifications_types.`name`,dbo_sales_clients.identification_number) as complete_identification
           FROM 
             dbo_administration_invoices
           join dbo_sales_clients on dbo_administration_invoices.client_id = dbo_sales_clients.id
           join dbo_config_identifications_types on dbo_sales_clients.identification_type_id = dbo_config_identifications_types.id
-          join dbo_system_users on dbo_administration_invoices.user_id = dbo_system_users.id
           WHERE dbo_administration_invoices.id = ".$invoice_id.";";
 
         $info_fiscal_factura = null;
@@ -154,12 +151,8 @@ while (true) {
 
         if ($info_fiscal_factura->num_rows == 0) { die("factura con info fiscal con ese id no existe"); }
 
+        // info fiscal
         $factura_fiscal_actual = $info_fiscal_factura->fetch_assoc();
-
-        // $factura_despues_interprete = //
-
-        // var_dump($query_info_fiscal_factura);
-        var_dump($factura_fiscal_actual);
 
 
         $factura_actual = $info_factura->fetch_assoc();
@@ -204,40 +197,7 @@ while (true) {
             $index_inverse_counter = 0;
 
             // consultar informacion fiscal de la factura antes de armarla
-            // .............. (FALTA) (info desde manual)
-            // MODELO IMPRESORA  SRP-812
-            // ENCABEZADOS X (Y) : 40 (8 líneas)
-            // PIE DE PÁGINA X (Y): 40 (8 líneas)         
-            // RIF/C.I X: 40
-            // RAZÓN SOCIAL X: 40
-            // INFORMACIÓN ADICIONAL X (Y):40 (10 líneas)
-            // COMENTARIO X:40
-            // DESCRIPCIÓN PRODUCTO X:  127
-
-            // ... ejemplo
-            // -5 => "iF*0000001\n",//factura asociadaj
-            // -4 => "iI*Z4A1234567\n",// numero de control de esa factura
-            // -3 => "iD*18-01-2014\n",//fecha factura dia especifico
-            // -2 => "iS*Pedro Mendez\n", // mombre persona
-            // -1 => "iR*12.345.678\n", // rif
-
-            // ["invoice_number"]=>string(3) "112"
-            // ["tax_id"]=> string(1) "1"
-            // ["exchange_rate"]=> string(1) "2"
-            // ["createdAt"]=> string(19) "2020-07-22 15:53:35"
-            // ["name"]=> string(12) "VENMATEX S A"
-            // ["last_name"]=> NULL
-            // ["telephone"]=> string(11) "02122427233"
-            // ["identification_number"]=> string(9) "002985321"
-            // ["identification_type_id"]=> string(1) "2"
-            // ["direction"]=> string(17) "LA URBINA CARACAS"
-            // ["identification_type_name"]=> string(1) "J"
-            // ["user_name"]=> string(10) "SUPERVISOR"
-            // ["user_lastname"]=> string(10) "SUPERVISOR"
-            // ["rol_id"]=> string(1) "2"
-
-
-
+            $infoFiscalTraducida = $interpreter->translateFiscalInfoArray($factura_fiscal_actual);
 
             // output data of each row
             while($item = $items_factura->fetch_assoc()) {
@@ -250,6 +210,9 @@ while (true) {
               $factura_en_contruccion[$index_counter] = $interpreter->translateLine($item["observation"],$item["price"],$item["quantity"],$item["description"])."\n";
               $index_counter++;
             }
+
+            // concateno la informacion fiscal a la de los items de la factura
+            $factura_en_contruccion = $infoFiscalTraducida + $factura_en_contruccion;
 
             //cierre de factura
             $factura_en_contruccion[$index_counter] = "101";
