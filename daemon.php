@@ -139,11 +139,15 @@ while (true) {
             dbo_sales_clients.identification_type_id,
             dbo_sales_clients.direction,
             dbo_config_identifications_types.`name`  as identification_type_name,
-            concat(dbo_config_identifications_types.`name`,dbo_sales_clients.identification_number) as complete_identification
+            concat(dbo_config_identifications_types.`name`,dbo_sales_clients.identification_number) as complete_identification,
+            dbo_system_users.name as user_name,
+            dbo_system_users.last_name as user_lastname,
+            dbo_system_users.rol_id 
           FROM 
             dbo_administration_invoices
           join dbo_sales_clients on dbo_administration_invoices.client_id = dbo_sales_clients.id
           join dbo_config_identifications_types on dbo_sales_clients.identification_type_id = dbo_config_identifications_types.id
+          join dbo_system_users on dbo_administration_invoices.user_id = dbo_system_users.id
           WHERE dbo_administration_invoices.id = ".$invoice_id.";";
 
         $info_fiscal_factura = null;
