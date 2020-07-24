@@ -221,6 +221,20 @@ while (true) {
             // -2 => "iS*Pedro Mendez\n", // mombre persona
             // -1 => "iR*12.345.678\n", // rif
 
+            // ["invoice_number"]=>string(3) "112"
+            // ["tax_id"]=> string(1) "1"
+            // ["exchange_rate"]=> string(1) "2"
+            // ["createdAt"]=> string(19) "2020-07-22 15:53:35"
+            // ["name"]=> string(12) "VENMATEX S A"
+            // ["last_name"]=> NULL
+            // ["telephone"]=> string(11) "02122427233"
+            // ["identification_number"]=> string(9) "002985321"
+            // ["identification_type_id"]=> string(1) "2"
+            // ["direction"]=> string(17) "LA URBINA CARACAS"
+            // ["identification_type_name"]=> string(1) "J"
+            // ["user_name"]=> string(10) "SUPERVISOR"
+            // ["user_lastname"]=> string(10) "SUPERVISOR"
+            // ["rol_id"]=> string(1) "2"
 
 
 
