@@ -141,6 +141,154 @@ class DatabaseBridge
   }
 
 
+  function mover_a_historico($conn, $documento_imprimiendo ){
+
+    // Check connection
+    if ($conn->connect_error) {
+      die("(mover_a_historico) Connection failed: " . $conn->connect_error);
+    }
+    
+    if($documento_imprimiendo ==  null){
+      die("objeto vacio (mover_a_historico)\n");
+    }
+
+    // ... se toma el individuo en current y se copia a history.
+    $query_a_historico = 
+      "INSERT INTO dbo_printer_history(
+            document_type_id, 
+            document_id, 
+            printer_id, 
+            user_id, 
+            cashier_name) 
+        VALUES ("
+        .$documento_imprimiendo["document_type_id"].","
+        .$documento_imprimiendo["document_id"].", "
+        .$documento_imprimiendo["printer_id"].", "
+        .$documento_imprimiendo["user_id"].", '"
+        .$documento_imprimiendo["cashier_name"]."');";
+    
+      // puedes validar el query aca
+      // echo ( $query_a_historico );
+
+      $insertar_registro = $conn->prepare($query_a_historico);
+
+    if ($insertar_registro->execute()) {
+      echo "Se ha registrado la factura en el historial \n";
+    } else {
+      echo "(al insertar a historial) Error: " . $sql . "\n" . mysqli_error($conn);
+    }
+
+  }
+
+
+  function borrar_imprimiendo($conn, $documento_imprimiendo ){
+
+    // Check connection
+    if ($conn->connect_error) {
+      die("(borrar_imprimiendo) Connection failed: " . $conn->connect_error);
+    }
+    
+    if($documento_imprimiendo ==  null){
+      die("objeto vacio (borrar_imprimiendo)\n");
+    }
+
+    // ... se borra de current
+    $query_delete_current = 
+      " DELETE 
+          FROM dbo_printer_current 
+        WHERE
+          document_type_id = ".$documento_imprimiendo["document_type_id"]." && 
+          document_id = ".$documento_imprimiendo["document_id"]." && 
+          printer_id = ".$documento_imprimiendo["printer_id"].";
+        ";
+    
+      // puedes validar el query aca
+      // echo ( $query_delete_current );
+
+      $borrar_current_registro = $conn->prepare($query_delete_current);
+
+    if ($borrar_current_registro->execute()) {
+      echo "Se ha borrado la factura de las imprimiendo, por haber sido completada. \n";
+    } else {
+      echo "(al borrar de current) Error: " . $sql . "\n" . mysqli_error($conn);
+    }
+
+
+  }
+
+
+  function logWithDoc($conn, $message, $documento_imprimiendo, $print_error){
+
+    // Check connection
+    if ($conn->connect_error) {
+      die("(logWithDoc) Connection failed: " . $conn->connect_error);
+    }
+    
+    if($documento_imprimiendo ==  null){
+      die("objeto vacio (logWithDoc)\n");
+    }
+
+    if($message ==  ""){
+      die("mensaje vacio (logWithDoc)\n");
+    }
+
+    $query_update_message = 
+      "INSERT dbo_printer_messages(
+        id, 
+        message, 
+        printer_id, 
+        user_id, 
+        cashier_name) 
+      VALUES ("
+        .$documento_imprimiendo["printer_id"].",'"
+        .$message."', "
+        .$documento_imprimiendo["printer_id"].", "
+        .$documento_imprimiendo["user_id"].", '"
+        .$documento_imprimiendo["cashier_name"]."')
+      ON DUPLICATE KEY UPDATE 
+        message = '".$message."'
+      ;";
+
+    // puedes validar el query aca
+    // echo ( $query_update_message );
+
+    $actualizar_mensaje_impresora = $conn->prepare($query_update_message);
+
+    if ($actualizar_mensaje_impresora->execute()) {
+      echo "se ha actualizado el mensaje de la impresora. \n";
+    } else {
+      echo "(al actualizar mensaje de la impresora) Error: " . $sql . "\n" . mysqli_error($conn);
+    }
+
+    // esta comprovacion evita que se repitan los errores en el log historico una vez falle una vez
+    if(!$print_error){
+
+        $query_log_message = 
+        "INSERT INTO dbo_printer_log(
+          message, 
+          printer_id, 
+          user_id, 
+          cashier_name) 
+        VALUES ('"
+        .$message."', "
+        .$documento_imprimiendo["printer_id"].", "
+        .$documento_imprimiendo["user_id"].", '"
+        .$documento_imprimiendo["cashier_name"]."');";
+
+        // puedes validar el query aca
+        // echo ( $query_log_message );
+
+        $actualizar_mensaje_impresora = $conn->prepare($query_log_message);
+
+        if ($actualizar_mensaje_impresora->execute()) {
+        echo "se ha escrito un registro nuevo en log de impresiones.  \n";
+        
+      } else {
+        echo "(al actualizar mensaje de la impresora)(error impresion)Error: " . $sql . "\n" . mysqli_error($conn);
+      }
+    }
+
+  }
 
 
 
