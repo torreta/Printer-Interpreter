@@ -1,17 +1,30 @@
 <?php
 
+  include_once ("TfhkaPHP.php"); 
+  include_once ("interpreter.php"); 
+  include_once ("Utils.php"); 
 
+  $itObj = new Tfhka(); // printer api
 
 class DatabaseBridge
 {
   
-  function validador_numerico($value){
-      // buscar expresion regular compatible con la mision de
-      // verificar si un numero es valido
-      // verificar si es valido sin decimales
-      // verificar si es valido con comas
-      // verificar si es valido con puntos
-      return (preg_match ('~^((?:\+|-)?[0-9]+)$~' ,$value) == 1);
+  function connect($servername, $username, $password, $dbname, $printer_id){
+    /*** (C) CONNECT DATABASE ***/
+    // Create connection
+    $conn = new mysqli($servername, $username, $password, $dbname);
+
+    // Check connection
+    if ($conn->connect_error) {
+      die("Connection failed: " . $conn->connect_error);
+    }
+
+    // cerrando db (FALTA COLOCARLO EN UN MEJOR LUGAR)
+    // $conn->close();
+
+    //retorno la conexion
+    return $conn;
+
   }
     
 

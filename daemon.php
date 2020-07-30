@@ -2,13 +2,17 @@
 
 /*** (A) CHECK ***/
 if (PHP_SAPI != "cli") {
-  die("Esto solo funciona ejecutandose desde consola.");
+  die("Este daemonio solo funciona ejecutandose desde consola. de momento no muestro errores en el browser.");
 }
 
 include_once ("TfhkaPHP.php"); 
 include_once ("interpreter.php"); 
+include_once ("DatabaseBridge.php"); 
+
 
 $itObj = new Tfhka();
+
+$DatabaseBridge =  new DatabaseBridge();
 
 /*** (B) SETTINGS ***/
 // Database settings - change these to your own
@@ -18,12 +22,8 @@ define('DB_CHARSET', 'utf8');
 define('DB_USER', 'root');
 define('DB_PASSWORD', null);
 
-define('PRINTER_ID', 1); //la impresora en uso
-
-// $servername = "localhost";
-// $username = "root";
-// $password = null;
-// $dbname = "pos_development";
+// Printer config (and identification)
+define('PRINTER_ID', 1); //la impresora en uso (numerada en BD)
 
 // Error and reporting
 ini_set("display_errors", 1);
@@ -40,25 +40,14 @@ function addlog ($message="") {
 // Cycle
 define('LOOP_CYCLE', 6); // Loop every 60 secs
 
-/*** (C) CONNECT DATABASE ***/
-  $servername = "localhost";
-  $username = "root";
-  $password = null;
-  $dbname = "pos_development";
 
-  // Create connection
-  $conn = new mysqli($servername, $username, $password, $dbname);
+$conn = $DatabaseBridge->connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME , PRINTER_ID);
 
-  // Check connection
-  if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-  }
+// cerrando db (FALTA COLOCARLO EN UN MEJOR LUGAR)
+// $conn->close();
 
-  // cerrando db (FALTA COLOCARLO EN UN MEJOR LUGAR)
-  // $conn->close();
-
-  // con esta variable verifico si debo imprimir varias veces el error de impresion
-  $print_error = false;
+// con esta variable verifico si debo imprimir varias veces el error de impresion
+$print_error = false;
 
 
 /*** (D) LOOP CHECK ***/
@@ -95,6 +84,9 @@ while (true) {
   $documentos_imprimiendo = null;
   $documentos_imprimiendo = $conn->query($query_documentos_imprimiendo);
 
+
+
+
   // contador para la traduccion (quizas mal puesto aqui)
   $documento = array();
   $index_counter = 0;
@@ -105,7 +97,7 @@ while (true) {
     // solo debe haber una por impresora en la tabla current
     $documento_imprimiendo = null;
     $documento_imprimiendo = $documentos_imprimiendo->fetch_assoc();
-    // var_dump($documento_imprimiendo);
+    var_dump($documento_imprimiendo);
 
     // segun el tipo de documento (solo facturas de momentos)
     switch ($documento_imprimiendo["document_type_id"]) {
@@ -130,7 +122,6 @@ while (true) {
           "SELECT
             dbo_administration_invoices.invoice_number,
             dbo_administration_invoices.tax_id,
-            dbo_administration_invoices.exchange_rate,
             DATE_FORMAT( dbo_administration_invoices.createdAt, '%d-%m-%Y') as createdAt,
             dbo_sales_clients.name,
             dbo_sales_clients.last_name,
@@ -175,6 +166,7 @@ while (true) {
             dbo_administration_invoices_items.price,
             dbo_administration_invoices_items.quantity, 
             dbo_administration_invoices_items.tax_id,
+            dbo_administration_invoices_items.tax_base,
             dbo_config_taxes.percentage,
             dbo_config_taxes.observation,
             dbo_administration_invoices_items.exchange_rate_id,
@@ -211,7 +203,8 @@ while (true) {
 
               // proximamente al interpreter
               // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
-              $factura_en_contruccion[$index_counter] = $interpreter->translateLine($item["observation"],$item["price"],$item["quantity"],$item["description"])."\n";
+              $factura_en_contruccion[$index_counter] = $interpreter->translateLine($item["observation"],$item["tax_base"],$item["quantity"],$item["description"])."\n";
+              // $factura_en_contruccion[$index_counter] = $interpreter->translateLine($item["observation"],round($item["price"]/1.12, 2),$item["quantity"],$item["description"])."\n";
               $index_counter++;
             }
 
