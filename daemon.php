@@ -77,25 +77,22 @@ while (true) {
   // ... se coloca el mensaje en la tabla log de mensajes (END)
 
 
-  // PASITO A PASITO
+  // PASITO A PASITO (los pasos anteriormente descritos... pero con especificidades)
   // (0) verifico si hay documentos en la tabla current (1)
   //.. en esto particular para la impresora en particular.
-  $query_documentos_imprimiendo = "SELECT * from dbo_printer_current WHERE printer_id = ".PRINTER_ID.";";
-  $documentos_imprimiendo = null;
-  $documentos_imprimiendo = $conn->query($query_documentos_imprimiendo);
 
 
+  // la conexion de base de datos y la impresora
+  // params:
+  // .. conexion por si se quiere enviar a otra base de datos
+  // .. printer id por si se quiere levantar un hilo despues que vigile a una impresora especifico
+  $documentos_imprimiendo = $DatabaseBridge->documentos_imprimiendo($conn, PRINTER_ID);
 
-
-  // contador para la traduccion (quizas mal puesto aqui)
-  $documento = array();
-  $index_counter = 0;
 
   // (1) (true) de haber tomo el documento y lo imprimo (...desarrollar ++) (3)
   if ($documentos_imprimiendo->num_rows > 0) { // aqui chequeo si tengo almenos 1
 
-    // solo debe haber una por impresora en la tabla current
-    $documento_imprimiendo = null;
+    // solo debe haber una impresion maximo por impresora en la tabla current
     $documento_imprimiendo = $documentos_imprimiendo->fetch_assoc();
     var_dump($documento_imprimiendo);
 
@@ -468,10 +465,8 @@ while (true) {
   // (1) (false) de no haber, busco en pendientes (2)
   }else{ 
     // ... reviso que no haya documentos en pendientes
-    $query_documentos_pendientes = "SELECT * from dbo_printer_pending WHERE printer_id = ".PRINTER_ID.";";
-    $documentos_pendientes = null;
-    $documentos_pendientes = $conn->query($query_documentos_pendientes);
-  
+    $documentos_pendientes = $DatabaseBridge->documentos_pendientes($conn, PRINTER_ID);
+
      // (2) (true) de haber en pendientes (para la impresora especificada), 
      // ...tomo el siguiente en orden FIFO de la cola
     if ($documentos_pendientes->num_rows > 0) {
@@ -480,52 +475,10 @@ while (true) {
       $documento_pendiente = $documentos_pendientes->fetch_assoc();
 
       // ... y lo coloco en current ese invoice.
-      $query_a_imprimiendo = 
-        "INSERT INTO dbo_printer_current(
-              document_type_id, 
-              document_id, 
-              printer_id, 
-              user_id, 
-              cashier_name) 
-          VALUES ("
-          .$documento_pendiente["document_type_id"].","
-          .$documento_pendiente["document_id"].", "
-          .$documento_pendiente["printer_id"].", "
-          .$documento_pendiente["user_id"].", '"
-          .$documento_pendiente["cashier_name"]."');";
-      
-        // puedes validar el query aca
-        // echo ( $query_a_imprimiendo );
-
-        $insertar_registro = $conn->prepare($query_a_imprimiendo);
-
-      if ($insertar_registro->execute()) {
-        echo "Se ha registrado una factura a imprimiendo \n";
-      } else {
-        echo "(al insertar a imrpimiendo) Error: " . $sql . "\n" . mysqli_error($conn);
-      }
+      $DatabaseBridge->mover_pendiente_a_imprimiendo( $conn, $documento_pendiente );
 
       // ... se borra de dicha factura de pendiente (END)
-      $query_delete_pending = 
-        " DELETE 
-            FROM dbo_printer_pending
-          WHERE
-            document_type_id = ".$documento_pendiente["document_type_id"]." && 
-            document_id = ".$documento_pendiente["document_id"]." &&
-            id = ".$documento_pendiente["id"]." &&  
-            printer_id = ".$documento_pendiente["printer_id"].";
-          ";
-      
-        // puedes validar el query aca
-        // echo ( $query_delete_pending );
-
-        $borrar_pendiente_registro = $conn->prepare($query_delete_pending);
-
-      if ($borrar_pendiente_registro->execute()) {
-        echo "Se ha borrado la factura pendientes, por haber sido llevada a imprimir. \n";
-      } else {
-        echo "(al borrar de pendientes) Error: " . $sql . "\n" . mysqli_error($conn);
-      }
+      $DatabaseBridge->eliminar_pendiente( $conn, $documento_pendiente );
 
     }else{
       // (2) (false) de no existir pendientes, no hay que hacer mas nada, solo esperar (Sleep) (END)

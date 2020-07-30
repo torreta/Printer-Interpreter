@@ -26,50 +26,122 @@ class DatabaseBridge
     return $conn;
 
   }
+
+
+  function documentos_imprimiendo($conn, $printer_id="" ){
+
+    // Check connection
+    if ($conn->connect_error) {
+      die(" (documentos imprimiendo) Connection failed: " . $conn->connect_error);
+    }
     
+    if($printer_id == ""){
+      die("valor vacio el identificador de impresora (documentos imprimiendo) \n");
+    }
 
-  function padding_number_format($value="", $max_cifras="" ){
+    $query_documentos_imprimiendo = "SELECT * from dbo_printer_current WHERE printer_id = ".$printer_id.";";
+    $documentos_imprimiendo = $conn->query($query_documentos_imprimiendo);
 
-    // echo("valor precio\n" . $value . "\n");
-    // echo("valor cifras\n" . $max_cifras . "\n");
-
-    $cifras_padding = $max_cifras - strlen($value) ;
-    // echo("padding cifras \n" . $cifras_padding . "\n");
-    if( $cifras_padding < 0){echo "numero de cifras permitidas excedido"; }
-
-    $padding ="";
-
-    // construyo cuantos ceros falten para completar el padding 
-    for ($i = 1; $i <= $cifras_padding; $i++) {
-        $padding = $padding . "0";
-    } 
-
-    // echo(" padding y valor: \n" . $padding . $value ." \n");
-    return $padding . $value;
+    return  $documentos_imprimiendo;
 
   }
 
 
-  function padding_decimal_format($value="", $max_cifras="" ){
+  function documentos_pendientes($conn, $printer_id="" ){
 
-    //  echo("valor precio\n" . $value . "\n");
-    //  echo("valor cifras\n" . $max_cifras . "\n");
+    // Check connection
+    if ($conn->connect_error) {
+      die("(documentos pendientes) Connection failed: " . $conn->connect_error);
+    }
+    
+    if($printer_id == ""){
+      die("valor vacio el identificador de impresora (documentos pendientes)\n");
+    }
+    $query_documentos_pendientes = "SELECT * from dbo_printer_pending WHERE printer_id = ".PRINTER_ID.";";
+    $documentos_pendientes = $conn->query($query_documentos_pendientes);
 
-    $cifras_padding = $max_cifras - strlen($value) ;
-    // echo("padding cifras \n" . $cifras_padding . "\n");
-    if( $cifras_padding < 0){echo "numero de cifras decimales permitidas excedido"; }
-
-    $padding ="";
-
-    // construyo cuantos ceros falten para completar el padding 
-    for ($i = 1; $i <= $cifras_padding; $i++) {
-        $padding = $padding . "0";
-    } 
-
-    // echo(" padding y valor: \n" . $value . $padding ." \n");
-    return  $value. $padding;
+    return  $documentos_pendientes;
 
   }
+
+
+  function mover_pendiente_a_imprimiendo($conn, $documento_pendiente ){
+
+    // Check connection
+    if ($conn->connect_error) {
+      die("(mover_pendiente_a_imprimiendo) Connection failed: " . $conn->connect_error);
+    }
+    
+    if($documento_pendiente ==  null){
+      die("objeto vacio (mover_pendiente_a_imprimiendo)\n");
+    }
+
+    $query_a_imprimiendo = 
+      "INSERT INTO dbo_printer_current(
+            document_type_id, 
+            document_id, 
+            printer_id, 
+            user_id, 
+            cashier_name) 
+        VALUES ("
+        .$documento_pendiente["document_type_id"].","
+        .$documento_pendiente["document_id"].", "
+        .$documento_pendiente["printer_id"].", "
+        .$documento_pendiente["user_id"].", '"
+        .$documento_pendiente["cashier_name"]."');";
+    
+      // puedes validar el query aca
+      // echo ( $query_a_imprimiendo );
+
+
+    $insertar_registro = $conn->prepare($query_a_imprimiendo);
+
+    if ($insertar_registro->execute()) {
+      echo "Se ha registrado una factura a imprimiendo \n";
+    } else {
+      echo "(al insertar a imrpimiendo) Error: " . $sql . "\n" . mysqli_error($conn);
+    }
+
+  }
+
+
+  function eliminar_pendiente($conn, $documento_pendiente ){
+
+    // Check connection
+    if ($conn->connect_error) {
+      die("(eliminar_pendiente) Connection failed: " . $conn->connect_error);
+    }
+    
+    if($documento_pendiente ==  null){
+      die("objeto vacio (eliminar_pendiente)\n");
+    }
+
+    $query_delete_pending = 
+    " DELETE 
+        FROM dbo_printer_pending
+      WHERE
+        document_type_id = ".$documento_pendiente["document_type_id"]." && 
+        document_id = ".$documento_pendiente["document_id"]." &&
+        id = ".$documento_pendiente["id"]." &&  
+        printer_id = ".$documento_pendiente["printer_id"].";
+      ";
+  
+    // puedes validar el query aca
+    // echo ( $query_delete_pending );
+
+    $borrar_pendiente_registro = $conn->prepare($query_delete_pending);
+
+    if ($borrar_pendiente_registro->execute()) {
+      echo "Se ha borrado la factura pendientes, por haber sido llevada a imprimir. \n";
+    } else {
+      echo "(al borrar de pendientes) Error: " . $sql . "\n" . mysqli_error($conn);
+    }
+
+
+  }
+
+
+
 
 
 }
