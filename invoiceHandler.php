@@ -137,15 +137,26 @@ class invoiceHandler
         // proximamente al interpreter
         // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
         // $tasa="", $precio = "", $cant = "", $desc = ""
-        $factura_en_contruccion[$index_counter] = $interpreter->translateLine($item["observation"],$item["tax_base"],$item["quantity"],$item["description"])."\n";
+        $factura_en_contruccion[$index_counter] = $interpreter->translateLine($item["observation"],$item["price"],$item["quantity"],$item["description"])."\n";
         $index_counter++;
       }else{
-        // el interpreter en los no fiscales genera 2 lineas separadas
+        // el interpreter en los no fiscales genera 2 lineas separadas, si es un item de de  mas de 2 items
 
         // // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
         // $tasa="", $precio = "", $cant = "", $desc = ""
-        $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLine($item["observation"],$item["tax_base"],$item["quantity"],$item["description"])."\n";
-        $index_counter++;
+        if($item["quantity"] == "1"){
+          $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLine($item["observation"],$item["price"],$item["quantity"],$item["description"])."\n";
+          $index_counter++;
+        }else{
+          // $precio = "", $cant = ""
+          $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLinePrice($item["observation"],$item["price"],$item["quantity"],$item["description"])."\n";
+          $index_counter++;
+          // $tasa="", $desc = ""
+          $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLineDesc($item["observation"],$item["price"],$item["quantity"],$item["description"])."\n";
+          $index_counter++;
+
+        }
+
 
       }
 
@@ -156,6 +167,9 @@ class invoiceHandler
       $factura_en_contruccion[$index_counter] = "101";
     }else{
       //cierre de factura no fiscal (viene despues de los items)
+      $factura_en_contruccion[$index_counter] = substr("80*"."------------------------------------------------------------------------",0,40)."\n";
+      $index_counter++;
+
       $factura_en_contruccion[$index_counter] = "810";
     }
 
