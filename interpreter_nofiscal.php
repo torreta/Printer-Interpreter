@@ -115,6 +115,33 @@ class interpreter_nofiscal{
 
   }
 
+  function translateFinalTotal($total){
+  
+    $comando = "80*"."TOTAL:  " ."Bs ". $total ;
+    
+    return  $comando;
+
+  }
+    
+
+  function translateSubtotal($subtotal){
+  
+    $comando = "80*"."SUBTTL:    ". "Bs ". $subtotal ;
+    
+    return  $comando;
+
+  }
+    
+  
+  function translateTax($tax){
+  
+    $comando = "80*"."IVA:    ". "Bs ". $tax ;
+    
+    return  $comando;
+
+  }
+    
+  
   function translateTotal($precio = "", $cant = ""){
   
     $comando = "Bs ". $precio* $cant ;
@@ -123,6 +150,7 @@ class interpreter_nofiscal{
 
   }
     
+
 
   function translateLinePrice($tasa="", $precio = "", $cant = "", $desc = ""){
   
