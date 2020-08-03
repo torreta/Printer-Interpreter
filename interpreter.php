@@ -194,7 +194,7 @@ class interpreter{
   }
     
     
-  function translateLine( $tasa="", $precio = "", $cant = "", $desc = "",$tipo_doc=""){
+  function translateLine( $tasa="", $precio = "", $cant = "", $desc = ""){
   
     $comando = $this->translateTasa($tasa) .$this->translatePrecio($precio) . $this->translateCantidad($cant) .$this->translateDescription($desc);
     
