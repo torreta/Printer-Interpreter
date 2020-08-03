@@ -2,6 +2,7 @@
 
   include_once ("TfhkaPHP.php"); 
   include_once ("interpreter.php"); 
+  include_once ("interpreter_nofiscal.php"); 
   include_once ("Utils.php"); 
   include_once ("DatabaseBridge.php"); 
 
@@ -75,20 +76,21 @@ class invoiceHandler
 
   }
 
-  function get_invoice_items($conn, $invoice_id ){
+  function get_invoice_items($conn, $invoice_id,$tipo_de_factura ){
 
     // Check connection
     if ($conn->connect_error) {
       die("(get_invoice_items) Connection failed: " . $conn->connect_error);
     }
     
-    if($invoice_id ==  null || $invoice_id ==  "" ){
+    if($invoice_id ==  null || $invoice_id ==  "" || $tipo_de_factura ==""){
       die("dato vital vacio (get_invoice_items)\n");
     }
     
     // inicializo una instancia de interprete para el tipo de doc.
     // ...(hago una instancia del interprete del tipo de doc)
     $interpreter = new interpreter();
+    $interpreter_nofiscal = new interpreter_nofiscal();
 
     $factura_en_contruccion = array();
     $index_counter = 0;
@@ -131,15 +133,32 @@ class invoiceHandler
       // echo "price: " . $item["price"]. " - quantity: " . $item["quantity"]. ", description " . $item["description"];
       // echo "\n";
 
-      // proximamente al interpreter
-      // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
-      $factura_en_contruccion[$index_counter] = $interpreter->translateLine($item["observation"],$item["tax_base"],$item["quantity"],$item["description"])."\n";
-      // $factura_en_contruccion[$index_counter] = $interpreter->translateLine($item["observation"],round($item["price"]/1.12, 2),$item["quantity"],$item["description"])."\n";
-      $index_counter++;
+      if($tipo_de_factura == "fiscal"){
+        // proximamente al interpreter
+        // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
+        // $tasa="", $precio = "", $cant = "", $desc = ""
+        $factura_en_contruccion[$index_counter] = $interpreter->translateLine($item["observation"],$item["tax_base"],$item["quantity"],$item["description"])."\n";
+        $index_counter++;
+      }else{
+        // el interpreter en los no fiscales genera 2 lineas separadas
+
+        // // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
+        // $tasa="", $precio = "", $cant = "", $desc = ""
+        $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLine($item["observation"],$item["tax_base"],$item["quantity"],$item["description"])."\n";
+        $index_counter++;
+
+      }
+
     }
 
-    //cierre de factura (viene despues de los items)
-    $factura_en_contruccion[$index_counter] = "101";
+    if($tipo_de_factura == "fiscal"){
+      //cierre de factura (viene despues de los items)
+      $factura_en_contruccion[$index_counter] = "101";
+    }else{
+      //cierre de factura no fiscal (viene despues de los items)
+      $factura_en_contruccion[$index_counter] = "810";
+    }
+
 
     return  $factura_en_contruccion;
 
@@ -151,12 +170,12 @@ class invoiceHandler
 
     // Check connection
     if ($conn->connect_error) {
-      die("(get_invoice_info) Connection failed: " . $conn->connect_error);
+      die("(printInvoice) Connection failed: " . $conn->connect_error);
     }
     
 
     if($documento_imprimiendo ==  null){
-      die("dato vital vacio (get_invoice_info)\n");
+      die("dato vital vacio (printInvoice)\n");
     }
 
     // tomo el id de la factura
@@ -180,24 +199,39 @@ class invoiceHandler
 
     $nombre_cajero = $documento_imprimiendo["cashier_name"];
 
+    $es_fiscal = $factura_actual["fiscal"];
+
+    $tipo_de_factura = ($es_fiscal == "1")? "fiscal":"no fiscal";
+
     echo "\n";
-    echo "el documento a imprimir es la factura " . $numero_factura .", por cajero ". $nombre_cajero. "\n ";
+    echo "el documento a imprimir es la factura ".$tipo_de_factura." de numero: " . $numero_factura .", por cajero ". $nombre_cajero. "\n ";
     echo "\n";
 
     // inicializo una instancia de interprete para el tipo de doc.
     // ...(hago una instancia del interprete del tipo de doc)
     $interpreter = new interpreter();
+    $interpreter_nofiscal = new interpreter_nofiscal();
 
     // counter for translation
     $factura_en_contruccion = array();
     $index_counter = 0;
     $index_inverse_counter = 0;
 
-    // consultar informacion fiscal de la factura antes de armarla
-    $infoFiscalTraducida = $interpreter->translateFiscalInfoArray($factura_fiscal_actual);
+    if($tipo_de_factura == "fiscal"){
+      // consultar informacion fiscal de la factura antes de armarla
+      $infoFiscalTraducida = $interpreter->translateFiscalInfoArray($factura_fiscal_actual);
 
-    // arreglo de los items de la factura
-    $items_factura = $this->get_invoice_items($conn,$invoice_id);
+      // arreglo de los items de la factura
+      $items_factura = $this->get_invoice_items($conn,$invoice_id,$tipo_de_factura);
+
+    }else{
+      // consultar informacion fiscal de la factura antes de armarla
+      $infoFiscalTraducida = $interpreter_nofiscal->translateFiscalInfoArray($factura_fiscal_actual);
+
+      // arreglo de los items de la factura
+      $items_factura = $this->get_invoice_items($conn,$invoice_id,$tipo_de_factura);
+      
+    }
 
     // concateno la informacion fiscal a la de los items de la factura
     $factura_en_contruccion = $infoFiscalTraducida + $items_factura;
