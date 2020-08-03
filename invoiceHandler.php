@@ -76,7 +76,7 @@ class invoiceHandler
 
   }
 
-  function get_invoice_items($conn, $invoice_id,$tipo_de_factura ){
+  function get_invoice_items($conn, $invoice_id,$tipo_de_factura, $subtotal, $tax, $total ){
 
     // Check connection
     if ($conn->connect_error) {
@@ -170,9 +170,22 @@ class invoiceHandler
       $factura_en_contruccion[$index_counter] = substr("80*"."------------------------------------------------------------------------",0,40)."\n";
       $index_counter++;
 
+      // subtotal
+      $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateSubtotal($subtotal)."\n";
+      $index_counter++;
+      // iva
+      $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateTax($tax)."\n";
+      $index_counter++;
+
+      $factura_en_contruccion[$index_counter] = substr("80*"."------------------------------------------------------------------------",0,40)."\n";
+      $index_counter++;
+      
+      // total
+      $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateFinalTotal($total)."\n";
+      $index_counter++;
+
       $factura_en_contruccion[$index_counter] = "810";
     }
-
 
     return  $factura_en_contruccion;
 
@@ -208,13 +221,17 @@ class invoiceHandler
     $factura_fiscal_actual = $info_fiscal_factura->fetch_assoc();
 
 
-    // numero de factura
+    // info de factura
     $numero_factura = $factura_actual["invoice_number"];
+    $subtotal = $factura_actual["subtotal"];
+    $tax = $factura_actual["tax"];
+    $total = $factura_actual["total"];
 
+    // nombre Cajero
     $nombre_cajero = $documento_imprimiendo["cashier_name"];
 
+    // tipo
     $es_fiscal = $factura_actual["fiscal"];
-
     $tipo_de_factura = ($es_fiscal == "1")? "fiscal":"no fiscal";
 
     echo "\n";
@@ -236,14 +253,14 @@ class invoiceHandler
       $infoFiscalTraducida = $interpreter->translateFiscalInfoArray($factura_fiscal_actual);
 
       // arreglo de los items de la factura
-      $items_factura = $this->get_invoice_items($conn,$invoice_id,$tipo_de_factura);
+      $items_factura = $this->get_invoice_items($conn ,$invoice_id, $tipo_de_factura, $subtotal, $tax, $total);
 
     }else{
       // consultar informacion fiscal de la factura antes de armarla
       $infoFiscalTraducida = $interpreter_nofiscal->translateFiscalInfoArray($factura_fiscal_actual);
 
       // arreglo de los items de la factura
-      $items_factura = $this->get_invoice_items($conn,$invoice_id,$tipo_de_factura);
+      $items_factura = $this->get_invoice_items($conn ,$invoice_id, $tipo_de_factura, $subtotal, $tax, $total);
       
     }
 
