@@ -95,41 +95,14 @@ while (true) {
     // segun el tipo de documento (solo facturas de momentos)
     switch ($documento_imprimiendo["document_type_id"]) {
       case "1": // Factura (unico caso de momento)
+        $tipo_documento = "factura";
+
         // tomo el id de la factura
         $invoice_id = $documento_imprimiendo["document_id"];
         
         // envio al "manejador" respectivo
         $invoiceHandler =  new invoiceHandler();
         $respuesta_impresora = $invoiceHandler->printInvoice($conn,$documento_imprimiendo);
-
-        // (3) (true) verifico el mensaje del controlador al imprimir, (condiciones de parseo), si todo sale exitoso
-        if($respuesta_impresora == "true"){
-          // ...si habia un mensaje de error, ahora que se pudo imprimir, deja volver a imprimir mensajes de error
-          $print_error = false;
-
-          // ... se toma el individuo en current y se copia a history.
-          $DatabaseBridge->mover_a_historico( $conn, $documento_imprimiendo );
-
-          // ... se borra de current
-          $DatabaseBridge->borrar_imprimiendo( $conn, $documento_imprimiendo );
-
-          // ... se sobrescribe el mensaje para la impresora de mensajes 
-          $mensaje_al_log = "la factura " . $numero_factura .", por cajero ". $nombre_cajero. ", ha impreso con exito.";
-          $DatabaseBridge->logWithDoc( $conn, $mensaje_al_log, $documento_imprimiendo, $print_error );
-
-        }else{
-          // (3) (false)  verifico el mensaje del controlador al imprimir, (condiciones de parseo), si sale un error
-          // ... se mantiene la factura en current (sin cambios)
-
-          echo "la impresora fallo... (hay que colocar los errores en log)\n";
-          // ... busco en checkprinter cual puede ser la razon del error.
-
-          // ... se sobrescribe el mensaje para la impresora de mensajes, indicando que hay un error
-          $mensaje_al_log = "la factura " . $numero_factura .", por cajero ". $nombre_cajero. ", tiene problemas para imprimir...";
-          $DatabaseBridge->logWithDoc( $conn, $mensaje_al_log, $documento_imprimiendo, $print_error );
-            // ...si habia un mensaje de error, ahora que se pudo imprimir, deja volver a imprimir mensajes de error
-            $print_error = true;
-        } 
 
         break;
       case "2":// Devolucion
@@ -142,9 +115,37 @@ while (true) {
         die("Documento indeterminado"); 
     }
 
-    
-  // (1) (false) de no haber, busco en pendientes (2)
+    // (3) (true) verifico el mensaje del controlador al imprimir, (condiciones de parseo), si todo sale exitoso
+    if($respuesta_impresora == "true"){
+      // ...si habia un mensaje de error, ahora que se pudo imprimir, deja volver a imprimir mensajes de error
+      $print_error = false;
+
+      // ... se toma el individuo en current y se copia a history.
+      $DatabaseBridge->mover_a_historico( $conn, $documento_imprimiendo );
+
+      // ... se borra de current
+      $DatabaseBridge->borrar_imprimiendo( $conn, $documento_imprimiendo );
+
+      // ... se sobrescribe el mensaje para la impresora de mensajes 
+      $mensaje_al_log = "la ".$tipo_documento .": " . $numero_factura .", por cajero ". $nombre_cajero. ", ha impreso con exito.";
+      $DatabaseBridge->logWithDoc( $conn, $mensaje_al_log, $documento_imprimiendo, $print_error );
+
+    }else{
+      // (3) (false)  verifico el mensaje del controlador al imprimir, (condiciones de parseo), si sale un error
+      // ... se mantiene la factura en current (sin cambios)
+
+      echo "la impresora fallo... (hay que colocar los errores en log)\n";
+      // ... busco en checkprinter cual puede ser la razon del error.
+
+      // ... se sobrescribe el mensaje para la impresora de mensajes, indicando que hay un error
+      $mensaje_al_log = "la ".$tipo_documento .": " . $numero_factura .", por cajero ". $nombre_cajero. ", tiene problemas para imprimir...";
+      $DatabaseBridge->logWithDoc( $conn, $mensaje_al_log, $documento_imprimiendo, $print_error );
+        // ...si habia un mensaje de error, ahora que se pudo imprimir, deja volver a imprimir mensajes de error
+        $print_error = true;
+    } 
+  
   }else{ 
+    // (1) (false) de no haber, busco en pendientes (2)
     // ... reviso que no haya documentos en pendientes
     $documentos_pendientes = $DatabaseBridge->documentos_pendientes($conn, PRINTER_ID);
 
