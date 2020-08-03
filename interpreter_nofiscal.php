@@ -114,20 +114,28 @@ class interpreter_nofiscal{
     return  $comando;
 
   }
-    
-    
-  function translateLinePrice($precio = "", $cant = ""){
+
+  function translateTotal($precio = "", $cant = ""){
   
-    $comando = "80*". $this->translateCantidad($cant).$this->translatePrecio($precio)."BS" ;
+    $comando = "Bs ". $precio* $cant ;
+    
+    return  $comando;
+
+  }
+    
+
+  function translateLinePrice($tasa="", $precio = "", $cant = "", $desc = ""){
+  
+    $comando = "80*". $this->translateCantidad($cant)."Bs".$this->translatePrecio($precio) ;
     
     return  $comando;
 
   }
 
 
-  function translateLineDesc($tasa="", $desc = ""){
+  function translateLineDesc($tasa="", $precio = "", $cant = "", $desc = ""){
   
-    $comando = "80*".$this->translateDescription($desc). $this->translateTasa($tasa);
+    $comando = "80*".$this->translateDescription($desc). $this->translateTasa($tasa).$this->translateTotal($precio, $cant);
     
     return  $comando;
 
@@ -136,7 +144,7 @@ class interpreter_nofiscal{
 
   function translateLine($tasa="", $precio = "", $cant = "", $desc = ""){
   
-    $comando = "80*". $this->translateCantidad($cant).$this->translatePrecio($precio)." BS ".$this->translateDescription($desc). $this->translateTasa($tasa);
+    $comando = "80*".$this->translateDescription($desc). $this->translateTasa($tasa)." Bs".$this->translatePrecio($precio)." ";
     
     return  $comando;
 
@@ -186,40 +194,44 @@ class interpreter_nofiscal{
     echo("dentro del interprete \n");
     var_dump($InfoFiscal);
 
-    // $InfoFiscalTraducida[$contador_inverso] = "iF*".$InfoFiscal["invoice_number"];
+    // TITULO
+    // -11 => titulo
     $InfoFiscalTraducida[$contador_inverso] = "80*"."FACTURA "."\n";
     $contador_inverso++;
-    // TITULO
 
     // $InfoFiscalTraducida[$contador_inverso] = "iF*".$InfoFiscal["invoice_number"];
     $InfoFiscalTraducida[$contador_inverso] = "80*"."#FAC: ".$InfoFiscal["invoice_number"]."\n";
     $contador_inverso++;
-    // -9 => "iD*18-01-2014\n",//fecha factura dia especifico
+    // -10 => "iD*18-01-2014\n",//fecha factura dia especifico
     $InfoFiscalTraducida[$contador_inverso] = "80*"."FECHA FAC: ".$InfoFiscal["createdAt"]."\n";
     $contador_inverso++;
-    // -8 => "iS*Pedro Mendez\n", // mombre persona
+    // -9 => "iS*Pedro Mendez\n", // mombre persona
     $InfoFiscalTraducida[$contador_inverso] =  substr("80*"."RIF/C.i: ".$InfoFiscal["name"].$InfoFiscal["last_name"],0,$max_caracteres)."\n";
     $contador_inverso++;
-    // -7 => "iR*12.345.678\n", // rif
+    // -8 => "iR*12.345.678\n", // rif
     $InfoFiscalTraducida[$contador_inverso] =  substr("80*"."RAZON SOCIAL: ".$InfoFiscal["complete_identification"],0,$max_caracteres)."\n";
     $contador_inverso++;
-    // -6 => "i00 algo\n", // info adicional cliente (telefono)
+    // -7 => "i00 algo\n", // info adicional cliente (telefono)
     $InfoFiscalTraducida[$contador_inverso] = substr("80*"."Telf: ".$InfoFiscal["telephone"],0,$max_caracteres_info_adicional)."\n";
     $contador_inverso++;
-    // -5 => "i00 algo\n", // info adicional cliente (direccion)
+    // -6 => "i00 algo\n", // info adicional cliente (direccion)
     $InfoFiscalTraducida[$contador_inverso] = substr("80*"."DIR: ".$InfoFiscal["direction"],0,$max_caracteres_info_adicional)."\n";
     $contador_inverso++;
-    // -4 => "i00 algo\n", // info adicional cliente (direccion)
+    // -5 => "i00 algo\n", // info adicional cliente (direccion)
     $InfoFiscalTraducida[$contador_inverso] = substr("80*"."CAJERO: ".$InfoFiscal["user_name"]." ".$InfoFiscal["user_lastname"],0,$max_caracteres_info_adicional)."\n";
     $contador_inverso++;
-    // -3 => "i00 algo\n", // info adicional cliente
+    // -4 => "i00 algo\n", // info adicional cliente
     $InfoFiscalTraducida[$contador_inverso] = substr("80*"."Primera linea super larga de informacion fiscal",0,$max_caracteres_info_adicional)."\n";;
     $contador_inverso++;
-    // -2 => "i00 algo\n", // info adicional cliente
-    $InfoFiscalTraducida[$contador_inverso] = substr("80*"."segunda linea de informacion fiscal?",0,$max_caracteres_info_adicional)."\n";;
+    // -3 => "i00 algo\n", // info adicional cliente
+    $InfoFiscalTraducida[$contador_inverso] = substr("80*"."segunda linea de informacion fiscal?",0,$max_caracteres_info_adicional)."\n";
     $contador_inverso++;
-    // -1 => "i00 algo\n", // comentario
+    // -2 => "i00 algo\n", // comentario
+    $InfoFiscalTraducida[$contador_inverso] = substr("80*"."------------------------------------------------------------------------",0,$max_caracteres_info_adicional)."\n";
+    $contador_inverso++;
+    // -1 => "i00 algo\n", // cierre de linea
     
+
     return  $InfoFiscalTraducida;
 
   }
