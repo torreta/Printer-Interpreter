@@ -167,19 +167,20 @@ class invoiceHandler
       $factura_en_contruccion[$index_counter] = "101";
     }else{
       //cierre de factura no fiscal (viene despues de los items)
-      $factura_en_contruccion[$index_counter] = substr("80*"."------------------------------------------------------------------------",0,40)."\n";
+      $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->separador();
       $index_counter++;
 
       // subtotal
       $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateSubtotal($subtotal)."\n";
       $index_counter++;
+      
       // iva
       $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateTax($tax)."\n";
       $index_counter++;
 
-      $factura_en_contruccion[$index_counter] = substr("80*"."------------------------------------------------------------------------",0,40)."\n";
+      $factura_en_contruccion[$index_counter] =  $interpreter_nofiscal->separador();
       $index_counter++;
-      
+
       // total
       $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateFinalTotal($total)."\n";
       $index_counter++;

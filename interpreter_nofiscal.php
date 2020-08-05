@@ -179,6 +179,16 @@ class interpreter_nofiscal{
   }
   
 
+  function separador(){
+  
+    // pendiente del maximo caracteres permitidos por maquina, deber estar adaptado a la config
+    $comando = substr("80*"."------------------------------------------------------------------------",0,45)."\n";
+    
+    return  $comando;
+
+  }
+  
+
   function translateFiscalInfoArray( $InfoFiscal = []){
     // MODELO IMPRESORA  SRP-812
     // ENCABEZADOS X (Y) : 40 (8 líneas)
@@ -255,7 +265,7 @@ class interpreter_nofiscal{
     $InfoFiscalTraducida[$contador_inverso] = substr("80*"."segunda linea de informacion fiscal?",0,$max_caracteres_info_adicional)."\n";
     $contador_inverso++;
     // -2 => "i00 algo\n", // comentario
-    $InfoFiscalTraducida[$contador_inverso] = substr("80*"."------------------------------------------------------------------------",0,$max_caracteres_info_adicional)."\n";
+    $InfoFiscalTraducida[$contador_inverso] = $this->separador();
     $contador_inverso++;
     // -1 => "i00 algo\n", // cierre de linea
     
