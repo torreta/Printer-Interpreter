@@ -14,7 +14,7 @@ class Utils
       return (preg_match ('~^((?:\+|-)?[0-9]+)$~' ,$value) == 1);
   }
     
-  
+
   function formal_number($num){
 
     $english_format_number = number_format($num, 2, '.', ',');
@@ -36,7 +36,7 @@ class Utils
       $padding = $padding . " ";
     } 
   
-    return "[".$texto.$padding.$num."]";
+    return $texto.$padding.$num;
   }
 
 

@@ -67,7 +67,7 @@ class interpreter_nofiscal{
         // echo("valor numerico\n");
     }
     
-      return  " ".$precio;
+    return  " ".$Utils->formal_number($precio);
 
   }
 
@@ -117,7 +117,13 @@ class interpreter_nofiscal{
 
   function translateFinalTotal($total){
   
-    $comando = "80*"."TOTAL:  " ."Bs ". $total ;
+    $Utils = new Utils();
+
+    $total = $Utils->formal_number($total);
+
+    $total = "Bs ". $total;
+
+    $comando = "80*".$Utils->formal_padding("TOTAL: ",$total,42);
     
     return  $comando;
 
@@ -125,8 +131,14 @@ class interpreter_nofiscal{
     
 
   function translateSubtotal($subtotal){
-  
-    $comando = "80*"."SUBTTL:    ". "Bs ". $subtotal ;
+
+    $Utils = new Utils();
+
+    $subtotal = $Utils->formal_number($subtotal);
+
+    $subtotal = "Bs ". $subtotal;
+
+    $comando = "80*".$Utils->formal_padding("SUBTTL: ",$subtotal,42);
     
     return  $comando;
 
@@ -135,7 +147,13 @@ class interpreter_nofiscal{
   
   function translateTax($tax){
   
-    $comando = "80*"."IVA:    ". "Bs ". $tax ;
+    $Utils = new Utils();
+
+    $tax = $Utils->formal_number($tax);
+
+    $tax = "Bs ". $tax;
+
+    $comando = "80*".$Utils->formal_padding("IVA: ",$tax,42);
     
     return  $comando;
 
@@ -144,7 +162,9 @@ class interpreter_nofiscal{
   
   function translateTotal($precio = "", $cant = ""){
   
-    $comando = "Bs ". $precio* $cant ;
+    $Utils = new Utils();
+
+    $comando = "Bs ".$Utils->formal_number($precio* $cant);  
     
     return  $comando;
 
