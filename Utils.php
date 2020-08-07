@@ -14,6 +14,31 @@ class Utils
       return (preg_match ('~^((?:\+|-)?[0-9]+)$~' ,$value) == 1);
   }
     
+  
+  function formal_number($num){
+
+    $english_format_number = number_format($num, 2, '.', ',');
+  
+    return $english_format_number;
+  }
+
+
+  function formal_padding($texto,$num,$max_chars_line){
+
+    $english_format_number = number_format($num, 2, '.', ',');
+  
+    $cifras_padding = $max_chars_line - strlen($texto) - strlen($num);
+  
+    $padding = "";
+  
+    // construyo cuantos ceros falten para completar el padding 
+    for ($i = 1; $i <= $cifras_padding; $i++) {
+      $padding = $padding . " ";
+    } 
+  
+    return "[".$texto.$padding.$num."]";
+  }
+
 
   function padding_number_format($value="", $max_cifras="" ){
 
