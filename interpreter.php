@@ -42,6 +42,45 @@ class interpreter{
 
   }
 
+  function translateTasaCredito($tasa=""){
+    // de momento tengo entendido 4 tipos de tasa
+    // (falta copiar de manuak, pero en ejemplo tengo)// (!), ("), (#), ( )
+    
+    if($tasa == ""){
+        echo("valor vacio de tasa \n"); die;
+        return false;
+    }
+
+    switch ($tasa) {
+      case "Sin IVA":
+      //echo "Exento\n";
+      $comando = "d0";
+      break;
+      case "IVA 16%":
+      //echo "Tasa 1\n";
+      $comando = "d1";
+      break;
+      case "Tasa 2":
+      //echo "Tasa 2\n";
+      $comando = "d2";
+      break;
+      case "tasa 3":
+      //echo "Tasa 3\n";
+      $comando = "d3";
+      break;
+      default:
+      //echo "Tasa no reconocida\n";
+      $comando = false;
+      $tasas = ["d0","d1","d2","d3"];
+      $tasa = $tasas[array_rand($tasas, 1)];
+      $comando = $tasa;
+    }
+    
+    return  $comando;
+
+  }
+
+
   
   function translatePrecio( $precio = ""){
 
@@ -202,6 +241,16 @@ class interpreter{
     return  $comando;
 
   }
+
+  function translateLineCredito( $tasa="", $precio = "", $cant = "", $desc = ""){
+  
+    $comando = $this->translateTasaCredito($tasa) .$this->translatePrecio($precio) . $this->translateCantidad($cant) .$this->translateDescription($desc);
+    
+    //echo "\n\nComando Final\n"; 
+    return  $comando;
+
+  }
+
 
   
   function translateFiscalInfoArray( $InfoFiscal = []){
