@@ -531,7 +531,7 @@ if (isset($Foperacion)){
 							-1 => "iD*18-01-2014\n",
 							 0 => "d0000000100000001000Harina\n",
 							 1 => "d1000000150000001500Jamon\n",
-							 2 => 'd2000000205000003000Patilla\n',
+							 2 => "d2000000205000003000Patilla\n",
 							 3 => "d3000005000000001000Caja de Wisky\n",
 							 4 => "101");
 							 
@@ -546,6 +546,9 @@ if (isset($Foperacion)){
                         
       fclose($fp); 
 
+      $out =  $itObj->SendFileCmd($file);
+
+      var_dump($out);
 	  }elseif ($Foperacion == "ReporteX") {
 			$out =  $itObj->SendCmd("I0X");
 	  }elseif ($Foperacion == "ReporteZ") {
