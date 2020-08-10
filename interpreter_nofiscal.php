@@ -119,7 +119,7 @@ class interpreter_nofiscal{
   
     $Utils = new Utils();
 
-    $total = $Utils->formal_number($total);
+    $total = $Utils->formal_number(floatval($total));
 
     $total = "Bs ". $total;
 
@@ -134,7 +134,7 @@ class interpreter_nofiscal{
 
     $Utils = new Utils();
 
-    $subtotal = $Utils->formal_number($subtotal);
+    $subtotal = $Utils->formal_number(floatval($subtotal));
 
     $subtotal = "Bs ". $subtotal;
 
@@ -149,7 +149,7 @@ class interpreter_nofiscal{
   
     $Utils = new Utils();
 
-    $tax = $Utils->formal_number($tax);
+    $tax = $Utils->formal_number(floatval($tax));
 
     $tax = "Bs ". $tax;
 
@@ -164,7 +164,7 @@ class interpreter_nofiscal{
   
     $Utils = new Utils();
 
-    $comando = "Bs ".$Utils->formal_number($precio* $cant);  
+    $comando = "Bs ".$Utils->formal_number(floatval($precio* $cant));  
     
     return  $comando;
 

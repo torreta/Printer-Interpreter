@@ -24,8 +24,6 @@ class Utils
 
 
   function formal_padding($texto,$num,$max_chars_line){
-
-    $english_format_number = number_format($num, 2, '.', ',');
   
     $cifras_padding = $max_chars_line - strlen($texto) - strlen($num);
   
