@@ -185,7 +185,9 @@ while (true) {
   // Sleep
   sleep(LOOP_CYCLE);
 }
-
+    
+    // cd C:\xampp\htdocs\pos_app\src\printer_daemon && php daemon.php
+    // D:\xamp\htdocs\Printer-Interpreter
     // cd C:\xampp\htdocs\Printer-Interpreter && php daemon.php
     // php daemon.php
     // cd  d:\xamp\htdocs\Printer-Interpreter && php daemon.php
