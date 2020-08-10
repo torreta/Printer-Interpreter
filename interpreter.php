@@ -285,7 +285,7 @@ class interpreter{
     // ["user_lastname"]=> string(10) "SUPERVISOR"
     // ["rol_id"]=> string(1) "2"
     // ["complete_identification"]=> string(xx) "J002985321"
-    $contador_inverso = -10; // aqui tengo que poner la cantidad de items que me llegan en reversa.
+    $contador_inverso = -7; // aqui tengo que poner la cantidad de items que me llegan en reversa. era 10 con las 3 lineas de abajo comentadas.
     $InfoFiscalTraducida = [];
     $max_caracteres = 40; //definido en el manual
     $max_caracteres_info_adicional = 40; //manual again
@@ -317,16 +317,16 @@ class interpreter{
     // -4 => "i00 algo\n", // info adicional cliente (direccion)
     $InfoFiscalTraducida[$contador_inverso] = substr("i00"."CAJERO: ".$InfoFiscal["user_name"]." ".$InfoFiscal["user_lastname"],0,$max_caracteres_info_adicional)."\n";
     $contador_inverso++;
-    // -3 => "i00 algo\n", // info adicional cliente
-    $InfoFiscalTraducida[$contador_inverso] = substr("i00"."Primera linea super larga de informacion fiscal",0,$max_caracteres_info_adicional)."\n";;
-    $contador_inverso++;
-    // -2 => "i00 algo\n", // info adicional cliente
-    $InfoFiscalTraducida[$contador_inverso] = substr("i00"."segunda linea de informacion fiscal?",0,$max_caracteres_info_adicional)."\n";;
-    $contador_inverso++;
-    // -1 => "i00 algo\n", // comentario
-    // este se puede hacer por articulo, asi que esto esta mal colocado aca
-    $InfoFiscalTraducida[$contador_inverso] = substr("@"."comentario super largo que hay qye cortar",0,$max_caracteres_comentario)."\n";;
-    $contador_inverso++;
+    // // -3 => "i00 algo\n", // info adicional cliente
+    // $InfoFiscalTraducida[$contador_inverso] = substr("i00"."Primera linea super larga de informacion fiscal",0,$max_caracteres_info_adicional)."\n";;
+    // $contador_inverso++;
+    // // -2 => "i00 algo\n", // info adicional cliente
+    // $InfoFiscalTraducida[$contador_inverso] = substr("i00"."segunda linea de informacion fiscal?",0,$max_caracteres_info_adicional)."\n";;
+    // $contador_inverso++;
+    // // -1 => "i00 algo\n", // comentario
+    // // este se puede hacer por articulo, asi que esto esta mal colocado aca
+    // $InfoFiscalTraducida[$contador_inverso] = substr("@"."comentario super largo que hay qye cortar",0,$max_caracteres_comentario)."\n";;
+    // $contador_inverso++;
     
     
     return  $InfoFiscalTraducida;

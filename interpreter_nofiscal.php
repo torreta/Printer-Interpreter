@@ -241,7 +241,7 @@ class interpreter_nofiscal{
     // ["user_lastname"]=> string(10) "SUPERVISOR"
     // ["rol_id"]=> string(1) "2"
     // ["complete_identification"]=> string(xx) "J002985321"
-    $contador_inverso = -10; // aqui tengo que poner la cantidad de items que me llegan en reversa.
+    $contador_inverso = -9; // aqui tengo que poner la cantidad de items que me llegan en reversa. eran 11 con las 2 lineas de comentario fiscal comentadas
     $InfoFiscalTraducida = [];
     $max_caracteres = 40; //definido en el manual
     $max_caracteres_info_adicional = 40; //manual again
@@ -278,12 +278,12 @@ class interpreter_nofiscal{
     // -5 => "i00 algo\n", // info adicional cliente (direccion)
     $InfoFiscalTraducida[$contador_inverso] = substr("80*"."CAJERO: ".$InfoFiscal["user_name"]." ".$InfoFiscal["user_lastname"],0,$max_caracteres_info_adicional)."\n";
     $contador_inverso++;
-    // -4 => "i00 algo\n", // info adicional cliente
-    $InfoFiscalTraducida[$contador_inverso] = substr("80*"."Primera linea super larga de informacion fiscal",0,$max_caracteres_info_adicional)."\n";;
-    $contador_inverso++;
-    // -3 => "i00 algo\n", // info adicional cliente
-    $InfoFiscalTraducida[$contador_inverso] = substr("80*"."segunda linea de informacion fiscal?",0,$max_caracteres_info_adicional)."\n";
-    $contador_inverso++;
+    // // -4 => "i00 algo\n", // info adicional cliente
+    // $InfoFiscalTraducida[$contador_inverso] = substr("80*"."Primera linea super larga de informacion fiscal",0,$max_caracteres_info_adicional)."\n";;
+    // $contador_inverso++;
+    // // -3 => "i00 algo\n", // info adicional cliente
+    // $InfoFiscalTraducida[$contador_inverso] = substr("80*"."segunda linea de informacion fiscal?",0,$max_caracteres_info_adicional)."\n";
+    // $contador_inverso++;
     // -2 => "i00 algo\n", // comentario
     $InfoFiscalTraducida[$contador_inverso] = $this->separador();
     $contador_inverso++;
