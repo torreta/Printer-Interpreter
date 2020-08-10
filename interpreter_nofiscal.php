@@ -183,8 +183,14 @@ class interpreter_nofiscal{
 
   function translateLineDesc($tasa="", $precio = "", $cant = "", $desc = ""){
   
-    $comando = "80*".$this->translateDescription($desc). $this->translateTasa($tasa).$this->translateTotal($precio, $cant);
-    
+    $Utils = new Utils();
+
+    $titulo = $this->translateDescription($desc). $this->translateTasa($tasa);
+
+    $numero = $this->translateTotal($precio, $cant);
+
+    $comando = "80*".$Utils->formal_padding($titulo, $numero, 42);
+
     return  $comando;
 
   }
@@ -192,8 +198,14 @@ class interpreter_nofiscal{
 
   function translateLine($tasa="", $precio = "", $cant = "", $desc = ""){
   
-    $comando = "80*".$this->translateDescription($desc). $this->translateTasa($tasa)." Bs".$this->translatePrecio($precio)." ";
+    $Utils = new Utils();
     
+    $titulo = $this->translateDescription($desc). $this->translateTasa($tasa);
+
+    $numero = "Bs".$this->translatePrecio($precio);
+
+    $comando = "80*".$Utils->formal_padding($titulo, $numero, 42);
+
     return  $comando;
 
   }
