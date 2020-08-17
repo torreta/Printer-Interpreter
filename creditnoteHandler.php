@@ -75,78 +75,78 @@ class creditnoteHandler
 
   }
 
-  function get_invoice_items($conn, $invoice_id,$tipo_de_factura, $subtotal, $tax, $total ){
+  function get_creditnote_items($conn, $creditnote_id,$tipo_de_factura, $subtotal, $tax, $total ){
 
     // Check connection
     if ($conn->connect_error) {
-      die("(get_invoice_items) Connection failed: " . $conn->connect_error);
+      die("(get_creditnote_items) Connection failed: " . $conn->connect_error);
     }
     
-    if($invoice_id ==  null || $invoice_id ==  "" || $tipo_de_factura ==""){
-      die("dato vital vacio (get_invoice_items)\n");
+    if($creditnote_id ==  null || $creditnote_id ==  "" || $tipo_de_factura ==""){
+      die("dato vital vacio (get_creditnote_items)\n");
     }
     
     // inicializo una instancia de interprete para el tipo de doc.
     // ...(hago una instancia del interprete del tipo de doc)
     $interpreter = new interpreter();
 
-    $factura_en_contruccion = array();
+    $creditnote_en_contruccion = array();
     $index_counter = 0;
     $index_inverse_counter = 0;
 
 
-    $query_items_factura = 
+    $query_items_creditnote = 
       "SELECT
-        dbo_administration_invoices_items.id,
-        dbo_administration_invoices_items.invoice_id,
-        dbo_administration_invoices_items.price,
-        dbo_administration_invoices_items.quantity, 
-        dbo_administration_invoices_items.tax_id,
-        dbo_administration_invoices_items.tax_base,
+        dbo_finance_creditnotes_items.id,
+        dbo_finance_creditnotes_items.creditnote_id,
+        dbo_finance_creditnotes_items.price,
+        dbo_finance_creditnotes_items.quantity, 
+        dbo_finance_creditnotes_items.tax_id,
+        dbo_finance_creditnotes_items.tax_base,
         dbo_config_taxes.percentage,
         dbo_config_taxes.observation,
-        dbo_administration_invoices_items.exchange_rate_id,
+        dbo_finance_creditnotes_items.exchange_rate_id,
         dbo_config_exchange_rates.exchange_rate,
         dbo_config_currencies.abbreviation,
         dbo_config_currencies.`name`,
         dbo_storage_products.`code`,
         dbo_storage_products.description
-      FROM `dbo_administration_invoices_items`
-      join dbo_config_taxes on dbo_administration_invoices_items.tax_id = dbo_config_taxes.id
-      join dbo_config_exchange_rates on dbo_administration_invoices_items.exchange_rate_id = dbo_config_exchange_rates.id
+      FROM `dbo_finance_creditnotes_items`
+      join dbo_config_taxes on dbo_finance_creditnotes_items.tax_id = dbo_config_taxes.id
+      join dbo_config_exchange_rates on dbo_finance_creditnotes_items.exchange_rate_id = dbo_config_exchange_rates.id
       join dbo_config_currencies on dbo_config_exchange_rates.currency_id = dbo_config_currencies.id
-      join dbo_storage_products on dbo_administration_invoices_items.product_id = dbo_storage_products.id
-      WHERE 	dbo_administration_invoices_items.invoice_id = " .$invoice_id.";
+      join dbo_storage_products on dbo_finance_creditnotes_items.product_id = dbo_storage_products.id
+      WHERE 	dbo_finance_creditnotes_items.creditnote_id = " .$creditnote_id.";
     ";
 
-    $items_factura = $conn->query($query_items_factura);
+    $items_factura = $conn->query($query_items_creditnote);
 
     if (!($items_factura->num_rows > 0)) {
-      die("no hay items asociados a esa factura");
-    }
+      var_dump("no hay items asociados a esa nota de credito");
+    }else{
 
-    // output data of each row
-    while($item = $items_factura->fetch_assoc()) {
-      // echo "\n";
-      // echo "price: " . $item["price"]. " - quantity: " . $item["quantity"]. ", description " . $item["description"];
-      // echo "\n";
+      // output data of each row
+      while($item = $items_factura->fetch_assoc()) {
+        // echo "\n";
+        // echo "price: " . $item["price"]. " - quantity: " . $item["quantity"]. ", description " . $item["description"];
+        // echo "\n";
 
-        // proximamente al interpreter
-        // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
-        // $tasa="", $precio = "", $cant = "", $desc = ""
-        $factura_en_contruccion[$index_counter] = $interpreter->translateLineCredito($item["observation"],$item["price"],$item["quantity"],$item["description"])."\n";
-        $index_counter++;
+          // proximamente al interpreter
+          // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
+          // $tasa="", $precio = "", $cant = "", $desc = ""
+          $creditnote_en_contruccion[$index_counter] = $interpreter->translateLineCredito($item["observation"],$item["price"],$item["quantity"],$item["description"])."\n";
+          $index_counter++;
 
+      }
 
     }
 
     //cierre de factura (viene despues de los items)
-    $factura_en_contruccion[$index_counter] = "101";
+    $creditnote_en_contruccion[$index_counter] = "101";
 
-    return  $factura_en_contruccion;
+    return  $creditnote_en_contruccion;
 
   }
-
 
 
   function printCreditnote($conn, $documento_imprimiendo ){
@@ -178,20 +178,17 @@ class creditnoteHandler
 
 
     // info de factura
-    $numero_factura = $factura_actual["invoice_number"];
-    $subtotal = $factura_actual["subtotal"];
-    $tax = $factura_actual["tax"];
-    $total = $factura_actual["total"];
+    $numero_creditnote = $factura_actual["creditnote_number"];
+    $subtotal = $factura_actual["subtotal"]; // --- maybe
+    $tax = $factura_actual["tax"]; // --- maybe
+    $amount = $factura_actual["amount"];
 
     // nombre Cajero
     $nombre_cajero = $documento_imprimiendo["cashier_name"];
 
-    // tipo
-    $es_fiscal = $factura_actual["fiscal"];
-    $tipo_de_factura = ($es_fiscal == "1")? "fiscal":"no fiscal";
 
     echo "\n";
-    echo "el documento a imprimir es la factura ".$tipo_de_factura." de numero: " . $numero_factura .", por cajero ". $nombre_cajero. "\n ";
+    echo "el documento a imprimir es la nota de credito de numero: " . $numero_creditnote .", por cajero ". $nombre_cajero. "\n ";
     echo "\n";
 
     // inicializo una instancia de interprete para el tipo de doc.
@@ -199,31 +196,31 @@ class creditnoteHandler
     $interpreter = new interpreter();
 
     // counter for translation
-    $factura_en_contruccion = array();
+    $creditnote_en_contruccion = array();
     $index_counter = 0;
     $index_inverse_counter = 0;
 
     // consultar informacion fiscal de la factura antes de armarla
-    $infoFiscalTraducida = $interpreter->translateFiscalInfoArray($factura_fiscal_actual);
+    $infoFiscalTraducida = $interpreter->translateFiscalInfoArrayCreditnote($factura_fiscal_actual);
 
     // arreglo de los items de la factura
-    $items_factura = $this->get_invoice_items($conn ,$creditnote_id, $tipo_de_factura, $subtotal, $tax, $total);
+    $items_factura = $this->get_creditnote_items($conn ,$creditnote_id, $tipo_de_factura, $subtotal, $tax, $total);
 
     // concateno la informacion fiscal a la de los items de la factura
-    $factura_en_contruccion = $infoFiscalTraducida + $items_factura;
+    $creditnote_en_contruccion = $infoFiscalTraducida + $items_factura;
 
     //cierre de factura (lo coloque en los items de una vez)
     //.. si quiero luego colocar pie de factura aqui lo puedo hacer con el size de $items_factura + 1 como indice y sumo
-    // $factura_en_contruccion[$index_counter] = "101";
+    // $creditnote_en_contruccion[$index_counter] = "101";
 
     echo "\n";
-    var_dump($factura_en_contruccion) ;
+    var_dump($creditnote_en_contruccion) ;
     echo "\n";
     
     // creo el archivo de la factura y lo mando a imprimir
     $Utils = new Utils();
     $filename = "Devolucion".$numero_factura.".txt";	
-    $file = $Utils->printFileFromArray($factura_en_contruccion, $filename);
+    $file = $Utils->printFileFromArray($creditnote_en_contruccion, $filename);
     
     $respuesta_impresora = $Utils->printFile($filename);
     
