@@ -7,48 +7,47 @@
 
   $itObj = new Tfhka(); // printer api
 
-class returnHandler
+class creditnoteHandler
 {
   
-  function get_invoice_info($conn, $invoice_id ){
+  function get_creditnote_info($conn, $creditnote_id ){
 
     // Check connection
     if ($conn->connect_error) {
-      die("(get_invoice_info) Connection failed: " . $conn->connect_error);
+      die("(get_creditnote_info) Connection failed: " . $conn->connect_error);
     }
     
-    if($invoice_id ==  null || $invoice_id ==  "" ){
-      die("dato vital vacio (get_invoice_info)\n");
+    if($creditnote_id ==  null || $creditnote_id ==  "" ){
+      die("dato vital vacio (get_creditnote_info)\n");
     }
 
-    $query_info_factura = "SELECT * FROM dbo_administration_invoices WHERE id = ".$invoice_id.";";
-    $info_factura = null;
-    $info_factura = $conn->query($query_info_factura);
+    $query_info_creditnote = "SELECT * FROM dbo_finance_creditnotes WHERE id = ".$creditnote_id.";";
+    $info_creditnote = null;
+    $info_creditnote = $conn->query($query_info_creditnote);
 
-    if ($info_factura->num_rows == 0) { die("factura con ese id no existe"); }
+    if ($info_creditnote->num_rows == 0) { die("Nota de credito con ese id no existe"); }
 
-    return  $info_factura;
+    return  $info_creditnote;
 
   }
 
   
-  function get_info_fiscal($conn, $invoice_id ){
+  function get_info_fiscal($conn, $creditnote_id ){
 
     // Check connection
     if ($conn->connect_error) {
-      die("(get_invoice_info) Connection failed: " . $conn->connect_error);
+      die("(get_creditnote_info) Connection failed: " . $conn->connect_error);
     }
     
-    if($invoice_id ==  null || $invoice_id ==  "" ){
-      die("dato vital vacio (get_invoice_info)\n");
+    if($creditnote_id ==  null || $creditnote_id ==  "" ){
+      die("dato vital vacio (get_creditnote_info)\n");
     }
 
     // detalles fiscales del documento
-    $query_info_fiscal_factura = 
+    $query_info_fiscal_creditnote = 
       "SELECT
-        dbo_administration_invoices.invoice_number,
-        dbo_administration_invoices.tax_id,
-        DATE_FORMAT( dbo_administration_invoices.createdAt, '%d-%m-%Y') as createdAt,
+        dbo_finance_creditnotes.creditnote_number,
+        DATE_FORMAT( dbo_finance_creditnotes.createdAt, '%d-%m-%Y') as createdAt,
         dbo_sales_clients.name,
         dbo_sales_clients.last_name,
         dbo_sales_clients.telephone,
@@ -61,17 +60,18 @@ class returnHandler
         dbo_system_users.last_name as user_lastname,
         dbo_system_users.rol_id 
       FROM 
-        dbo_administration_invoices
-      join dbo_sales_clients on dbo_administration_invoices.client_id = dbo_sales_clients.id
+        dbo_finance_creditnotes
+      join dbo_sales_clients on dbo_finance_creditnotes.client_id = dbo_sales_clients.id
       join dbo_config_identifications_types on dbo_sales_clients.identification_type_id = dbo_config_identifications_types.id
-      join dbo_system_users on dbo_administration_invoices.user_id = dbo_system_users.id
-      WHERE dbo_administration_invoices.id = ".$invoice_id.";";
+      join dbo_system_users on dbo_finance_creditnotes.user_id = dbo_system_users.id
+      where dbo_finance_creditnotes.id =".$creditnote_id.";";
 
-    $info_fiscal_factura = $conn->query($query_info_fiscal_factura);
 
-    if ($info_fiscal_factura->num_rows == 0) { die("factura con info fiscal con ese id no existe"); }
+    $info_fiscal_creditnote = $conn->query($query_info_fiscal_creditnote);
 
-    return  $info_fiscal_factura;
+    if ($info_fiscal_creditnote->num_rows == 0) { die("nota de credito con info fiscal con ese id no existe, o faltan datos"); }
+
+    return  $info_fiscal_creditnote;
 
   }
 
@@ -149,29 +149,29 @@ class returnHandler
 
 
 
-  function printInvoice($conn, $documento_imprimiendo ){
+  function printCreditnote($conn, $documento_imprimiendo ){
 
     // Check connection
     if ($conn->connect_error) {
-      die("(printInvoice) Connection failed: " . $conn->connect_error);
+      die("(creditnoteHandler) Connection failed: " . $conn->connect_error);
     }
     
 
     if($documento_imprimiendo ==  null){
-      die("dato vital vacio (printInvoice)\n");
+      die("dato vital vacio (creditnoteHandler)\n");
     }
 
     // tomo el id de la factura
-    $invoice_id = $documento_imprimiendo["document_id"];
+    $creditnote_id = $documento_imprimiendo["document_id"];
 
     // detalles de documento
-    $info_factura = $this->get_invoice_info($conn,$invoice_id);
+    $info_creditnote = $this->get_creditnote_info($conn,$creditnote_id);
 
     // objeto de los datos de la factura.
-    $factura_actual = $info_factura->fetch_assoc();
+    $factura_actual = $info_creditnote->fetch_assoc();
 
     // informacion fiscal
-    $info_fiscal_factura =  $this->get_info_fiscal($conn,$invoice_id);
+    $info_fiscal_factura =  $this->get_info_fiscal($conn,$creditnote_id);
 
     // objeto informacion fiscal factura
     $factura_fiscal_actual = $info_fiscal_factura->fetch_assoc();
@@ -207,7 +207,7 @@ class returnHandler
     $infoFiscalTraducida = $interpreter->translateFiscalInfoArray($factura_fiscal_actual);
 
     // arreglo de los items de la factura
-    $items_factura = $this->get_invoice_items($conn ,$invoice_id, $tipo_de_factura, $subtotal, $tax, $total);
+    $items_factura = $this->get_invoice_items($conn ,$creditnote_id, $tipo_de_factura, $subtotal, $tax, $total);
 
     // concateno la informacion fiscal a la de los items de la factura
     $factura_en_contruccion = $infoFiscalTraducida + $items_factura;
