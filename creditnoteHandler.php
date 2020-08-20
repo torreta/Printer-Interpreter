@@ -47,6 +47,7 @@ class creditnoteHandler
     $query_info_fiscal_creditnote = 
       "SELECT
         dbo_finance_creditnotes.creditnote_number,
+        dbo_finance_creditnotes.observations,
         DATE_FORMAT( dbo_finance_creditnotes.createdAt, '%d-%m-%Y') as createdAt,
         dbo_sales_clients.name,
         dbo_sales_clients.last_name,
@@ -58,14 +59,15 @@ class creditnoteHandler
         concat(dbo_config_identifications_types.`name`,dbo_sales_clients.identification_number) as complete_identification,
         dbo_system_users.name as user_name,
         dbo_system_users.last_name as user_lastname,
-        dbo_system_users.rol_id 
-      FROM 
+        dbo_system_users.rol_id
+      FROM
         dbo_finance_creditnotes
-      join dbo_sales_clients on dbo_finance_creditnotes.client_id = dbo_sales_clients.id
-      join dbo_config_identifications_types on dbo_sales_clients.identification_type_id = dbo_config_identifications_types.id
-      join dbo_system_users on dbo_finance_creditnotes.user_id = dbo_system_users.id
+      left join dbo_sales_clients on dbo_finance_creditnotes.client_id = dbo_sales_clients.id
+      left join dbo_config_identifications_types on dbo_sales_clients.identification_type_id = dbo_config_identifications_types.id
+      left join dbo_system_users on dbo_finance_creditnotes.user_id = dbo_system_users.id
       where dbo_finance_creditnotes.id =".$creditnote_id.";";
 
+    var_dump($query_info_fiscal_creditnote);
 
     $info_fiscal_creditnote = $conn->query($query_info_fiscal_creditnote);
 
