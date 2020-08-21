@@ -77,14 +77,14 @@ class creditnoteHandler
 
   }
 
-  function get_creditnote_items($conn, $creditnote_id,$tipo_de_factura, $subtotal, $tax, $total ){
+  function get_creditnote_items($conn, $creditnote_id ){
 
     // Check connection
     if ($conn->connect_error) {
       die("(get_creditnote_items) Connection failed: " . $conn->connect_error);
     }
     
-    if($creditnote_id ==  null || $creditnote_id ==  "" || $tipo_de_factura ==""){
+    if($creditnote_id ==  null || $creditnote_id ==  "" ){
       die("dato vital vacio (get_creditnote_items)\n");
     }
     
@@ -99,24 +99,12 @@ class creditnoteHandler
 
     $query_items_creditnote = 
       "SELECT
-        dbo_finance_creditnotes_items.id,
-        dbo_finance_creditnotes_items.creditnote_id,
-        dbo_finance_creditnotes_items.price,
-        dbo_finance_creditnotes_items.quantity, 
-        dbo_finance_creditnotes_items.tax_id,
-        dbo_finance_creditnotes_items.tax_base,
-        dbo_config_taxes.percentage,
-        dbo_config_taxes.observation,
-        dbo_finance_creditnotes_items.exchange_rate_id,
-        dbo_config_exchange_rates.exchange_rate,
-        dbo_config_currencies.abbreviation,
-        dbo_config_currencies.`name`,
+        dbo_finance_creditnotes_items.net_amount,
+        dbo_finance_creditnotes_items.product_quantity,
+        dbo_finance_creditnotes_items.observations,
         dbo_storage_products.`code`,
-        dbo_storage_products.description
+        dbo_storage_products.description,
       FROM `dbo_finance_creditnotes_items`
-      join dbo_config_taxes on dbo_finance_creditnotes_items.tax_id = dbo_config_taxes.id
-      join dbo_config_exchange_rates on dbo_finance_creditnotes_items.exchange_rate_id = dbo_config_exchange_rates.id
-      join dbo_config_currencies on dbo_config_exchange_rates.currency_id = dbo_config_currencies.id
       join dbo_storage_products on dbo_finance_creditnotes_items.product_id = dbo_storage_products.id
       WHERE 	dbo_finance_creditnotes_items.creditnote_id = " .$creditnote_id.";
     ";
@@ -136,7 +124,7 @@ class creditnoteHandler
           // proximamente al interpreter
           // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
           // $tasa="", $precio = "", $cant = "", $desc = ""
-          $creditnote_en_contruccion[$index_counter] = $interpreter->translateLineCredito($item["observation"],$item["price"],$item["quantity"],$item["description"])."\n";
+          $creditnote_en_contruccion[$index_counter] = $interpreter->translateLineCredito($item["observations"],$item["net_amount"],$item["product_quantity"],$item["description"])."\n";
           $index_counter++;
 
       }
@@ -206,7 +194,7 @@ class creditnoteHandler
     $infoFiscalTraducida = $interpreter->translateFiscalInfoArrayCreditnote($factura_fiscal_actual);
 
     // arreglo de los items de la factura
-    $items_factura = $this->get_creditnote_items($conn ,$creditnote_id, $tipo_de_factura, $subtotal, $tax, $total);
+    $items_factura = $this->get_creditnote_items($conn ,$creditnote_id);
 
     // concateno la informacion fiscal a la de los items de la factura
     $creditnote_en_contruccion = $infoFiscalTraducida + $items_factura;
@@ -221,7 +209,7 @@ class creditnoteHandler
     
     // creo el archivo de la factura y lo mando a imprimir
     $Utils = new Utils();
-    $filename = "Devolucion".$numero_factura.".txt";	
+    $filename = "NotadeCredito".$numero_creditnote.".txt";	
     $file = $Utils->printFileFromArray($creditnote_en_contruccion, $filename);
     
     $respuesta_impresora = $Utils->printFile($filename);
