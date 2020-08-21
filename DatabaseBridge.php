@@ -97,7 +97,7 @@ class DatabaseBridge
     $insertar_registro = $conn->prepare($query_a_imprimiendo);
 
     if ($insertar_registro->execute()) {
-      echo "Se ha registrado una factura a imprimiendo \n";
+      echo "Se ha registrado un documento a imprimiendo \n";
     } else {
       echo "(al insertar a imrpimiendo) Error: " . $sql . "\n" . mysqli_error($conn);
     }
@@ -132,7 +132,7 @@ class DatabaseBridge
     $borrar_pendiente_registro = $conn->prepare($query_delete_pending);
 
     if ($borrar_pendiente_registro->execute()) {
-      echo "Se ha borrado la factura pendientes, por haber sido llevada a imprimir. \n";
+      echo "Se ha borrado el documento de pendientes, por haber sido llevada a imprimir. \n";
     } else {
       echo "(al borrar de pendientes) Error: " . $sql . "\n" . mysqli_error($conn);
     }
@@ -173,7 +173,7 @@ class DatabaseBridge
       $insertar_registro = $conn->prepare($query_a_historico);
 
     if ($insertar_registro->execute()) {
-      echo "Se ha registrado la factura en el historial \n";
+      echo "Se ha registrado el documento en el historial de impresos \n";
     } else {
       echo "(al insertar a historial) Error: " . $sql . "\n" . mysqli_error($conn);
     }
@@ -208,7 +208,7 @@ class DatabaseBridge
       $borrar_current_registro = $conn->prepare($query_delete_current);
 
     if ($borrar_current_registro->execute()) {
-      echo "Se ha borrado la factura de las imprimiendo, por haber sido completada. \n";
+      echo "Se ha borrado el documeto de la cola de impresion, por haber sido completada. \n";
     } else {
       echo "(al borrar de current) Error: " . $sql . "\n" . mysqli_error($conn);
     }
