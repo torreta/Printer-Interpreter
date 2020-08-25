@@ -282,7 +282,9 @@ class invoiceHandler
     $file = $Utils->printFileFromArray($factura_en_contruccion, $filename);
     
     $respuesta_impresora = $Utils->printFile($filename);
-    
+    // linea para emular impresion exitosa.
+    // $respuesta_impresora = "true";
+
     if($respuesta_impresora == "true"){
 
       return "true";

@@ -48,6 +48,7 @@ class creditnoteHandler
       "SELECT
         dbo_finance_creditnotes.creditnote_number,
         dbo_finance_creditnotes.observations,
+        dbo_finance_creditnotes.creditnote_amount,
         DATE_FORMAT( dbo_finance_creditnotes.createdAt, '%d-%m-%Y') as createdAt,
         dbo_sales_clients.name,
         dbo_sales_clients.last_name,
@@ -113,6 +114,7 @@ class creditnoteHandler
 
     if (!($items_factura->num_rows > 0)) {
       var_dump("no hay items asociados a esa nota de credito");
+      return "false";
     }else{
 
       // output data of each row
@@ -158,20 +160,17 @@ class creditnoteHandler
     $info_creditnote = $this->get_creditnote_info($conn,$creditnote_id);
 
     // objeto de los datos de la factura.
-    $factura_actual = $info_creditnote->fetch_assoc();
+    $nota_credito_actual = $info_creditnote->fetch_assoc();
 
     // informacion fiscal
-    $info_fiscal_factura =  $this->get_info_fiscal($conn,$creditnote_id);
+    $info_fiscal_nota_credito =  $this->get_info_fiscal($conn,$creditnote_id);
 
     // objeto informacion fiscal factura
-    $factura_fiscal_actual = $info_fiscal_factura->fetch_assoc();
-
+    $factura_fiscal_actual = $info_fiscal_nota_credito->fetch_assoc();
 
     // info de factura
-    $numero_creditnote = $factura_actual["creditnote_number"];
-    $subtotal = $factura_actual["subtotal"]; // --- maybe
-    $tax = $factura_actual["tax"]; // --- maybe
-    $amount = $factura_actual["amount"];
+    $numero_creditnote = $nota_credito_actual["creditnote_number"];
+    $amount = $nota_credito_actual["creditnote_amount"];
 
     // nombre Cajero
     $nombre_cajero = $documento_imprimiendo["cashier_name"];
@@ -196,8 +195,20 @@ class creditnoteHandler
     // arreglo de los items de la factura
     $items_factura = $this->get_creditnote_items($conn ,$creditnote_id);
 
-    // concateno la informacion fiscal a la de los items de la factura
-    $creditnote_en_contruccion = $infoFiscalTraducida + $items_factura;
+
+    // en caso de que la nota de credito no tenia items, esto aplica
+    if ($items_factura == "false") {
+      $items_factura_extra = array();
+      $items_factura_extra[1] = $interpreter->translateLineCredito("Sin IVA",$amount ,1,"otros")."\n";
+
+      $cierre = array();
+      $cierre[2] = "101";
+      $creditnote_en_contruccion = $infoFiscalTraducida +  $items_factura_extra + $cierre;
+
+    } else {
+      // concateno la informacion fiscal a la de los items de la factura
+      $creditnote_en_contruccion = $infoFiscalTraducida + $items_factura;
+    }
 
     //cierre de factura (lo coloque en los items de una vez)
     //.. si quiero luego colocar pie de factura aqui lo puedo hacer con el size de $items_factura + 1 como indice y sumo
@@ -213,6 +224,8 @@ class creditnoteHandler
     $file = $Utils->printFileFromArray($creditnote_en_contruccion, $filename);
     
     $respuesta_impresora = $Utils->printFile($filename);
+    // linea para emular impresion exitosa.
+    // $respuesta_impresora = "true";
     
     if($respuesta_impresora == "true"){
 

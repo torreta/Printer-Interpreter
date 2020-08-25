@@ -350,7 +350,7 @@ class interpreter{
     // -2 => "iS*Pedro Mendez\n", // mombre persona
     // -1 => "iR*12.345.678\n", // rif
 
-    $contador_inverso = -7; // aqui tengo que poner la cantidad de items que me llegan en reversa. era 10 con las 3 lineas de abajo comentadas.
+    $contador_inverso = -8; // aqui tengo que poner la cantidad de items que me llegan en reversa. era 10 con las 3 lineas de abajo comentadas.
     $InfoFiscalTraducida = [];
     $max_caracteres = 40; //definido en el manual
     $max_caracteres_info_adicional = 40; //manual again
@@ -385,8 +385,8 @@ class interpreter{
     $InfoFiscalTraducida[$contador_inverso] = substr("i00"."CAJERO: ".$InfoFiscal["user_name"]." ".$InfoFiscal["user_lastname"],0,$max_caracteres_info_adicional)."\n";
     $contador_inverso++;
     // // -3 => "i00 algo\n", // info adicional cliente
-    // $InfoFiscalTraducida[$contador_inverso] = substr("i00"."Primera linea super larga de informacion fiscal",0,$max_caracteres_info_adicional)."\n";;
-    // $contador_inverso++;
+    $InfoFiscalTraducida[$contador_inverso] = substr("i00".$InfoFiscal["observations"],0,$max_caracteres_info_adicional)."\n";;
+    $contador_inverso++;
     // // -2 => "i00 algo\n", // info adicional cliente
     // $InfoFiscalTraducida[$contador_inverso] = substr("i00"."segunda linea de informacion fiscal?",0,$max_caracteres_info_adicional)."\n";;
     // $contador_inverso++;
