@@ -104,23 +104,24 @@ class creditnoteHandler
         dbo_finance_creditnotes_items.product_quantity,
         dbo_finance_creditnotes_items.observations,
         dbo_storage_products.`code`,
-        dbo_storage_products.description,
+        dbo_storage_products.description
       FROM `dbo_finance_creditnotes_items`
       join dbo_storage_products on dbo_finance_creditnotes_items.product_id = dbo_storage_products.id
       WHERE 	dbo_finance_creditnotes_items.creditnote_id = " .$creditnote_id.";
     ";
 
-    $items_factura = $conn->query($query_items_creditnote);
+    $items_nota_credito = $conn->query($query_items_creditnote);
+    // var_dump($items_nota_credito);
 
-    if (!($items_factura->num_rows > 0)) {
+    if (!($items_nota_credito->num_rows > 0)) {
       var_dump("no hay items asociados a esa nota de credito");
       return "false";
     }else{
 
       // output data of each row
-      while($item = $items_factura->fetch_assoc()) {
+      while($item = $items_nota_credito->fetch_assoc()) {
         // echo "\n";
-        // echo "price: " . $item["price"]. " - quantity: " . $item["quantity"]. ", description " . $item["description"];
+        // echo "price: " . $item["net_amount"]. " - quantity: " . $item["product_quantity"]. ", description " . $item["description"]. ", observation: " . $item["observations"];
         // echo "\n";
 
           // proximamente al interpreter
