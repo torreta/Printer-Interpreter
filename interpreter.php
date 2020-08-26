@@ -351,7 +351,7 @@ class interpreter{
     // -2 => "iS*Pedro Mendez\n", // mombre persona
     // -1 => "iR*12.345.678\n", // rif
 
-    $contador_inverso = -9; // aqui tengo que poner la cantidad de items que me llegan en reversa. era 10 con las 3 lineas de abajo comentadas.
+    $contador_inverso = -8; // aqui tengo que poner la cantidad de items que me llegan en reversa. era 10 con las 3 lineas de abajo comentadas.
     $InfoFiscalTraducida = [];
     $max_caracteres = 40; //definido en el manual
     $max_caracteres_info_adicional = 40; //manual again
@@ -362,8 +362,8 @@ class interpreter{
     var_dump($InfoFiscal);
     // -10 => "iF*0000001\n",//factura asociadaj
     // $InfoFiscalTraducida[$contador_inverso] = "iF*".$InfoFiscal["invoice_number"];
-    $InfoFiscalTraducida[$contador_inverso] = "iF*".$InfoFiscal["creditnote_number"]."\n";
-    $contador_inverso++;
+    // $InfoFiscalTraducida[$contador_inverso] = "iF*".$InfoFiscal["creditnote_number"]."\n";
+    // $contador_inverso++;
     //numero doc
     $InfoFiscalTraducida[$contador_inverso] = "iF*".$InfoFiscal["creditnote_number"]."\n";
     $contador_inverso++;
