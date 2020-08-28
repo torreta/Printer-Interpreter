@@ -76,8 +76,7 @@ class interpreter{
       $comando = $tasa;
     }
     
-    //return  $comando;
-    return  "d0";
+    return  $comando;
 
   }
 
