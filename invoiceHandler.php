@@ -105,6 +105,7 @@ class invoiceHandler
         dbo_administration_invoices_items.quantity, 
         dbo_administration_invoices_items.tax_id,
         dbo_administration_invoices_items.tax_base,
+        ROUND(dbo_administration_invoices_items.tax_base / dbo_administration_invoices_items.quantity, 2) as real_base,
         dbo_config_taxes.percentage,
         dbo_config_taxes.observation,
         dbo_administration_invoices_items.exchange_rate_id,
@@ -137,7 +138,7 @@ class invoiceHandler
         // proximamente al interpreter
         // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
         // $tasa="", $precio = "", $cant = "", $desc = ""
-        $factura_en_contruccion[$index_counter] = $interpreter->translateLine($item["observation"],$item["price"],$item["quantity"],$item["description"])."\n";
+        $factura_en_contruccion[$index_counter] = $interpreter->translateLine($item["observation"],$item["real_base"],$item["quantity"],$item["description"])."\n";
         $index_counter++;
       }else{
         // el interpreter en los no fiscales genera 2 lineas separadas, si es un item de de  mas de 2 items
@@ -145,14 +146,14 @@ class invoiceHandler
         // // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
         // $tasa="", $precio = "", $cant = "", $desc = ""
         if($item["quantity"] == "1"){
-          $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLine($item["observation"],$item["price"],$item["quantity"],$item["description"])."\n";
+          $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLine($item["observation"],$item["real_base"],$item["quantity"],$item["description"])."\n";
           $index_counter++;
         }else{
           // $precio = "", $cant = ""
-          $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLinePrice($item["observation"],$item["price"],$item["quantity"],$item["description"])."\n";
+          $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLinePrice($item["observation"],$item["real_base"],$item["quantity"],$item["description"])."\n";
           $index_counter++;
           // $tasa="", $desc = ""
-          $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLineDesc($item["observation"],$item["price"],$item["quantity"],$item["description"])."\n";
+          $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLineDesc($item["observation"],$item["real_base"],$item["quantity"],$item["description"])."\n";
           $index_counter++;
 
         }
