@@ -100,13 +100,18 @@ class creditnoteHandler
 
     $query_items_creditnote = 
       "SELECT
-        dbo_finance_creditnotes_items.net_amount,
+        dbo_storage_products.`code`,
+        dbo_storage_products.description,
+        dbo_administration_invoices_items.price,
         dbo_finance_creditnotes_items.product_quantity,
         dbo_finance_creditnotes_items.observations,
-        dbo_storage_products.`code`,
-        dbo_storage_products.description
+        dbo_config_taxes.observation as tax_observation
       FROM `dbo_finance_creditnotes_items`
+      join dbo_finance_creditnotes on dbo_finance_creditnotes.id = dbo_finance_creditnotes_items.creditnote_id
+      join dbo_administration_invoices on dbo_administration_invoices.id = dbo_finance_creditnotes.invoice_id
       join dbo_storage_products on dbo_finance_creditnotes_items.product_id = dbo_storage_products.id
+      join dbo_administration_invoices_items on dbo_administration_invoices_items.product_id = dbo_finance_creditnotes_items.product_id
+      join dbo_config_taxes on dbo_config_taxes.id = dbo_administration_invoices_items.tax_id
       WHERE 	dbo_finance_creditnotes_items.creditnote_id = " .$creditnote_id.";
     ";
 
@@ -120,15 +125,15 @@ class creditnoteHandler
 
       // output data of each row
       while($item = $items_nota_credito->fetch_assoc()) {
-        // echo "\n";
-        // echo "price: " . $item["net_amount"]. " - quantity: " . $item["product_quantity"]. ", description " . $item["description"]. ", observation: " . $item["observations"];
-        // echo "\n";
+        echo "\n";
+        echo "price: " . $item["price"]. " - quantity: " . $item["product_quantity"]. ", description " . $item["description"]. ", observation: " . $item["observations"];
+        echo "\n";
 
-          // proximamente al interpreter
-          // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
-          // $tasa="", $precio = "", $cant = "", $desc = ""
-          $creditnote_en_contruccion[$index_counter] = $interpreter->translateLineCredito($item["observations"],$item["net_amount"],$item["product_quantity"],$item["description"])."\n";
-          $index_counter++;
+        // proximamente al interpreter
+        // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
+        // $tasa="", $precio = "", $cant = "", $desc = ""
+        $creditnote_en_contruccion[$index_counter] = $interpreter->translateLineCredito($item["tax_observation"],$item["price"],$item["product_quantity"],$item["description"])."\n";
+        $index_counter++;
 
       }
 
