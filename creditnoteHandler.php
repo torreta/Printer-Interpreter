@@ -205,7 +205,7 @@ class creditnoteHandler
     // en caso de que la nota de credito no tenia items, esto aplica
     if ($items_factura == "false") {
       $items_factura_extra = array();
-      $items_factura_extra[1] = $interpreter->translateLineCredito("Sin IVA",$amount ,1,"otros")."\n";
+      $items_factura_extra[1] = $interpreter->translateLineCredito("Sin IVA",$amount ,1,"Otros")."\n";
 
       $cierre = array();
       $cierre[2] = "101";
