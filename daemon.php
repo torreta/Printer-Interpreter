@@ -138,6 +138,9 @@ while (true) {
       // ... se borra de current
       $DatabaseBridge->borrar_imprimiendo( $conn, $documento_imprimiendo );
 
+      // ... se marca documento impreso
+      $DatabaseBridge->marcar_impreso( $conn, $documento_imprimiendo );
+
       // ... se sobrescribe el mensaje para la impresora de mensajes 
       $mensaje_al_log = "la ".$tipo_documento .": " . $numero_factura .", por cajero ". $nombre_cajero. ", ha impreso con exito.";
       $DatabaseBridge->logWithDoc( $conn, $mensaje_al_log, $documento_imprimiendo, $print_error );

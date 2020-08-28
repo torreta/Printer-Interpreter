@@ -217,6 +217,68 @@ class DatabaseBridge
   }
 
 
+  function marcar_impreso($conn, $documento_imprimiendo ){
+
+    // Check connection
+    if ($conn->connect_error) {
+      die("(marcar_impreso) Connection failed: " . $conn->connect_error);
+    }
+    
+    if($documento_imprimiendo ==  null){
+      die("objeto vacio (marcar_impreso)\n");
+    }
+
+    // query indenpotente... (no hace nada particular...)
+    $query_mark_printed = "SELECT * from `dbo_administration_invoices`;";
+
+
+    switch ($documento_imprimiendo["document_type_id"]) {
+      case "1": // Factura (unico caso de momento)
+        $tipo_documento = "factura";
+
+        // tomo el id de la factura
+        $invoice_id = $documento_imprimiendo["document_id"];
+        
+        // ... marcar como impreso
+        $query_mark_printed = 
+        "UPDATE`dbo_administration_invoices` 
+          SET `printed` = 1 
+          WHERE `id` = ".$invoice_id.";";
+        
+        break;
+      case "2":// Nota de Credito
+        $tipo_documento = "Nota de Credito";
+
+        // tomo el id de la NotadeCredito (nota de credito)
+        $creditnote_id = $documento_imprimiendo["document_id"];
+        
+        // envio al "manejador" respectivo
+
+        break;
+        break;
+      case "3":// Nota de Entrega
+        break;
+      case "4":// Nota no Fiscal
+        break;
+      default: // Documento indeterminado
+        die("Documento indeterminado"); 
+    }
+
+      // puedes validar el query aca
+      // echo ( $query_mark_printed );
+
+      $marcar_current_registro = $conn->prepare($query_mark_printed);
+
+    if ($marcar_current_registro->execute()) {
+      echo "Se ha marcado el documento como impreso.. \n";
+    } else {
+      echo "(marcar_impreso) Error: " . $sql . "\n" . mysqli_error($conn);
+    }
+
+
+  }
+
+
   function logWithDoc($conn, $message, $documento_imprimiendo, $print_error){
 
     // Check connection
