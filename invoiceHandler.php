@@ -105,7 +105,8 @@ class invoiceHandler
         dbo_administration_invoices_items.quantity, 
         dbo_administration_invoices_items.tax_id,
         dbo_administration_invoices_items.tax_base,
-        ROUND(dbo_administration_invoices_items.tax_base / dbo_administration_invoices_items.quantity, 2) as real_base,
+        ROUND(dbo_administration_invoices_items.tax_base / dbo_administration_invoices_items.quantity, 2) as real_base_check,
+        dbo_administration_invoices_items_prices.unit_price_after_discount as real_base,
         dbo_config_taxes.percentage,
         dbo_config_taxes.observation,
         dbo_administration_invoices_items.exchange_rate_id,
@@ -113,12 +114,14 @@ class invoiceHandler
         dbo_config_currencies.abbreviation,
         dbo_config_currencies.`name`,
         dbo_storage_products.`code`,
-        dbo_storage_products.description
+        dbo_storage_products.description				
       FROM `dbo_administration_invoices_items`
       join dbo_config_taxes on dbo_administration_invoices_items.tax_id = dbo_config_taxes.id
       join dbo_config_exchange_rates on dbo_administration_invoices_items.exchange_rate_id = dbo_config_exchange_rates.id
       join dbo_config_currencies on dbo_config_exchange_rates.currency_id = dbo_config_currencies.id
       join dbo_storage_products on dbo_administration_invoices_items.product_id = dbo_storage_products.id
+      join dbo_administration_invoices_items_prices on dbo_administration_invoices_items.id = dbo_administration_invoices_items_prices.invoice_item_id 
+      and dbo_administration_invoices_items_prices.currency_id = 2
       WHERE 	dbo_administration_invoices_items.invoice_id = " .$invoice_id.";
     ";
 
