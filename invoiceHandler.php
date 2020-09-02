@@ -49,6 +49,7 @@ class invoiceHandler
       "SELECT
         dbo_administration_invoices.invoice_number,
         dbo_administration_invoices.tax_id,
+        dbo_administration_invoices.credit,
         DATE_FORMAT( dbo_administration_invoices.createdAt, '%d-%m-%Y') as createdAt,
         dbo_sales_clients.name,
         dbo_sales_clients.last_name,
