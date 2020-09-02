@@ -135,6 +135,8 @@ class creditnoteHandler
         // proximamente al interpreter
         // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
         // $tasa="", $precio = "", $cant = "", $desc = ""
+        // $creditnote_en_contruccion[$index_counter] = $interpreter->translateLineCommentCredito($item["observations"])."\n";
+        // $index_counter++;
         $creditnote_en_contruccion[$index_counter] = $interpreter->translateLineCredito($item["tax_observation"],$item["price"],$item["product_quantity"],$item["description"])."\n";
         $index_counter++;
 

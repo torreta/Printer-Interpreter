@@ -252,6 +252,16 @@ class interpreter{
 
   }
 
+
+  function translateLineCommentCredito( $observations=""){
+    $max_caracteres_comentario = 40;
+
+    // este texto por articulo no concuerda con el manual
+    $comando = substr("@". $observations, 0, $max_caracteres_comentario)."\n";;
+    return  $comando;
+
+  }
+
   
   function translateFiscalInfoArray( $InfoFiscal = []){
     // MODELO IMPRESORA  SRP-812
