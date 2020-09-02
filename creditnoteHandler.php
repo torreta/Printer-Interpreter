@@ -102,7 +102,8 @@ class creditnoteHandler
       "SELECT
         dbo_storage_products.`code`,
         dbo_storage_products.description,
-        dbo_administration_invoices_items.price,
+        dbo_administration_invoices_items.price as check_price,
+        dbo_administration_invoices_items_prices.unit_price_after_discount as price,
         dbo_finance_creditnotes_items.product_quantity,
         dbo_finance_creditnotes_items.observations,
         dbo_config_taxes.observation as tax_observation
@@ -112,6 +113,8 @@ class creditnoteHandler
       join dbo_storage_products on dbo_finance_creditnotes_items.product_id = dbo_storage_products.id
       join dbo_administration_invoices_items on dbo_administration_invoices_items.product_id = dbo_finance_creditnotes_items.product_id
       join dbo_config_taxes on dbo_config_taxes.id = dbo_administration_invoices_items.tax_id
+      join dbo_administration_invoices_items_prices on dbo_administration_invoices_items.id = dbo_administration_invoices_items_prices.invoice_item_id 
+      and dbo_administration_invoices_items_prices.currency_id = 2
       WHERE 	dbo_finance_creditnotes_items.creditnote_id = " .$creditnote_id.";
     ";
 
