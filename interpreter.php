@@ -42,6 +42,7 @@ class interpreter{
 
   }
 
+
   function translateTasaCredito($tasa=""){
     // de momento tengo entendido 4 tipos de tasa
     // (falta copiar de manuak, pero en ejemplo tengo)// (!), ("), (#), ( )
@@ -79,7 +80,6 @@ class interpreter{
     return  $comando;
 
   }
-
 
   
   function translatePrecio( $precio = ""){
@@ -242,6 +242,7 @@ class interpreter{
 
   }
 
+
   function translateLineCredito( $tasa="", $precio = "", $cant = "", $desc = ""){
   
     $comando = $this->translateTasaCredito($tasa) .$this->translatePrecio($precio) . $this->translateCantidad($cant) .$this->translateDescription($desc);
@@ -250,7 +251,6 @@ class interpreter{
     return  $comando;
 
   }
-
 
   
   function translateFiscalInfoArray( $InfoFiscal = []){
@@ -285,7 +285,7 @@ class interpreter{
     // ["user_lastname"]=> string(10) "SUPERVISOR"
     // ["rol_id"]=> string(1) "2"
     // ["complete_identification"]=> string(xx) "J002985321"
-    $contador_inverso = -7; // aqui tengo que poner la cantidad de items que me llegan en reversa. era 10 con las 3 lineas de abajo comentadas.
+    $contador_inverso = -8; // aqui tengo que poner la cantidad de items que me llegan en reversa. era 10 con las 3 lineas de abajo comentadas.
     $InfoFiscalTraducida = [];
     $max_caracteres = 40; //definido en el manual
     $max_caracteres_info_adicional = 40; //manual again
@@ -295,26 +295,30 @@ class interpreter{
 
     echo("dentro del interprete \n");
     var_dump($InfoFiscal);
-    // -10 => "iF*0000001\n",//factura asociadaj
+    // -8 => "iF*0000001\n",//factura asociadaj
     // $InfoFiscalTraducida[$contador_inverso] = "iF*".$InfoFiscal["invoice_number"];
     $InfoFiscalTraducida[$contador_inverso] = "iF*".$InfoFiscal["invoice_number"]."\n";
     $contador_inverso++;
-    // -9 => "iD*18-01-2014\n",//fecha factura dia especifico
+    // -7 => "iD*18-01-2014\n",//fecha factura dia especifico
     $InfoFiscalTraducida[$contador_inverso] = "iD*".$InfoFiscal["createdAt"]."\n";
     $contador_inverso++;
-    // -8 => "iS*Pedro Mendez\n", // mombre persona
+    // -6 => "iS*Pedro Mendez\n", // mombre persona
     $InfoFiscalTraducida[$contador_inverso] =  substr("iS*".$InfoFiscal["name"].$InfoFiscal["last_name"],0,$max_caracteres)."\n";
     $contador_inverso++;
-    // -7 => "iR*12.345.678\n", // rif
+    // -5 => "iR*12.345.678\n", // rif
     $InfoFiscalTraducida[$contador_inverso] = "iR*".$InfoFiscal["complete_identification"]."\n";
     $contador_inverso++;
-    // -6 => "i00 algo\n", // info adicional cliente (telefono)
+    // -4 => "i00 algo\n", // info adicional cliente (direccion)
+    $contado = ($InfoFiscal["credit"] == "1") ? "CREDITO" : "CONTADO" ;
+    $InfoFiscalTraducida[$contador_inverso] = substr("i00"."TIPO: ".$contado." ",0,$max_caracteres_info_adicional)."\n";
+    $contador_inverso++;
+    // -3 => "i00 algo\n", // info adicional cliente (telefono)
     $InfoFiscalTraducida[$contador_inverso] = substr("i00"."Telf: ".$InfoFiscal["telephone"],0,$max_caracteres_info_adicional)."\n";
     $contador_inverso++;
-    // -5 => "i00 algo\n", // info adicional cliente (direccion)
+    // -2 => "i00 algo\n", // info adicional cliente (direccion)
     $InfoFiscalTraducida[$contador_inverso] = substr("i00"."DIR: ".$InfoFiscal["direction"],0,$max_caracteres_info_adicional)."\n";
     $contador_inverso++;
-    // -4 => "i00 algo\n", // info adicional cliente (direccion)
+    // -1 => "i00 algo\n", // info adicional cliente (direccion)
     $InfoFiscalTraducida[$contador_inverso] = substr("i00"."CAJERO: ".$InfoFiscal["user_name"]." ".$InfoFiscal["user_lastname"],0,$max_caracteres_info_adicional)."\n";
     $contador_inverso++;
     // // -3 => "i00 algo\n", // info adicional cliente
@@ -332,6 +336,7 @@ class interpreter{
     return  $InfoFiscalTraducida;
 
   }
+
 
   function translateFiscalInfoArrayCreditnote( $InfoFiscal = []){
     // MODELO IMPRESORA  SRP-812
