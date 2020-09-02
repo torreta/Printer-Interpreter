@@ -275,10 +275,10 @@ class interpreter_nofiscal{
     $InfoFiscalTraducida[$contador_inverso] = "80*"."FECHA FAC: ".$InfoFiscal["createdAt"]."\n";
     $contador_inverso++;
     // -7 => "iS*Pedro Mendez\n", // mombre persona
-    $InfoFiscalTraducida[$contador_inverso] =  substr("80*"."RIF/C.i: ".$InfoFiscal["name"].$InfoFiscal["last_name"],0,$max_caracteres)."\n";
+    $InfoFiscalTraducida[$contador_inverso] =  substr("80*"."RIF/C.i: ".$InfoFiscal["complete_identification"],0,$max_caracteres)."\n";
     $contador_inverso++;
     // -6 => "iR*12.345.678\n", // rif
-    $InfoFiscalTraducida[$contador_inverso] =  substr("80*"."RAZON SOCIAL: ".$InfoFiscal["complete_identification"],0,$max_caracteres)."\n";
+    $InfoFiscalTraducida[$contador_inverso] =  substr("80*"."RAZON SOCIAL: ".$InfoFiscal["name"].$InfoFiscal["last_name"],0,$max_caracteres)."\n";
     $contador_inverso++;
     // -5 => "i00 algo\n", // info adicional cliente (direccion)
     $contado = ($InfoFiscal["credit"] == "1") ? "CREDITO" : "CONTADO" ;
