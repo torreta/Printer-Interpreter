@@ -195,4 +195,10 @@ while (true) {
     // php daemon.php
     // cd  d:\xamp\htdocs\Printer-Interpreter && php daemon.php
     // D:\xamp\htdocs\Printer-Interpreter
+
+    // cmd normal:
+    // C:\xampp\php\php.exe C:\xampp\htdocs\Printer-Interpreter\daemon.php
+    // (de no funcionar, vigilar variables de entorno y lo que vaya diciendo el log.)
+    // C:\xampp\xampp_shell.bat cd C:\xampp\htdocs\Printer-Interpreter && php daemon.php
+    // C:\xampp\xampp_shell.bat C:\xampp\php\php.exe C:\xampp\htdocs\Printer-Interpreter\daemon.php
 ?>
