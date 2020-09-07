@@ -200,5 +200,8 @@ while (true) {
     // C:\xampp\php\php.exe C:\xampp\htdocs\Printer-Interpreter\daemon.php
     // (de no funcionar, vigilar variables de entorno y lo que vaya diciendo el log.)
     // C:\xampp\xampp_shell.bat cd C:\xampp\htdocs\Printer-Interpreter && php daemon.php
-    // C:\xampp\xampp_shell.bat C:\xampp\php\php.exe C:\xampp\htdocs\Printer-Interpreter\daemon.php
+    // C:\xampp\xampp_shell.bat C:\xampp\php\php.exe C:\xampp\htdocs\Printer-Interpreter\daemon.php.
+
+    // background:
+    // cd C:\xampp\htdocs\Printer-Interpreter && START /B php daemon.php > logsito.txt
 ?>
