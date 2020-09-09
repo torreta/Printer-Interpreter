@@ -18,3 +18,5 @@ First Steps toward a Spooler for a fiscal Project, we need to talk with the prin
 7. configure daemon database conection on the same daemon.php file
 
 8. after all is configured you can run starter.vbs to start the daemon a background process
+
+9. to kill the deamon u just need to kill the CLI (php) process
