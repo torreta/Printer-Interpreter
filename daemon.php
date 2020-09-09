@@ -20,6 +20,14 @@ define('DB_CHARSET', 'utf8');
 define('DB_USER', 'root');
 define('DB_PASSWORD', null);
 
+// // Database settings - change these to your own
+// define('DB_HOST', 'strixerp.gotdns.com');
+// define('DB_NAME', 'pos_development');
+// define('DB_PORT', '3306');
+// define('DB_CHARSET', 'utf8');
+// define('DB_USER', '-------'); // remember // anibal
+// define('DB_PASSWORD', '-------'); // ask // man***
+
 // Printer config (and identification)
 define('PRINTER_ID', 1); //la impresora en uso (numerada en BD)
 
