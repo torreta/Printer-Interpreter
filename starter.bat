@@ -1,0 +1,1 @@
+START /B C:\xampp\php\php.exe C:\xampp\htdocs\Printer-Interpreter\daemon.php > C:\xampp\htdocs\Printer-Interpreter\logsito.txt 
