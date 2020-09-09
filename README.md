@@ -11,4 +11,10 @@ First Steps toward a Spooler for a fiscal Project, we need to talk with the prin
 
 4. requires PHP 7+
 
-5. 
+5. configure starter.bat paths depending on ur current machine.
+
+6. follow examples how to configure paths on daemon.php final lines
+
+7. configure daemon database conection on the same daemon.php file
+
+8. after all is configured you can run starter.vbs to start the daemon a background process
