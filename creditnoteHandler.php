@@ -46,7 +46,8 @@ class creditnoteHandler
     // detalles fiscales del documento
     $query_info_fiscal_creditnote = 
       "SELECT
-        dbo_finance_creditnotes.creditnote_number,
+        IFNULL(dbo_finance_creditnotes.creditnote_number,'na') as creditnote_number,
+        IFNULL(dbo_administration_invoices.invoice_number,'na') as invoice_number,
         dbo_finance_creditnotes.observations,
         dbo_finance_creditnotes.creditnote_amount,
         DATE_FORMAT( dbo_finance_creditnotes.createdAt, '%d-%m-%Y') as createdAt,
@@ -60,12 +61,14 @@ class creditnoteHandler
         concat(dbo_config_identifications_types.`name`,dbo_sales_clients.identification_number) as complete_identification,
         dbo_system_users.name as user_name,
         dbo_system_users.last_name as user_lastname,
-        dbo_system_users.rol_id
+        dbo_system_users.rol_id,
+      	'Z00000001' as printer_serial
       FROM
         dbo_finance_creditnotes
       left join dbo_sales_clients on dbo_finance_creditnotes.client_id = dbo_sales_clients.id
       left join dbo_config_identifications_types on dbo_sales_clients.identification_type_id = dbo_config_identifications_types.id
       left join dbo_system_users on dbo_finance_creditnotes.user_id = dbo_system_users.id
+      left join dbo_administration_invoices on dbo_finance_creditnotes.invoice_id = dbo_administration_invoices.id
       where dbo_finance_creditnotes.id =".$creditnote_id.";";
 
     var_dump($query_info_fiscal_creditnote);
@@ -177,7 +180,7 @@ class creditnoteHandler
     $info_fiscal_nota_credito =  $this->get_info_fiscal($conn,$creditnote_id);
 
     // objeto informacion fiscal factura
-    $factura_fiscal_actual = $info_fiscal_nota_credito->fetch_assoc();
+    $nota_credito_actual = $info_fiscal_nota_credito->fetch_assoc();
 
     // info de factura
     $numero_creditnote = $nota_credito_actual["creditnote_number"];
@@ -201,7 +204,7 @@ class creditnoteHandler
     $index_inverse_counter = 0;
 
     // consultar informacion fiscal de la factura antes de armarla
-    $infoFiscalTraducida = $interpreter->translateFiscalInfoArrayCreditnote($factura_fiscal_actual);
+    $infoFiscalTraducida = $interpreter->translateFiscalInfoArrayCreditnote($nota_credito_actual);
 
     // arreglo de los items de la factura
     $items_factura = $this->get_creditnote_items($conn ,$creditnote_id);
