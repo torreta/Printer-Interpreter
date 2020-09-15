@@ -103,6 +103,7 @@ class creditnoteHandler
 
     $query_items_creditnote = 
       "SELECT
+        dbo_finance_creditnotes_items.creditnote_id,
         dbo_storage_products.`code`,
         dbo_storage_products.description,
         dbo_administration_invoices_items.price as check_price,
@@ -114,7 +115,7 @@ class creditnoteHandler
       join dbo_finance_creditnotes on dbo_finance_creditnotes.id = dbo_finance_creditnotes_items.creditnote_id
       join dbo_administration_invoices on dbo_administration_invoices.id = dbo_finance_creditnotes.invoice_id
       join dbo_storage_products on dbo_finance_creditnotes_items.product_id = dbo_storage_products.id
-      join dbo_administration_invoices_items on dbo_administration_invoices_items.product_id = dbo_finance_creditnotes_items.product_id
+      join dbo_administration_invoices_items on dbo_administration_invoices_items.product_id = dbo_finance_creditnotes_items.product_id and dbo_administration_invoices_items.invoice_id = dbo_finance_creditnotes.invoice_id
       join dbo_config_taxes on dbo_config_taxes.id = dbo_administration_invoices_items.tax_id
       join dbo_administration_invoices_items_prices on dbo_administration_invoices_items.id = dbo_administration_invoices_items_prices.invoice_item_id 
       and dbo_administration_invoices_items_prices.currency_id = 2
