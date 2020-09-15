@@ -392,10 +392,10 @@ class interpreter{
     // -8 => "iR*12.345.678\n", // rif
     $InfoFiscalTraducida[$contador_inverso] = "iR*".$InfoFiscal["complete_identification"]."\n";
     $contador_inverso++;
-    //numero doc
+    // -7 => "iD*18-01-2014\n",//fecha factura dia especifico
     $InfoFiscalTraducida[$contador_inverso] = "iF*".$InfoFiscal["invoice_number"]."\n";
     $contador_inverso++;
-    // -7 => "iD*18-01-2014\n",//fecha factura dia especifico
+    // -6 => "iI*Z4A1234567\n",// serial de la impresora fiscal
     $InfoFiscalTraducida[$contador_inverso] = "iI*".$InfoFiscal["printer_serial"]."\n";
     $contador_inverso++;
     // -6 => "iD*18-01-2014\n",//fecha factura dia especifico
@@ -407,10 +407,10 @@ class interpreter{
     // -4 => "i00 algo\n", // info adicional cliente (direccion)
     $InfoFiscalTraducida[$contador_inverso] = substr("i00"."DIR: ".$InfoFiscal["direction"],0,$max_caracteres_info_adicional)."\n";
     $contador_inverso++;
-    // -3 => "i00 algo\n", // info adicional cliente (direccion)
+    // -3 => "i00 algo\n", // info adicional cliente (usuario)
     $InfoFiscalTraducida[$contador_inverso] = substr("i00"."CAJERO: ".$InfoFiscal["user_name"]." ".$InfoFiscal["user_lastname"],0,$max_caracteres_info_adicional)."\n";
     $contador_inverso++;
-    // // -2 => "i00 algo\n", // info adicional cliente
+    // // -2 => "i00 algo\n", // info adicional cliente (observaciones )
     $InfoFiscalTraducida[$contador_inverso] = substr("i00".$InfoFiscal["observations"],0,$max_caracteres_info_adicional)."\n";;
     $contador_inverso++;
     // // -1 => "i00 algo\n", // info adicional cliente
