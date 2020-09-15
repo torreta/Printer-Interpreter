@@ -300,6 +300,27 @@ class Utils
   }
 
 
+  function rearrangeToNegativeArray( $arreglo = []){
+    // habia problemas arreglando indices 
+    // era necesario poder sumar arreglos y
+    // que el primer arreglo fuera en orden
+    // sin importar que el indice fuera tomado por el 
+    // segundo arreglo
+
+    $arreglo_inv = [];
+
+    $arreglo = array_reverse($arreglo);
+
+    for ($i = 0; $i < sizeof($arreglo); $i++) {
+      $arreglo_inv[-$i-1] = $arreglo[$i];
+    }
+
+    $arreglo =  array_reverse($arreglo_inv,true);
+
+    return($arreglo);
+  }
+
+
   function printFileFromArray($ArrayInfo, $filename=""){
 
     // escribo en un archivo el contenido de un array
