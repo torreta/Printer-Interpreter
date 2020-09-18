@@ -260,39 +260,40 @@ class interpreter_nofiscal{
     $max_lineas_info_adicional = 10; //manual again
     $max_caracteres_comentario = 40;
 
-
+    $Utils = new Utils();
+    $contador = 0;
     echo("dentro del interprete \n");
     var_dump($InfoFiscal);
 
     // TITULO
     // -10 => titulo
-    $InfoFiscalTraducida[$contador_inverso] = "80*"."FACTURA "."\n";
-    $contador_inverso++;
+    $InfoFiscalTraducida[$contador] = "80*"."FACTURA "."\n";
+    $contador++;
     // -9 $InfoFiscalTraducida[$contador_inverso] = "iF*".$InfoFiscal["invoice_number"];
-    $InfoFiscalTraducida[$contador_inverso] = "80*"."#FAC: ".$InfoFiscal["invoice_number"]."\n";
-    $contador_inverso++;
+    $InfoFiscalTraducida[$contador] = "80*"."#FAC: ".$InfoFiscal["invoice_number"]."\n";
+    $contador++;
     // -8 => "iD*18-01-2014\n",//fecha factura dia especifico
-    $InfoFiscalTraducida[$contador_inverso] = "80*"."FECHA FAC: ".$InfoFiscal["createdAt"]."\n";
-    $contador_inverso++;
+    $InfoFiscalTraducida[$contador] = "80*"."FECHA FAC: ".$InfoFiscal["createdAt"]."\n";
+    $contador++;
     // -7 => "iS*Pedro Mendez\n", // mombre persona
-    $InfoFiscalTraducida[$contador_inverso] =  substr("80*"."RIF/C.i: ".$InfoFiscal["complete_identification"],0,$max_caracteres)."\n";
-    $contador_inverso++;
+    $InfoFiscalTraducida[$contador] =  substr("80*"."RIF/C.i: ".$InfoFiscal["complete_identification"],0,$max_caracteres)."\n";
+    $contador++;
     // -6 => "iR*12.345.678\n", // rif
-    $InfoFiscalTraducida[$contador_inverso] =  substr("80*"."RAZON SOCIAL: ".$InfoFiscal["name"].$InfoFiscal["last_name"],0,$max_caracteres)."\n";
-    $contador_inverso++;
+    $InfoFiscalTraducida[$contador] =  substr("80*"."RAZON SOCIAL: ".$InfoFiscal["name"].$InfoFiscal["last_name"],0,$max_caracteres)."\n";
+    $contador++;
     // -5 => "i00 algo\n", // info adicional cliente (direccion)
     $contado = ($InfoFiscal["credit"] == "1") ? "CREDITO" : "CONTADO" ;
-    $InfoFiscalTraducida[$contador_inverso] = substr("80*"."TIPO: ".$contado." ",0,$max_caracteres_info_adicional)."\n";
-    $contador_inverso++;
+    $InfoFiscalTraducida[$contador] = substr("80*"."TIPO: ".$contado." ",0,$max_caracteres_info_adicional)."\n";
+    $contador++;
     // -4 => "i00 algo\n", // info adicional cliente (telefono)
-    $InfoFiscalTraducida[$contador_inverso] = substr("80*"."Telf: ".$InfoFiscal["telephone"],0,$max_caracteres_info_adicional)."\n";
-    $contador_inverso++;
+    $InfoFiscalTraducida[$contador] = substr("80*"."Telf: ".$InfoFiscal["telephone"],0,$max_caracteres_info_adicional)."\n";
+    $contador++;
     // -3 => "i00 algo\n", // info adicional cliente (direccion)
-    $InfoFiscalTraducida[$contador_inverso] = substr("80*"."DIR: ".$InfoFiscal["direction"],0,$max_caracteres_info_adicional)."\n";
-    $contador_inverso++;
+    $InfoFiscalTraducida[$contador] = substr("80*"."DIR: ".$InfoFiscal["direction"],0,$max_caracteres_info_adicional)."\n";
+    $contador++;
     // -2 => "i00 algo\n", // info adicional cliente (direccion)
-    $InfoFiscalTraducida[$contador_inverso] = substr("80*"."CAJERO: ".$InfoFiscal["user_name"]." ".$InfoFiscal["user_lastname"],0,$max_caracteres_info_adicional)."\n";
-    $contador_inverso++;
+    $InfoFiscalTraducida[$contador] = substr("80*"."CAJERO: ".$InfoFiscal["user_name"]." ".$InfoFiscal["user_lastname"],0,$max_caracteres_info_adicional)."\n";
+    $contador++;
 
     // // -4 => "i00 algo\n", // info adicional cliente
     // $InfoFiscalTraducida[$contador_inverso] = substr("80*"."Primera linea super larga de informacion fiscal",0,$max_caracteres_info_adicional)."\n";;
@@ -302,10 +303,13 @@ class interpreter_nofiscal{
     // $contador_inverso++;
 
     // -1 => "i00 algo\n", // cierre de linea
-    $InfoFiscalTraducida[$contador_inverso] = $this->separador();
-    $contador_inverso++;
+    $InfoFiscalTraducida[$contador] = $this->separador();
+    $contador++;
 
-    
+    // esta ultima linea me ayuda a no tener que predecir la cantidad de lineas que tengo
+    // sino que modifica un arreglo y crea otro con los cambios de indices requeridos
+    $InfoFiscalTraducida = $Utils->rearrangeToNegativeArray($InfoFiscalTraducida);
+
     return  $InfoFiscalTraducida;
 
   }
