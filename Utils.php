@@ -330,12 +330,12 @@ class Utils
   }
 
 
-  function makeComment( $comments = []){
+  function makeComment( $comments = [], $prefix = "i00" ){
   //transformando elementos de un arreglo en lineas de codigo de comentario.
     $arreglo = [];
 
     for ($i = 0; $i < sizeof($comments); $i++) {
-        $arreglo[$i] = "i00".$comments[$i];
+        $arreglo[$i] = $prefix.$comments[$i];
     }
 
     return($arreglo);
