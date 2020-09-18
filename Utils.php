@@ -321,14 +321,27 @@ class Utils
   }
 
 
-  function splitsize( $texto = "", $size = 40){
+  function splitsize( $texto = "", $size = 36){
+    // tengo comentarios demasiado largos, necesitaba dividirlo en lineas
 
     $arreglo = str_split($texto, $size);
 
     return($arreglo);
   }
 
+
+  function makeComment( $comments = []){
+  //transformando elementos de un arreglo en lineas de codigo de comentario.
+    $arreglo = [];
+
+    for ($i = 0; $i < sizeof($comments); $i++) {
+        $arreglo[$i] = "i00".$comments[$i];
+    }
+
+    return($arreglo);
+  }
   
+
   function printFileFromArray($ArrayInfo, $filename=""){
 
     // escribo en un archivo el contenido de un array
