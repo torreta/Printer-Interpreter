@@ -321,6 +321,14 @@ class Utils
   }
 
 
+  function splitsize( $texto = "", $size = 40){
+
+    $arreglo = str_split($texto, $size);
+
+    return($arreglo);
+  }
+
+  
   function printFileFromArray($ArrayInfo, $filename=""){
 
     // escribo en un archivo el contenido de un array
