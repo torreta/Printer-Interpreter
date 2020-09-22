@@ -1,5 +1,23 @@
-80*nosenada
-80*suerte
-80*lo maximo
-80*en serio, te adoro
+80*FACTURA 
+80*#FAC: 0
+80*FECHA FAC: 16-09-2020
+80*RIF/C.i: V5555555
+80*RAZON SOCIAL: wilhwilh
+80*TIPO: CONTADO 
+80*Telf: 
+80*DIR: 
+80*CAJERO: ADMINISTRADOR ADMINISTRADOR
+80*------------------------------------------
+80*14 xBs 600,000.00
+80*ACONDICIONADOR VO5 A (G)   Bs 8,400,000.00
+80*ONE A DAY WOMENS 300 (G)   Bs 5,600,000.00
+80*5 xBs 200,000.00
+80*CAPRISUN PACIFIC 177 (G)   Bs 1,000,000.00
+80*5 xBs 1,200,000.00
+80*ACEITE VEGETAL PAN 3 (G)   Bs 6,000,000.00
+80*------------------------------------------
+80*SUBTTL:                   Bs 21,000,000.00
+80*IVA:                       Bs 3,360,000.00
+80*------------------------------------------
+80*TOTAL:                    Bs 24,360,000.00
 810
