@@ -10,36 +10,36 @@
 class debitnoteHandler
 {
   
-  function get_debitnote_info($conn, $creditnote_id ){
+  function get_debitnote_info($conn, $debitnote_id ){
 
     // Check connection
     if ($conn->connect_error) {
       die("(get_debitnote_info) Connection failed: " . $conn->connect_error);
     }
     
-    if($creditnote_id ==  null || $creditnote_id ==  "" ){
+    if($debitnote_id ==  null || $debitnote_id ==  "" ){
       die("dato vital vacio (get_debitnote_info)\n");
     }
 
-    $query_info_creditnote = "SELECT * FROM dbo_finance_creditnotes WHERE id = ".$creditnote_id.";";
-    $info_creditnote = null;
-    $info_creditnote = $conn->query($query_info_creditnote);
+    $query_info_debitnote = "SELECT * FROM dbo_finance_debitnotes WHERE id = ".$debitnote_id.";";
+    $info_debitnote = null;
+    $info_debitnote = $conn->query($query_info_debitnote);
 
-    if ($info_creditnote->num_rows == 0) { die("Nota de credito con ese id no existe"); }
+    if ($info_debitnote->num_rows == 0) { die("Nota de debito con ese id no existe"); }
 
-    return  $info_creditnote;
+    return  $info_debitnote;
 
   }
 
   
-  function get_info_fiscal($conn, $creditnote_id ){
+  function get_info_fiscal($conn, $debitnote_id ){
 
     // Check connection
     if ($conn->connect_error) {
       die("(get_debitnote_info) Connection failed: " . $conn->connect_error);
     }
     
-    if($creditnote_id ==  null || $creditnote_id ==  "" ){
+    if($debitnote_id ==  null || $debitnote_id ==  "" ){
       die("dato vital vacio (get_debitnote_info)\n");
     }
 
@@ -69,7 +69,7 @@ class debitnoteHandler
       left join dbo_config_identifications_types on dbo_sales_clients.identification_type_id = dbo_config_identifications_types.id
       left join dbo_system_users on dbo_finance_creditnotes.user_id = dbo_system_users.id
       left join dbo_administration_invoices on dbo_finance_creditnotes.invoice_id = dbo_administration_invoices.id
-      where dbo_finance_creditnotes.id =".$creditnote_id.";";
+      where dbo_finance_creditnotes.id =".$debitnote_id.";";
 
     var_dump($query_info_fiscal_creditnote);
 
@@ -81,14 +81,14 @@ class debitnoteHandler
 
   }
 
-  function get_creditnote_items($conn, $creditnote_id ){
+  function get_creditnote_items($conn, $debitnote_id ){
 
     // Check connection
     if ($conn->connect_error) {
       die("(get_creditnote_items) Connection failed: " . $conn->connect_error);
     }
     
-    if($creditnote_id ==  null || $creditnote_id ==  "" ){
+    if($debitnote_id ==  null || $debitnote_id ==  "" ){
       die("dato vital vacio (get_creditnote_items)\n");
     }
     
@@ -119,7 +119,7 @@ class debitnoteHandler
       join dbo_config_taxes on dbo_config_taxes.id = dbo_administration_invoices_items.tax_id
       join dbo_administration_invoices_items_prices on dbo_administration_invoices_items.id = dbo_administration_invoices_items_prices.invoice_item_id 
       and dbo_administration_invoices_items_prices.currency_id = 2
-      WHERE 	dbo_finance_creditnotes_items.creditnote_id = " .$creditnote_id.";
+      WHERE 	dbo_finance_creditnotes_items.creditnote_id = " .$debitnote_id.";
     ";
 
     $items_nota_credito = $conn->query($query_items_creditnote);
@@ -169,16 +169,18 @@ class debitnoteHandler
     }
 
     // tomo el id de la factura
-    $creditnote_id = $documento_imprimiendo["document_id"];
+    $debitnote_id = $documento_imprimiendo["document_id"];
 
     // detalles de documento
-    $info_creditnote = $this->get_debitnote_info($conn,$creditnote_id);
+    $info_creditnote = $this->get_debitnote_info($conn,$debitnote_id);
+
+
 
     // objeto de los datos de la factura.
     $nota_credito_actual = $info_creditnote->fetch_assoc();
 
     // informacion fiscal
-    $info_fiscal_nota_credito =  $this->get_info_fiscal($conn,$creditnote_id);
+    $info_fiscal_nota_credito =  $this->get_info_fiscal($conn,$debitnote_id);
 
     // objeto informacion fiscal factura
     $nota_credito_actual = $info_fiscal_nota_credito->fetch_assoc();
@@ -208,7 +210,7 @@ class debitnoteHandler
     $infoFiscalTraducida = $interpreter->translateFiscalInfoArrayCreditnote($nota_credito_actual);
 
     // arreglo de los items de la factura
-    $items_factura = $this->get_creditnote_items($conn ,$creditnote_id);
+    $items_factura = $this->get_creditnote_items($conn ,$debitnote_id);
 
 
     // en caso de que la nota de credito no tenia items, esto aplica
