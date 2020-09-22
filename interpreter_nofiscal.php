@@ -255,6 +255,7 @@ class interpreter_nofiscal{
     // ["complete_identification"]=> string(xx) "J002985321"
     $contador_inverso = -10; // aqui tengo que poner la cantidad de items que me llegan en reversa. eran 11 con las 2 lineas de comentario fiscal comentadas
     $InfoFiscalTraducida = [];
+    $ComentarioTraducido = [];
     $max_caracteres = 40; //definido en el manual
     $max_caracteres_info_adicional = 40; //manual again
     $max_lineas_info_adicional = 10; //manual again
@@ -302,9 +303,14 @@ class interpreter_nofiscal{
     // $InfoFiscalTraducida[$contador_inverso] = substr("80*"."segunda linea de informacion fiscal?",0,$max_caracteres_info_adicional)."\n";
     // $contador_inverso++;
 
+    // $ComentarioTraducido =  $Utils->makeComment($Utils->splitsize($InfoFiscal["observations"]),"80*");
+
+    // $InfoFiscalTraducida = array_merge($InfoFiscalTraducida,$ComentarioTraducido);
+
+    // $contador +  sizeof($ComentarioTraducido);
+
     // -1 => "i00 algo\n", // cierre de linea
     $InfoFiscalTraducida[$contador] = $this->separador();
-    $contador++;
 
     // esta ultima linea me ayuda a no tener que predecir la cantidad de lineas que tengo
     // sino que modifica un arreglo y crea otro con los cambios de indices requeridos
