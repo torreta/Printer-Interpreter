@@ -335,7 +335,7 @@ class Utils
     $arreglo = [];
 
     for ($i = 0; $i < sizeof($comments); $i++) {
-        $arreglo[$i] = $prefix.$comments[$i];
+        $arreglo[$i] = $prefix.$comments[$i]. "\n";
     }
 
     return($arreglo);
