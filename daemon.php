@@ -8,6 +8,7 @@ if (PHP_SAPI != "cli") {
 include_once ("DatabaseBridge.php"); 
 include_once ("invoiceHandler.php"); 
 include_once ("creditnoteHandler.php"); 
+include_once ("debitnoteHandler.php"); 
 
 
 $DatabaseBridge =  new DatabaseBridge();
@@ -126,8 +127,16 @@ while (true) {
         $respuesta_impresora = $creditnoteHandler->printCreditnote($conn,$documento_imprimiendo);
 
         break;
-        break;
-      case "3":// Nota de Entrega
+      case "3":// Nota de Debito
+        $tipo_documento = "Nota de Debito";
+
+        // tomo el id de la NotadeCredito (nota de credito)
+        $debitnote_id = $documento_imprimiendo["document_id"];
+        
+        // envio al "manejador" respectivo
+        $debitnoteHandler =  new debitnoteHandler();
+        $respuesta_impresora = $debitnoteHandler->printDebitnote($conn,$documento_imprimiendo);
+
         break;
       case "4":// Nota no Fiscal
         break;
