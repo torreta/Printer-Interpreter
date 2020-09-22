@@ -44,13 +44,12 @@ class debitnoteHandler
     }
 
     // detalles fiscales del documento
-    $query_info_fiscal_creditnote = 
+    $query_info_fiscal_debitnote = 
       "SELECT
-        IFNULL(dbo_finance_creditnotes.creditnote_number,'na') as creditnote_number,
-        IFNULL(dbo_administration_invoices.invoice_number,'na') as invoice_number,
-        dbo_finance_creditnotes.observations,
-        dbo_finance_creditnotes.creditnote_amount,
-        DATE_FORMAT( dbo_finance_creditnotes.createdAt, '%d-%m-%Y') as createdAt,
+        IFNULL(dbo_finance_debitnotes.debitnote_number,'na') as debitnote_number,
+        dbo_finance_debitnotes.debitnote_amount,
+        DATE_FORMAT( dbo_finance_debitnotes.createdAt, '%d-%m-%Y') as createdAt,
+        dbo_finance_debitnotes.observations,
         dbo_sales_clients.name,
         dbo_sales_clients.last_name,
         dbo_sales_clients.telephone,
@@ -62,36 +61,38 @@ class debitnoteHandler
         dbo_system_users.name as user_name,
         dbo_system_users.last_name as user_lastname,
         dbo_system_users.rol_id,
-      	'Z00000001' as printer_serial
+        'Z00000001' as printer_serial
       FROM
-        dbo_finance_creditnotes
-      left join dbo_sales_clients on dbo_finance_creditnotes.client_id = dbo_sales_clients.id
+      dbo_finance_debitnotes
+      left join dbo_sales_clients on dbo_finance_debitnotes.client_id = dbo_sales_clients.id
       left join dbo_config_identifications_types on dbo_sales_clients.identification_type_id = dbo_config_identifications_types.id
-      left join dbo_system_users on dbo_finance_creditnotes.user_id = dbo_system_users.id
-      left join dbo_administration_invoices on dbo_finance_creditnotes.invoice_id = dbo_administration_invoices.id
-      where dbo_finance_creditnotes.id =".$debitnote_id.";";
+      left join dbo_system_users on dbo_finance_debitnotes.user_id = dbo_system_users.id
+      where dbo_finance_debitnotes.id =".$debitnote_id.";";
 
-    var_dump($query_info_fiscal_creditnote);
+    var_dump($query_info_fiscal_debitnote);
 
-    $info_fiscal_creditnote = $conn->query($query_info_fiscal_creditnote);
+    $info_fiscal_debitnote = $conn->query($query_info_fiscal_debitnote);
 
-    if ($info_fiscal_creditnote->num_rows == 0) { die("nota de credito con info fiscal con ese id no existe, o faltan datos"); }
+    if ($info_fiscal_debitnote->num_rows == 0) { die("nota de debito con info fiscal con ese id no existe, o faltan datos"); }
 
-    return  $info_fiscal_creditnote;
+    return  $info_fiscal_debitnote;
 
   }
 
-  function get_creditnote_items($conn, $debitnote_id ){
+  function get_debitnote_items($conn, $debitnote_id ){
 
     // Check connection
     if ($conn->connect_error) {
-      die("(get_creditnote_items) Connection failed: " . $conn->connect_error);
+      die("(get_debitnote_items) Connection failed: " . $conn->connect_error);
     }
     
     if($debitnote_id ==  null || $debitnote_id ==  "" ){
-      die("dato vital vacio (get_creditnote_items)\n");
+      die("dato vital vacio (get_debitnote_items)\n");
     }
     
+    // DE MOMENTO LAS NOTAS DE DEBITO NO POSEEN ITEMS, POR LO TANTO, ESTO ES INNCESESARIO
+
+
     // inicializo una instancia de interprete para el tipo de doc.
     // ...(hago una instancia del interprete del tipo de doc)
     $interpreter = new interpreter();
@@ -168,33 +169,31 @@ class debitnoteHandler
       die("dato vital vacio (debitnoteHandler)\n");
     }
 
-    // tomo el id de la factura
+    // tomo el id de la nota de debito
     $debitnote_id = $documento_imprimiendo["document_id"];
 
     // detalles de documento
-    $info_creditnote = $this->get_debitnote_info($conn,$debitnote_id);
+    $info_debitnote = $this->get_debitnote_info($conn,$debitnote_id);
 
-
-
-    // objeto de los datos de la factura.
-    $nota_credito_actual = $info_creditnote->fetch_assoc();
+    // objeto de los datos de la nota de debito.
+    $nota_debito_actual = $info_debitnote->fetch_assoc();
 
     // informacion fiscal
-    $info_fiscal_nota_credito =  $this->get_info_fiscal($conn,$debitnote_id);
+    $info_fiscal_nota_debito =  $this->get_info_fiscal($conn,$debitnote_id);
 
-    // objeto informacion fiscal factura
-    $nota_credito_actual = $info_fiscal_nota_credito->fetch_assoc();
+    // objeto informacion fiscal nota de debito
+    $nota_debito_actual = $info_fiscal_nota_debito->fetch_assoc();
 
-    // info de factura
-    $numero_creditnote = $nota_credito_actual["creditnote_number"];
-    $amount = $nota_credito_actual["creditnote_amount"];
+    // info de nota de debito
+    $numero_debitnote = $nota_debito_actual["debitnote_number"];
+    $amount = $nota_debito_actual["debitnote_amount"];
 
     // nombre Cajero
     $nombre_cajero = $documento_imprimiendo["cashier_name"];
 
 
     echo "\n";
-    echo "el documento a imprimir es la nota de credito de numero: " . $numero_creditnote .", por cajero ". $nombre_cajero. "\n ";
+    echo "el documento a imprimir es la nota de debito de numero: " . $numero_debitnote .", por cajero ". $nombre_cajero. "\n ";
     echo "\n";
 
     // inicializo una instancia de interprete para el tipo de doc.
@@ -202,43 +201,45 @@ class debitnoteHandler
     $interpreter = new interpreter();
 
     // counter for translation
-    $creditnote_en_contruccion = array();
+    $debitnote_en_contruccion = array();
     $index_counter = 0;
     $index_inverse_counter = 0;
 
-    // consultar informacion fiscal de la factura antes de armarla
-    $infoFiscalTraducida = $interpreter->translateFiscalInfoArrayCreditnote($nota_credito_actual);
+    // consultar informacion fiscal de la nota de debito antes de armarla
+    $infoFiscalTraducida = $interpreter->translateFiscalInfoArrayDebitnote($nota_debito_actual);
 
-    // arreglo de los items de la factura
-    $items_factura = $this->get_creditnote_items($conn ,$debitnote_id);
+    // arreglo de los items de la nota de debito
+    // de momento las notas de debito no poseen items por lo tanto... estos traducen en 1 solo
+    // $items_factura = $this->get_debitnote_items($conn ,$debitnote_id);
+    $items_nota = "false";
 
 
-    // en caso de que la nota de credito no tenia items, esto aplica
-    if ($items_factura == "false") {
-      $items_factura_extra = array();
-      $items_factura_extra[1] = $interpreter->translateLineCredito("Sin IVA",$amount ,1,"Otros")."\n";
+    // en caso de que la nota de debito no tenia items, esto aplica
+    if ($items_nota == "false") {
+      $items_nota_extra = array();
+      $items_nota_extra[1] = $interpreter->translateLineDebito("Sin IVA",$amount ,1,"Otros")."\n";
 
       $cierre = array();
       $cierre[2] = "101";
-      $creditnote_en_contruccion = $infoFiscalTraducida +  $items_factura_extra + $cierre;
+      $debitnote_en_contruccion = $infoFiscalTraducida +  $items_nota_extra + $cierre;
 
     } else {
-      // concateno la informacion fiscal a la de los items de la factura
-      $creditnote_en_contruccion = $infoFiscalTraducida + $items_factura;
+      // concateno la informacion fiscal a la de los items de la nota de debito
+      $debitnote_en_contruccion = $infoFiscalTraducida + $items_nota;
     }
 
-    //cierre de factura (lo coloque en los items de una vez)
-    //.. si quiero luego colocar pie de factura aqui lo puedo hacer con el size de $items_factura + 1 como indice y sumo
-    // $creditnote_en_contruccion[$index_counter] = "101";
+    //cierre de nota de debito (lo coloque en los items de una vez)
+    //.. si quiero luego colocar pie de nota de debito aqui lo puedo hacer con el size de $items_nota de debito + 1 como indice y sumo
+    // $debitnote_en_contruccion[$index_counter] = "101";
 
     echo "\n";
-    var_dump($creditnote_en_contruccion) ;
+    var_dump($debitnote_en_contruccion) ;
     echo "\n";
     
-    // creo el archivo de la factura y lo mando a imprimir
+    // creo el archivo de la nota de debito y lo mando a imprimir
     $Utils = new Utils();
-    $filename = "NotadeCredito".$numero_creditnote.".txt";	
-    $file = $Utils->printFileFromArray($creditnote_en_contruccion, $filename);
+    $filename = "NotadeDebito".$numero_debitnote.".txt";	
+    $file = $Utils->printFileFromArray($debitnote_en_contruccion, $filename);
     
     $respuesta_impresora = $Utils->printFile($filename);
     // linea para emular impresion exitosa.
