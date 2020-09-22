@@ -211,5 +211,5 @@ while (true) {
     // C:\xampp\xampp_shell.bat C:\xampp\php\php.exe C:\xampp\htdocs\Printer-Interpreter\daemon.php.
 
     // background:
-    // cd C:\xampp\htdocs\Printer-Interpreter && START /B php daemon.php > logsito.txt
+    // cd C:\xampp\htdocs\Printer-Interpreter && START /B php daemon.php > daemon.log
 ?>
