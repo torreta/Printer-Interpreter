@@ -344,7 +344,7 @@ class interpreter{
     // ["user_lastname"]=> string(10) "SUPERVISOR"
     // ["rol_id"]=> string(1) "2"
     // ["complete_identification"]=> string(xx) "J002985321"
-    $contador_inverso = -8; // aqui tengo que poner la cantidad de items que me llegan en reversa. era 10 con las 3 lineas de abajo comentadas.
+    // $contador_inverso = -8; // aqui tengo que poner la cantidad de items que me llegan en reversa. era 10 con las 3 lineas de abajo comentadas.
     $InfoFiscalTraducida = [];
     $max_caracteres = 40; //definido en el manual
     $max_caracteres_info_adicional = 40; //manual again
@@ -352,45 +352,42 @@ class interpreter{
     $max_caracteres_comentario = 40;
 
 
+    $Utils = new Utils();
+    $contador = 0;
+
     echo("dentro del interprete \n");
     var_dump($InfoFiscal);
+
     // -8 => "iF*0000001\n",//factura asociadaj
     // $InfoFiscalTraducida[$contador_inverso] = "iF*".$InfoFiscal["invoice_number"];
-    $InfoFiscalTraducida[$contador_inverso] = "iF*".$InfoFiscal["invoice_number"]."\n";
-    $contador_inverso++;
+    $InfoFiscalTraducida[$contador] = "iF*".$InfoFiscal["invoice_number"]."\n";
+    $contador++;
     // -7 => "iD*18-01-2014\n",//fecha factura dia especifico
-    $InfoFiscalTraducida[$contador_inverso] = "iD*".$InfoFiscal["createdAt"]."\n";
-    $contador_inverso++;
+    $InfoFiscalTraducida[$contador] = "iD*".$InfoFiscal["createdAt"]."\n";
+    $contador++;
     // -6 => "iS*Pedro Mendez\n", // mombre persona
-    $InfoFiscalTraducida[$contador_inverso] =  substr("iS*".$InfoFiscal["name"].$InfoFiscal["last_name"],0,$max_caracteres)."\n";
-    $contador_inverso++;
+    $InfoFiscalTraducida[$contador] =  substr("iS*".$InfoFiscal["name"].$InfoFiscal["last_name"],0,$max_caracteres)."\n";
+    $contador++;
     // -5 => "iR*12.345.678\n", // rif
-    $InfoFiscalTraducida[$contador_inverso] = "iR*".$InfoFiscal["complete_identification"]."\n";
-    $contador_inverso++;
+    $InfoFiscalTraducida[$contador] = "iR*".$InfoFiscal["complete_identification"]."\n";
+    $contador++;
     // -4 => "i00 algo\n", // info adicional cliente (direccion)
     $contado = ($InfoFiscal["credit"] == "1") ? "CREDITO" : "CONTADO" ;
-    $InfoFiscalTraducida[$contador_inverso] = substr("i00"."TIPO: ".$contado." ",0,$max_caracteres_info_adicional)."\n";
-    $contador_inverso++;
+    $InfoFiscalTraducida[$contador] = substr("i00"."TIPO: ".$contado." ",0,$max_caracteres_info_adicional)."\n";
+    $contador++;
     // -3 => "i00 algo\n", // info adicional cliente (telefono)
-    $InfoFiscalTraducida[$contador_inverso] = substr("i00"."Telf: ".$InfoFiscal["telephone"],0,$max_caracteres_info_adicional)."\n";
-    $contador_inverso++;
+    $InfoFiscalTraducida[$contador] = substr("i00"."Telf: ".$InfoFiscal["telephone"],0,$max_caracteres_info_adicional)."\n";
+    $contador++;
     // -2 => "i00 algo\n", // info adicional cliente (direccion)
-    $InfoFiscalTraducida[$contador_inverso] = substr("i00"."DIR: ".$InfoFiscal["direction"],0,$max_caracteres_info_adicional)."\n";
-    $contador_inverso++;
+    $InfoFiscalTraducida[$contador] = substr("i00"."DIR: ".$InfoFiscal["direction"],0,$max_caracteres_info_adicional)."\n";
+    $contador++;
     // -1 => "i00 algo\n", // info adicional cliente (direccion)
-    $InfoFiscalTraducida[$contador_inverso] = substr("i00"."CAJERO: ".$InfoFiscal["user_name"]." ".$InfoFiscal["user_lastname"],0,$max_caracteres_info_adicional)."\n";
-    $contador_inverso++;
-    // // -3 => "i00 algo\n", // info adicional cliente
-    // $InfoFiscalTraducida[$contador_inverso] = substr("i00"."Primera linea super larga de informacion fiscal",0,$max_caracteres_info_adicional)."\n";;
-    // $contador_inverso++;
-    // // -2 => "i00 algo\n", // info adicional cliente
-    // $InfoFiscalTraducida[$contador_inverso] = substr("i00"."segunda linea de informacion fiscal?",0,$max_caracteres_info_adicional)."\n";;
-    // $contador_inverso++;
-    // // -1 => "i00 algo\n", // comentario
-    // // este se puede hacer por articulo, asi que esto esta mal colocado aca
-    // $InfoFiscalTraducida[$contador_inverso] = substr("@"."comentario super largo que hay qye cortar",0,$max_caracteres_comentario)."\n";;
-    // $contador_inverso++;
-    
+    $InfoFiscalTraducida[$contador] = substr("i00"."CAJERO: ".$InfoFiscal["user_name"]." ".$InfoFiscal["user_lastname"],0,$max_caracteres_info_adicional)."\n";
+    $contador++;
+
+    // esta ultima linea me ayuda a no tener que predecir la cantidad de lineas que tengo
+    // sino que modifica un arreglo y crea otro con los cambios de indices requeridos
+    $InfoFiscalTraducida = $Utils->rearrangeToNegativeArray( $InfoFiscalTraducida );
     
     return  $InfoFiscalTraducida;
 
