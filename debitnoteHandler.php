@@ -95,64 +95,64 @@ class debitnoteHandler
 
     // inicializo una instancia de interprete para el tipo de doc.
     // ...(hago una instancia del interprete del tipo de doc)
-    $interpreter = new interpreter();
+    // $interpreter = new interpreter();
 
-    $creditnote_en_contruccion = array();
-    $index_counter = 0;
-    $index_inverse_counter = 0;
+    // $creditnote_en_contruccion = array();
+    // $index_counter = 0;
+    // $index_inverse_counter = 0;
 
 
-    $query_items_creditnote = 
-      "SELECT
-        dbo_finance_creditnotes_items.creditnote_id,
-        dbo_storage_products.`code`,
-        dbo_storage_products.description,
-        dbo_administration_invoices_items.price as check_price,
-        dbo_administration_invoices_items_prices.unit_price_after_discount as price,
-        dbo_finance_creditnotes_items.product_quantity,
-        dbo_finance_creditnotes_items.observations,
-        dbo_config_taxes.observation as tax_observation
-      FROM `dbo_finance_creditnotes_items`
-      join dbo_finance_creditnotes on dbo_finance_creditnotes.id = dbo_finance_creditnotes_items.creditnote_id
-      join dbo_administration_invoices on dbo_administration_invoices.id = dbo_finance_creditnotes.invoice_id
-      join dbo_storage_products on dbo_finance_creditnotes_items.product_id = dbo_storage_products.id
-      join dbo_administration_invoices_items on dbo_administration_invoices_items.product_id = dbo_finance_creditnotes_items.product_id and dbo_administration_invoices_items.invoice_id = dbo_finance_creditnotes.invoice_id
-      join dbo_config_taxes on dbo_config_taxes.id = dbo_administration_invoices_items.tax_id
-      join dbo_administration_invoices_items_prices on dbo_administration_invoices_items.id = dbo_administration_invoices_items_prices.invoice_item_id 
-      and dbo_administration_invoices_items_prices.currency_id = 2
-      WHERE 	dbo_finance_creditnotes_items.creditnote_id = " .$debitnote_id.";
-    ";
+    // $query_items_creditnote = 
+    //   "SELECT
+    //     dbo_finance_creditnotes_items.creditnote_id,
+    //     dbo_storage_products.`code`,
+    //     dbo_storage_products.description,
+    //     dbo_administration_invoices_items.price as check_price,
+    //     dbo_administration_invoices_items_prices.unit_price_after_discount as price,
+    //     dbo_finance_creditnotes_items.product_quantity,
+    //     dbo_finance_creditnotes_items.observations,
+    //     dbo_config_taxes.observation as tax_observation
+    //   FROM `dbo_finance_creditnotes_items`
+    //   join dbo_finance_creditnotes on dbo_finance_creditnotes.id = dbo_finance_creditnotes_items.creditnote_id
+    //   join dbo_administration_invoices on dbo_administration_invoices.id = dbo_finance_creditnotes.invoice_id
+    //   join dbo_storage_products on dbo_finance_creditnotes_items.product_id = dbo_storage_products.id
+    //   join dbo_administration_invoices_items on dbo_administration_invoices_items.product_id = dbo_finance_creditnotes_items.product_id and dbo_administration_invoices_items.invoice_id = dbo_finance_creditnotes.invoice_id
+    //   join dbo_config_taxes on dbo_config_taxes.id = dbo_administration_invoices_items.tax_id
+    //   join dbo_administration_invoices_items_prices on dbo_administration_invoices_items.id = dbo_administration_invoices_items_prices.invoice_item_id 
+    //   and dbo_administration_invoices_items_prices.currency_id = 2
+    //   WHERE 	dbo_finance_creditnotes_items.creditnote_id = " .$debitnote_id.";
+    // ";
 
-    $items_nota_credito = $conn->query($query_items_creditnote);
-    // var_dump($items_nota_credito);
+    // $items_nota_credito = $conn->query($query_items_creditnote);
+    // // var_dump($items_nota_credito);
 
-    if (!($items_nota_credito->num_rows > 0)) {
-      var_dump("no hay items asociados a esa nota de credito");
-      return "false";
-    }else{
+    // if (!($items_nota_credito->num_rows > 0)) {
+    //   var_dump("no hay items asociados a esa nota de credito");
+    //   return "false";
+    // }else{
 
-      // output data of each row
-      while($item = $items_nota_credito->fetch_assoc()) {
-        echo "\n";
-        echo "price: " . $item["price"]. " - quantity: " . $item["product_quantity"]. ", description " . $item["description"]. ", observation: " . $item["observations"];
-        echo "\n";
+    //   // output data of each row
+    //   while($item = $items_nota_credito->fetch_assoc()) {
+    //     echo "\n";
+    //     echo "price: " . $item["price"]. " - quantity: " . $item["product_quantity"]. ", description " . $item["description"]. ", observation: " . $item["observations"];
+    //     echo "\n";
 
-        // proximamente al interpreter
-        // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
-        // $tasa="", $precio = "", $cant = "", $desc = ""
-        // $creditnote_en_contruccion[$index_counter] = $interpreter->translateLineCommentCredito($item["observations"])."\n";
-        // $index_counter++;
-        $creditnote_en_contruccion[$index_counter] = $interpreter->translateLineCredito($item["tax_observation"],$item["price"],$item["product_quantity"],$item["description"])."\n";
-        $index_counter++;
+    //     // proximamente al interpreter
+    //     // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
+    //     // $tasa="", $precio = "", $cant = "", $desc = ""
+    //     // $creditnote_en_contruccion[$index_counter] = $interpreter->translateLineCommentCredito($item["observations"])."\n";
+    //     // $index_counter++;
+    //     $creditnote_en_contruccion[$index_counter] = $interpreter->translateLineCredito($item["tax_observation"],$item["price"],$item["product_quantity"],$item["description"])."\n";
+    //     $index_counter++;
 
-      }
+    //   }
 
-    }
+    // }
 
-    //cierre de factura (viene despues de los items)
-    $creditnote_en_contruccion[$index_counter] = "101";
+    // //cierre de factura (viene despues de los items)
+    // $creditnote_en_contruccion[$index_counter] = "101";
 
-    return  $creditnote_en_contruccion;
+    // return  $creditnote_en_contruccion;
 
   }
 
@@ -217,7 +217,7 @@ class debitnoteHandler
     // en caso de que la nota de debito no tenia items, esto aplica
     if ($items_nota == "false") {
       $items_nota_extra = array();
-      $items_nota_extra[1] = $interpreter->translateLineDebito("Sin IVA",$amount ,1,"Otros")."\n";
+      $items_nota_extra[1] = $interpreter->translateLineDebito("Sin IVA",$amount ,1,"Deuda")."\n";
 
       $cierre = array();
       $cierre[2] = "101";
