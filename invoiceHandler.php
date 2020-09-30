@@ -175,18 +175,25 @@ class invoiceHandler
       $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->separador();
       $index_counter++;
 
-      // subtotal
-      $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateSubtotal($subtotal)."\n";
-      $index_counter++;
+      // // subtotal
+      // $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateSubtotal($subtotal)."\n";
+      // $index_counter++;
       
-      // iva
-      $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateTax($tax)."\n";
-      $index_counter++;
+      // ########################################################################
+      // esto dejo de ser valido, ya que el impuesto no es aplicable a notas de venta
+      // hay que coordinar para que el calculo total de la factura refleje los montos de 
+      // sistema, yo poner el monto subtotal aqui, es un malentendido y confunde 
+      // respecto a la info arrojada por el sistema.
+      // ##########################################################################
 
-      $factura_en_contruccion[$index_counter] =  $interpreter_nofiscal->separador();
-      $index_counter++;
+      // // iva
+      // $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateTax($tax)."\n";
+      // $index_counter++;
 
-      // total
+      // $factura_en_contruccion[$index_counter] =  $interpreter_nofiscal->separador();
+      // $index_counter++;
+
+      // // total
       $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateFinalTotal($total)."\n";
       $index_counter++;
 
