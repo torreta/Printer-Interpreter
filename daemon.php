@@ -139,7 +139,18 @@ while (true) {
 
         break;
       case "4":// Nota no Fiscal
+
+        // nota de cualquier otro tipo, 
+
         break;
+      case "5":// corte de caja
+
+       break;
+
+      case "6":// cierre de caja
+
+       break;
+
       default: // Documento indeterminado
         die("Documento indeterminado"); 
     }
