@@ -384,6 +384,10 @@ class interpreter{
     // -1 => "i00 algo\n", // info adicional cliente (direccion)
     $InfoFiscalTraducida[$contador] = substr("i00"."CAJERO: ".$InfoFiscal["user_name"]." ".$InfoFiscal["user_lastname"],0,$max_caracteres_info_adicional)."\n";
     $contador++;
+    // -1! => "i00 algo\n", // info adicional cliente (direccion)
+    $InfoFiscalTraducida[$contador] = substr("i00"."REF: 00P".$InfoFiscal["reference_dolar"]. "XLGGW",0,$max_caracteres_info_adicional)."\n";
+    $contador++;
+
 
     // esta ultima linea me ayuda a no tener que predecir la cantidad de lineas que tengo
     // sino que modifica un arreglo y crea otro con los cambios de indices requeridos
