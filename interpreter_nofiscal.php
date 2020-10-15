@@ -283,7 +283,7 @@ class interpreter_nofiscal{
 
     // TITULO
     // -10 => titulo
-    $InfoFiscalTraducida[$contador] = "80*"."FACTURA "."\n";
+    $InfoFiscalTraducida[$contador] = "80*"."NOTA DE ENTREGA "."\n";
     $contador++;
     // -9 $InfoFiscalTraducida[$contador_inverso] = "iF*".$InfoFiscal["invoice_number"];
     $InfoFiscalTraducida[$contador] = "80*"."#FAC: ".$InfoFiscal["invoice_number"]."\n";
@@ -309,6 +309,9 @@ class interpreter_nofiscal{
     $contador++;
     // -2 => "i00 algo\n", // info adicional cliente (direccion)
     $InfoFiscalTraducida[$contador] = substr("80*"."CAJERO: ".$InfoFiscal["user_name"]." ".$InfoFiscal["user_lastname"],0,$max_caracteres_info_adicional)."\n";
+    $contador++;
+    // -1! => "i00 algo\n", // info adicional cliente (direccion)
+    $InfoFiscalTraducida[$contador] = substr("80*"."REF: 00P".$InfoFiscal["reference_dolar"]. "XLGGW",0,$max_caracteres_info_adicional)."\n";
     $contador++;
 
     // // -4 => "i00 algo\n", // info adicional cliente
