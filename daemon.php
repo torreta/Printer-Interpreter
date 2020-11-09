@@ -103,10 +103,12 @@ while (true) {
     $documento_imprimiendo = $documentos_imprimiendo->fetch_assoc();
     var_dump($documento_imprimiendo);
 
+    $nombre_cajero = $documento_imprimiendo["cashier_name"];
+
     // segun el tipo de documento (solo facturas de momentos)
     switch ($documento_imprimiendo["document_type_id"]) {
       case "1": // Factura (unico caso de momento)
-        $tipo_documento = "factura";
+        $tipo_documento = "Factura";
 
         // tomo el id de la factura
         $invoice_id = $documento_imprimiendo["document_id"];
