@@ -265,7 +265,13 @@ class interpreter{
       return false;
     }
 
-    $comando = substr($desc,0,$max_caracteres);
+    // tengo que reemplazar caracteres que causan errores
+    $remplazos_buenos = array("Y");
+    $caracteres_malvados = array("&");
+
+    $linea_sana = str_replace($caracteres_malvados, $remplazos_buenos, $desc );
+
+    $comando = substr($linea_sana,0,$max_caracteres);
 
     return  $comando;
 
@@ -274,6 +280,10 @@ class interpreter{
     
   function translateLine( $tasa="", $precio = "", $cant = "", $desc = ""){
   
+    var_dump("datos que me llegan a la linea de producto");
+
+    var_dump( $tasa, $precio, $cant ,$desc );
+
     $comando = $this->translateTasa($tasa) .$this->translatePrecio($precio) . $this->translateCantidad($cant) .$this->translateDescription($desc);
     
     //echo "\n\nComando Final\n"; 
