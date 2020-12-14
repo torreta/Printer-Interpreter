@@ -266,12 +266,14 @@ class interpreter{
     }
 
     // tengo que reemplazar caracteres que causan errores
-    $remplazos_buenos = array("Y");
-    $caracteres_malvados = array("&");
+    $remplazos_buenos =    array("Y","E","N","");
+    $caracteres_malvados = array("&","É","Ñ",".");
 
     $linea_sana = str_replace($caracteres_malvados, $remplazos_buenos, $desc );
 
     $comando = substr($linea_sana,0,$max_caracteres);
+
+    $comando = preg_replace('/[^A-Za-z0-9\ ]/','', $comando); //solo acepta caracteres normales
 
     return  $comando;
 
@@ -376,7 +378,9 @@ class interpreter{
     $InfoFiscalTraducida[$contador] = "iD*".$InfoFiscal["createdAt"]."\n";
     $contador++;
     // -6 => "iS*Pedro Mendez\n", // mombre persona
-    $InfoFiscalTraducida[$contador] =  substr("iS*".$InfoFiscal["name"].$InfoFiscal["last_name"],0,$max_caracteres)."\n";
+    $linea_sin_caracteres_especiales = $InfoFiscal["name"].$InfoFiscal["last_name"];
+    $linea_sin_caracteres_especiales = $Utils->cleanSpecialChars($linea_sin_caracteres_especiales); //solo acepta caracteres normales
+    $InfoFiscalTraducida[$contador] =  substr("iS*".$linea_sin_caracteres_especiales,0,$max_caracteres)."\n";
     $contador++;
     // -5 => "iR*12.345.678\n", // rif
     $InfoFiscalTraducida[$contador] = "iR*".$InfoFiscal["complete_identification"]."\n";
@@ -389,13 +393,19 @@ class interpreter{
     $InfoFiscalTraducida[$contador] = substr("i00"."Telf: ".$InfoFiscal["telephone"],0,$max_caracteres_info_adicional)."\n";
     $contador++;
     // -2 => "i00 algo\n", // info adicional cliente (direccion)
-    $InfoFiscalTraducida[$contador] = substr("i00"."DIR: ".$InfoFiscal["direction"],0,$max_caracteres_info_adicional)."\n";
+    $linea_sin_caracteres_especiales = "DIR: ".$InfoFiscal["direction"];
+    $linea_sin_caracteres_especiales = $Utils->cleanSpecialChars($linea_sin_caracteres_especiales); //solo acepta caracteres normales
+    $InfoFiscalTraducida[$contador] = substr("i00".$linea_sin_caracteres_especiales,0,$max_caracteres_info_adicional)."\n";
     $contador++;
     // -1 => "i00 algo\n", // info adicional cliente (direccion)
-    $InfoFiscalTraducida[$contador] = substr("i00"."CAJERO: ".$InfoFiscal["user_name"]." ".$InfoFiscal["user_lastname"],0,$max_caracteres_info_adicional)."\n";
+    $linea_sin_caracteres_especiales = "CAJERO: ".$InfoFiscal["user_name"]." ".$InfoFiscal["user_lastname"];
+    $linea_sin_caracteres_especiales = $Utils->cleanSpecialChars($linea_sin_caracteres_especiales); //solo acepta caracteres normales
+    $InfoFiscalTraducida[$contador] = substr("i00".$linea_sin_caracteres_especiales,0,$max_caracteres_info_adicional)."\n";
     $contador++;
     // -1! => "i00 algo\n", // info adicional cliente (direccion)
-    $InfoFiscalTraducida[$contador] = substr("i00"."REF: 00P".$InfoFiscal["reference_dolar"]. "XLGGW",0,$max_caracteres_info_adicional)."\n";
+    $linea_sin_caracteres_especiales = "REF: 00P".$InfoFiscal["reference_dolar"]. "XLGGW";
+    $linea_sin_caracteres_especiales = $Utils->cleanSpecialChars($linea_sin_caracteres_especiales); //solo acepta caracteres normales
+    $InfoFiscalTraducida[$contador] = substr("i00".$linea_sin_caracteres_especiales,0,$max_caracteres_info_adicional)."\n";
     $contador++;
 
 
@@ -471,17 +481,25 @@ class interpreter{
     $InfoFiscalTraducida[$contador] = "iD*".$InfoFiscal["createdAt"]."\n";
     $contador++;
     // -5 => "i00 algo\n", // info adicional cliente (telefono)
-    $InfoFiscalTraducida[$contador] = substr("i00"."Telf: ".$InfoFiscal["telephone"],0,$max_caracteres_info_adicional)."\n";
+    $linea_sin_caracteres_especiales = "Telf: ".$InfoFiscal["telephone"];
+    $linea_sin_caracteres_especiales = $Utils->cleanSpecialChars($linea_sin_caracteres_especiales); //solo acepta caracteres normales
+    $InfoFiscalTraducida[$contador] = substr("i00".$linea_sin_caracteres_especiales,0,$max_caracteres_info_adicional)."\n";
     $contador++;
     // -4 => "i00 algo\n", // info adicional cliente (direccion)
-    $InfoFiscalTraducida[$contador] = substr("i00"."DIR: ".$InfoFiscal["direction"],0,$max_caracteres_info_adicional)."\n";
+    $linea_sin_caracteres_especiales = "DIR: ".$InfoFiscal["direction"];
+    $linea_sin_caracteres_especiales = $Utils->cleanSpecialChars($linea_sin_caracteres_especiales); //solo acepta caracteres normales
+    $InfoFiscalTraducida[$contador] = substr("i00".$linea_sin_caracteres_especiales,0,$max_caracteres_info_adicional)."\n";
     $contador++;
     // -3 => "i00 algo\n", // info adicional cliente (usuario)
-    $InfoFiscalTraducida[$contador] = substr("i00"."CAJERO: ".$InfoFiscal["user_name"]." ".$InfoFiscal["user_lastname"],0,$max_caracteres_info_adicional)."\n";
+    $linea_sin_caracteres_especiales = "CAJERO: ".$InfoFiscal["user_name"]." ".$InfoFiscal["user_lastname"];
+    $linea_sin_caracteres_especiales = $Utils->cleanSpecialChars($linea_sin_caracteres_especiales); //solo acepta caracteres normales
+    $InfoFiscalTraducida[$contador] = substr("i00".$linea_sin_caracteres_especiales,0,$max_caracteres_info_adicional)."\n";
     $contador++;
 
     // -2 => "i00 algo\n", // info adicional cliente (usuario)
-    $InfoFiscalTraducida[$contador] = substr("i00"."Nro Nota: ".$InfoFiscal["creditnote_number"],0,$max_caracteres_info_adicional)."\n";
+    $linea_sin_caracteres_especiales = "Nro Nota: ".$InfoFiscal["creditnote_number"];
+    $linea_sin_caracteres_especiales = $Utils->cleanSpecialChars($linea_sin_caracteres_especiales); //solo acepta caracteres normales
+    $InfoFiscalTraducida[$contador] = substr("i00".$linea_sin_caracteres_especiales,0,$max_caracteres_info_adicional)."\n";
     $contador++;
 
     $ComentarioTraducido =  $Utils->makeComment($Utils->splitsize($InfoFiscal["observations"]),"i00");
@@ -535,6 +553,8 @@ class interpreter{
     var_dump($InfoFiscal);
 
     // -9 => "iS*Pedro Mendez\n", // mombre persona
+    $linea_sin_caracteres_especiales = "Nro Nota: ".$InfoFiscal["creditnote_number"];
+    $linea_sin_caracteres_especiales = $Utils->cleanSpecialChars($linea_sin_caracteres_especiales); //solo acepta caracteres normales
     $InfoFiscalTraducida[$contador] =  substr("iS*".$InfoFiscal["name"].$InfoFiscal["last_name"],0,$max_caracteres)."\n";
     $contador++;
     
@@ -551,19 +571,27 @@ class interpreter{
     $contador++;
     
     // -5 => "i00 algo\n", // info adicional cliente (telefono)
-    $InfoFiscalTraducida[$contador] = substr("i00"."Telf: ".$InfoFiscal["telephone"],0,$max_caracteres_info_adicional)."\n";
+    $linea_sin_caracteres_especiales = "Telf: ".$InfoFiscal["telephone"];
+    $linea_sin_caracteres_especiales = $Utils->cleanSpecialChars($linea_sin_caracteres_especiales); //solo acepta caracteres normales
+    $InfoFiscalTraducida[$contador] = substr("i00".$linea_sin_caracteres_especiales,0,$max_caracteres_info_adicional)."\n";
     $contador++;
     
     // -4 => "i00 algo\n", // info adicional cliente (direccion)
-    $InfoFiscalTraducida[$contador] = substr("i00"."DIR: ".$InfoFiscal["direction"],0,$max_caracteres_info_adicional)."\n";
+    $linea_sin_caracteres_especiales = "DIR: ".$InfoFiscal["direction"];
+    $linea_sin_caracteres_especiales = $Utils->cleanSpecialChars($linea_sin_caracteres_especiales); //solo acepta caracteres normales
+    $InfoFiscalTraducida[$contador] = substr("i00".$linea_sin_caracteres_especiales,0,$max_caracteres_info_adicional)."\n";
     $contador++;
    
     // -3 => "i00 algo\n", // info adicional cliente (usuario)
-    $InfoFiscalTraducida[$contador] = substr("i00"."CAJERO: ".$InfoFiscal["user_name"]." ".$InfoFiscal["user_lastname"],0,$max_caracteres_info_adicional)."\n";
+    $linea_sin_caracteres_especiales = "CAJERO: ".$InfoFiscal["user_name"]." ".$InfoFiscal["user_lastname"];
+    $linea_sin_caracteres_especiales = $Utils->cleanSpecialChars($linea_sin_caracteres_especiales); //solo acepta caracteres normales
+    $InfoFiscalTraducida[$contador] = substr("i00".$linea_sin_caracteres_especiales,0,$max_caracteres_info_adicional)."\n";
     $contador++;
 
-    // -2 => "i00 algo\n", // info adicional cliente (usuario)
-    $InfoFiscalTraducida[$contador] = substr("i00"."Nro Nota: ".$InfoFiscal["debitnote_number"],0,$max_caracteres_info_adicional)."\n";
+    // -2 => "i00 algo\n", // info adicional cliente (usuario)\
+    $linea_sin_caracteres_especiales = "Nro Nota: ".$InfoFiscal["debitnote_number"];
+    $linea_sin_caracteres_especiales = $Utils->cleanSpecialChars($linea_sin_caracteres_especiales); //solo acepta caracteres normales
+    $InfoFiscalTraducida[$contador] = substr("i00".$linea_sin_caracteres_especiales,0,$max_caracteres_info_adicional)."\n";
     $contador++;
 
     $ComentarioTraducido =  $Utils->makeComment($Utils->splitsize($InfoFiscal["observations"]),"i00");
