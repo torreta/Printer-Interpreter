@@ -260,8 +260,14 @@ class DatabaseBridge
         break;
       case "4":// Nota no Fiscal
         break;
+      case "5":// nota de entrega
+        break;
+      case "6":// corte de caja
+        break;
+      case "7":// cierre de caja
+        break;
       default: // Documento indeterminado
-        die("Documento indeterminado"); 
+        die("Documento indeterminado (bridge) ". $documento_imprimiendo["document_type_id"] ); 
     }
 
       // puedes validar el query aca
