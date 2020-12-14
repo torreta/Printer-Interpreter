@@ -329,6 +329,15 @@ class Utils
     return($arreglo);
   }
 
+  function cleanSpecialChars( $texto = ""){
+    // tengo comentarios demasiado largos, necesitaba dividirlo en lineas
+
+    $comando = preg_replace('/[^A-Za-z0-9\ ]/','', $texto);
+
+    return($comando);
+  }
+
+
 
   function makeComment( $comments = [], $prefix = "i00" ){
   //transformando elementos de un arreglo en lineas de codigo de comentario.
