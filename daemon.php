@@ -10,8 +10,10 @@ include_once ("invoiceHandler.php");
 include_once ("creditnoteHandler.php"); 
 include_once ("debitnoteHandler.php"); 
 
+include_once ("Utils.php"); 
 
 $DatabaseBridge =  new DatabaseBridge();
+$Utils =  new Utils();
 
 /*** (B) SETTINGS ***/
 // Database settings - change these to your own
@@ -115,6 +117,15 @@ while (true) {
         
         // envio al "manejador" respectivo
         $invoiceHandler =  new invoiceHandler();
+
+        // numero del documento
+        $info_factura = $invoiceHandler->get_invoice_info($conn, $invoice_id);
+
+        // objeto de los datos de la factura.
+        $factura_actual = $info_factura->fetch_assoc();
+        $numero_documento = $factura_actual["invoice_number"];
+
+
         $respuesta_impresora = $invoiceHandler->printInvoice($conn,$documento_imprimiendo);
 
         break;
@@ -126,6 +137,11 @@ while (true) {
         
         // envio al "manejador" respectivo
         $creditnoteHandler =  new creditnoteHandler();
+
+        // // numero del documento
+        // $numero_documento = $creditnoteHandler->get_creditnote_info($conn, $creditnote_id);
+        // $numero_documento = $numero_documento["credinote_number"];
+
         $respuesta_impresora = $creditnoteHandler->printCreditnote($conn,$documento_imprimiendo);
 
         break;
@@ -137,24 +153,37 @@ while (true) {
         
         // envio al "manejador" respectivo
         $debitnoteHandler =  new debitnoteHandler();
+
+        // // numero del documento
+        // $numero_documento = $debitnoteHandler->get_debitnote_info($conn, $debitnote_id);
+        // $numero_documento = $numero_documento["debitnote_number"];
+
+
         $respuesta_impresora = $debitnoteHandler->printDebitnote($conn,$documento_imprimiendo);
 
         break;
-      case "4":// Nota no Fiscal
+      case "4":// Nota de entrega (solo items)
 
         // nota de cualquier otro tipo, 
 
         break;
-      case "5":// corte de caja
+      case "5":// documento nulo de caja
 
        break;
 
-      case "6":// cierre de caja
+      case "6":// corte de caja
+        $respuesta_impresora = $Utils->sendCorte(); 
 
+       break;
+
+       case "7":// cierre de caja
+        $respuesta_impresora = $Utils->sendCierre(); 
+         
        break;
 
       default: // Documento indeterminado
-        die("Documento indeterminado"); 
+        die("Documento indeterminado: (daemon) ". $documento_imprimiendo["document_type_id"] ); 
+
     }
 
     // (3) (true) verifico el mensaje del controlador al imprimir, (condiciones de parseo), si todo sale exitoso
@@ -172,7 +201,7 @@ while (true) {
       $DatabaseBridge->marcar_impreso( $conn, $documento_imprimiendo );
 
       // ... se sobrescribe el mensaje para la impresora de mensajes 
-      $mensaje_al_log = "la ".$tipo_documento .": " . $numero_factura .", por cajero ". $nombre_cajero. ", ha impreso con exito.";
+      $mensaje_al_log = "la ".$tipo_documento .": " . $numero_documento .", por cajero ". $nombre_cajero. ", ha impreso con exito.";
       $DatabaseBridge->logWithDoc( $conn, $mensaje_al_log, $documento_imprimiendo, $print_error );
 
     }else{
@@ -183,7 +212,7 @@ while (true) {
       // ... busco en checkprinter cual puede ser la razon del error.
 
       // ... se sobrescribe el mensaje para la impresora de mensajes, indicando que hay un error
-      $mensaje_al_log = "la ".$tipo_documento .": " . $numero_factura .", por cajero ". $nombre_cajero. ", tiene problemas para imprimir...";
+      $mensaje_al_log = "la ".$tipo_documento .": " . $numero_documento .", por cajero ". $nombre_cajero. ", tiene problemas para imprimir...";
       $DatabaseBridge->logWithDoc( $conn, $mensaje_al_log, $documento_imprimiendo, $print_error );
         // ...si habia un mensaje de error, ahora que se pudo imprimir, deja volver a imprimir mensajes de error
         $print_error = true;
