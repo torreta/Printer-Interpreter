@@ -273,7 +273,7 @@ class interpreter{
 
     $comando = substr($linea_sana,0,$max_caracteres);
 
-    $comando = preg_replace('/[^A-Za-z0-9\ ]/','', $comando); //solo acepta caracteres normales
+    $comando = preg_replace('/[^A-Za-z0-9Ññ\ ]/','', $comando); //solo acepta caracteres normales
 
     return  $comando;
 

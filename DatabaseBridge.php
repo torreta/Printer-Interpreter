@@ -245,6 +245,18 @@ class DatabaseBridge
           SET `printed` = 1 
           WHERE `id` = ".$invoice_id.";";
         
+          // puedes validar el query aca
+          // echo ( $query_mark_printed );
+
+        $marcar_current_registro = $conn->prepare($query_mark_printed);
+
+        if ($marcar_current_registro->execute()) {
+          echo "Se ha marcado el documento como impreso.. \n";
+        } else {
+          echo "(marcar_impreso) Error: " . $sql . "\n" . mysqli_error($conn);
+        }
+
+
         break;
       case "2":// Nota de Credito
         $tipo_documento = "Nota de Credito";
@@ -263,22 +275,13 @@ class DatabaseBridge
       case "5":// nota de entrega
         break;
       case "6":// corte de caja
+        $tipo_documento = "Corte";
         break;
       case "7":// cierre de caja
+        $tipo_documento = "Cierre";
         break;
       default: // Documento indeterminado
         die("Documento indeterminado (bridge) ". $documento_imprimiendo["document_type_id"] ); 
-    }
-
-      // puedes validar el query aca
-      // echo ( $query_mark_printed );
-
-      $marcar_current_registro = $conn->prepare($query_mark_printed);
-
-    if ($marcar_current_registro->execute()) {
-      echo "Se ha marcado el documento como impreso.. \n";
-    } else {
-      echo "(marcar_impreso) Error: " . $sql . "\n" . mysqli_error($conn);
     }
 
 

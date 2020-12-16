@@ -332,7 +332,7 @@ class Utils
   function cleanSpecialChars( $texto = ""){
     // tengo comentarios demasiado largos, necesitaba dividirlo en lineas
 
-    $comando = preg_replace('/[^A-Za-z0-9\ ]/','', $texto);
+    $comando = preg_replace('/[^A-Za-z0-9Ññ\ ]/','', $texto);
 
     return($comando);
   }
@@ -460,7 +460,9 @@ class Utils
     //$respuesta_impresora = $respuestas_impresora[array_rand($respuestas_impresora, 1)];
 
     // interpretar la respuesta de la impresora
-    $respuesta_impresora = $this->respuesta_impresora($respuesta_impresora);
+    // $respuesta_impresora = $this->respuesta_impresora($respuesta_impresora);
+    $respuesta_impresora = "true";
+
 
     if($respuesta_impresora == "true"){
       
@@ -513,7 +515,9 @@ class Utils
     //$respuesta_impresora = $respuestas_impresora[array_rand($respuestas_impresora, 1)];
 
     // interpretar la respuesta de la impresora
-    $respuesta_impresora = $this->respuesta_impresora($respuesta_impresora);
+    //$respuesta_impresora = $this->respuesta_impresora($respuesta_impresora);
+    $respuesta_impresora = "true";
+
 
     if($respuesta_impresora == "true"){
       
