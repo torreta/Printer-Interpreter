@@ -139,8 +139,8 @@ while (true) {
         $creditnoteHandler =  new creditnoteHandler();
 
         // // numero del documento
-        $numero_documento = $creditnoteHandler->get_creditnote_info($conn, $creditnote_id);
-        $numero_documento = $numero_documento["credinote_number"];
+        // $numero_documento = $creditnoteHandler->get_creditnote_info($conn, $creditnote_id);
+        // $numero_documento = $numero_documento["credinote_number"];
 
         $respuesta_impresora = $creditnoteHandler->printCreditnote($conn,$documento_imprimiendo);
 
@@ -155,8 +155,8 @@ while (true) {
         $debitnoteHandler =  new debitnoteHandler();
 
         // // numero del documento
-        $numero_documento = $debitnoteHandler->get_debitnote_info($conn, $debitnote_id);
-        $numero_documento = $numero_documento["debitnote_number"];
+        // $numero_documento = $debitnoteHandler->get_debitnote_info($conn, $debitnote_id);
+        // $numero_documento = $numero_documento["debitnote_number"];
 
 
         $respuesta_impresora = $debitnoteHandler->printDebitnote($conn,$documento_imprimiendo);
