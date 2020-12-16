@@ -63,7 +63,7 @@ class invoiceHandler
         dbo_system_users.name as user_name,
         dbo_system_users.last_name as user_lastname,
         dbo_system_users.rol_id,
-        concat(truncate(dbo_administration_invoices_all_currencies.total,0),"C", SUBSTR(cast(dbo_administration_invoices_all_currencies.total - truncate(dbo_administration_invoices_all_currencies.total,0) as char),3)) as reference_dolar
+        concat(truncate(dbo_administration_invoices_all_currencies.total,0),'C', SUBSTR(cast(dbo_administration_invoices_all_currencies.total - truncate(dbo_administration_invoices_all_currencies.total,0) as char),3)) as reference_dolar
       FROM 
         dbo_administration_invoices
       join dbo_administration_invoices_all_currencies on (dbo_administration_invoices.id = dbo_administration_invoices_all_currencies.invoice_id and dbo_administration_invoices_all_currencies.currency_id = 1) 
