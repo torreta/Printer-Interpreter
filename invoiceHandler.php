@@ -48,6 +48,7 @@ class invoiceHandler
     $query_info_fiscal_factura = 
       "SELECT
         dbo_administration_invoices.invoice_number,
+        dbo_administration_invoices.saleorder_number,
         dbo_administration_invoices.tax_id,
         dbo_administration_invoices.credit,
         DATE_FORMAT( dbo_administration_invoices.createdAt, '%d-%m-%Y') as createdAt,

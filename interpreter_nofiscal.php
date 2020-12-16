@@ -407,7 +407,7 @@ class interpreter_nofiscal{
     $InfoFiscalTraducida[$contador] = "80*"."NOTA DE CREDITO "."\n";
     $contador++;
     // -9 $InfoFiscalTraducida[$contador_inverso] = "iF*".$InfoFiscal["invoice_number"];
-    $InfoFiscalTraducida[$contador] = "80*"."#FAC: ".$InfoFiscal["invoice_number"]."\n";
+    $InfoFiscalTraducida[$contador] = "80*"."#FAC PED: ".$InfoFiscal["saleorder_number"]."\n";
     $contador++;
     // -9 $InfoFiscalTraducida[$contador_inverso] = "iF*".$InfoFiscal["invoice_number"];
     $InfoFiscalTraducida[$contador] = "80*"."#NOTA CRED: ".$InfoFiscal["creditnote_number"]."\n";
