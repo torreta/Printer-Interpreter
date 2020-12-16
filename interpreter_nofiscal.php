@@ -303,7 +303,7 @@ class interpreter_nofiscal{
     $InfoFiscalTraducida[$contador] =  substr("80*"."RIF/C.i: ".$InfoFiscal["complete_identification"],0,$max_caracteres)."\n";
     $contador++;
     // -6 => "iR*12.345.678\n", // rif
-    $linea_sin_caracteres_especiales = "RAZON SOCIAL: ".$InfoFiscal["name"].$InfoFiscal["last_name"];
+    $linea_sin_caracteres_especiales = "RAZON SOCIAL: ".$InfoFiscal["name"]." ".$InfoFiscal["last_name"];
     $linea_sin_caracteres_especiales = $Utils->cleanSpecialChars($linea_sin_caracteres_especiales); //solo acepta caracteres normales
     $InfoFiscalTraducida[$contador] =  substr("80*".$linea_sin_caracteres_especiales,0,$max_caracteres)."\n";
     $contador++;
@@ -419,7 +419,7 @@ class interpreter_nofiscal{
     $InfoFiscalTraducida[$contador] =  substr("80*"."RIF/C.i: ".$InfoFiscal["complete_identification"],0,$max_caracteres)."\n";
     $contador++;
     // -6 => "iR*12.345.678\n", // rif
-    $linea_sin_caracteres_especiales = "RAZON SOCIAL: ".$InfoFiscal["name"].$InfoFiscal["last_name"];
+    $linea_sin_caracteres_especiales = "RAZON SOCIAL: ".$InfoFiscal["name"]." ".$InfoFiscal["last_name"];
     $linea_sin_caracteres_especiales = $Utils->cleanSpecialChars($linea_sin_caracteres_especiales); //solo acepta caracteres normales
     $InfoFiscalTraducida[$contador] =  substr("80*".$linea_sin_caracteres_especiales,0,$max_caracteres)."\n";
     $contador++;
