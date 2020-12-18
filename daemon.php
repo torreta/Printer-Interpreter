@@ -47,7 +47,7 @@ function addlog ($message="") {
 }
 
 // Cycle
-define('LOOP_CYCLE', 6); // Loop every 60 secs
+define('LOOP_CYCLE', 1); // Loop every 60 secs (actually 1 sec)
 
 
 $conn = $DatabaseBridge->connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME , PRINTER_ID);
