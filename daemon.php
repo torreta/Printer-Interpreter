@@ -241,7 +241,7 @@ while (true) {
     }else{
       // (2) (false) de no existir pendientes, no hay que hacer mas nada, solo esperar (Sleep) (END)
       // echo("no hay documentos en pendientes, me tomo una siesta. \n");
-      // echo(".");
+      echo(".");
 
     }
 
