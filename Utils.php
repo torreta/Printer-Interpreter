@@ -425,6 +425,20 @@ class Utils
   }
 
   
+  function printFileFalso( $filename=""){
+
+    echo ( "***************************************" );
+    echo ( "***************************************" );
+    echo ( "IMPRESION FALSA! !!!!! SIEMPRE SIRVE" );
+    echo ( "probar flujo".  $filename );
+    echo ( "***************************************" );
+    echo ( "***************************************" );
+
+    return "true";
+ 
+   }
+
+
   function sendCorte(){
 
     $itObj = new Tfhka();
@@ -476,6 +490,20 @@ class Utils
       return "false";
     }
 
+  }
+
+
+  function sendCorteFalso(){
+
+    echo ( "***************************************" );
+    echo ( "***************************************" );
+    echo ( "IMPRESION FALSA! !!!!! Corte" );
+    echo ( "probar flujo con corte" );
+    echo ( "***************************************" );
+    echo ( "***************************************" );
+
+    return "true";
+ 
   }
 
   
@@ -531,6 +559,18 @@ class Utils
       return "false";
     }
 
+  }
+
+  function sendCierreFalso(){
+
+    echo ( "***************************************" );
+    echo ( "***************************************" );
+    echo ( "IMPRESION FALSA! !!!!! Cierre" );
+    echo ( "probar flujo con corte" );
+    echo ( "***************************************" );
+    echo ( "***************************************" );
+
+    return "true";
   }
 
 
