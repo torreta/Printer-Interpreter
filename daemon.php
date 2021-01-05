@@ -125,6 +125,12 @@ while (true) {
         $factura_actual = $info_factura->fetch_assoc();
         $numero_documento = $factura_actual["invoice_number"];
 
+        // tipo
+        $es_fiscal = $factura_actual["fiscal"];
+        $tipo_de_factura = ($es_fiscal == "1")? "fiscal":"no fiscal";
+        $tipo_documento = ($es_fiscal == "1")? "Factura":"Pedido";
+        $numero_documento = ($es_fiscal == "1")? $factura_actual["invoice_number"]:$factura_actual["saleorder_number"];
+
 
         $respuesta_impresora = $invoiceHandler->printInvoice($conn,$documento_imprimiendo);
 
