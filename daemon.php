@@ -47,7 +47,7 @@ function addlog ($message="") {
 }
 
 // Cycle
-define('LOOP_CYCLE', 1); // Loop every 60 secs (actually 1 sec)
+define('LOOP_CYCLE', 1); // Loop every 60 secs
 
 
 $conn = $DatabaseBridge->connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME , PRINTER_ID);
@@ -172,12 +172,20 @@ while (true) {
        break;
 
       case "6":// corte de caja
+        echo "********************\n";
+        echo "CORTE ENDEMONIADO!!!\n";
+        echo "*********************\n";
+
         $tipo_documento = "Corte de Caja";
         $respuesta_impresora = $Utils->sendCorte(); 
 
        break;
 
        case "7":// cierre de caja
+        echo "********************\n";
+        echo "CIERRE ENDEMONIADO!!!\n";
+        echo "*********************\n";
+        
         $tipo_documento = "Cierre de Caja";
         $respuesta_impresora = $Utils->sendCierre(); 
          
@@ -242,7 +250,6 @@ while (true) {
       // (2) (false) de no existir pendientes, no hay que hacer mas nada, solo esperar (Sleep) (END)
       // echo("no hay documentos en pendientes, me tomo una siesta. \n");
       echo(".");
-
     }
 
   }
