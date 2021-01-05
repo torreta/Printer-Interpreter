@@ -294,7 +294,8 @@ class interpreter_nofiscal{
     $InfoFiscalTraducida[$contador] = "80*"."NOTA DE ENTREGA "."\n";
     $contador++;
     // -9 $InfoFiscalTraducida[$contador_inverso] = "iF*".$InfoFiscal["invoice_number"];
-    $InfoFiscalTraducida[$contador] = "80*"."#FAC: ".$InfoFiscal["saleorder_number"]."\n";
+    // $InfoFiscalTraducida[$contador] = "80*"."#FAC: ".$InfoFiscal["invoice_number"]."\n";
+    $InfoFiscalTraducida[$contador] = "80*"."#PED: ".$InfoFiscal["saleorder_number"]."\n";
     $contador++;
     // -8 => "iD*18-01-2014\n",//fecha factura dia especifico
     $InfoFiscalTraducida[$contador] = "80*"."FECHA FAC: ".$InfoFiscal["createdAt"]."\n";
