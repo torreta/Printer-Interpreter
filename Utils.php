@@ -425,20 +425,6 @@ class Utils
   }
 
   
-  function printFileFalso( $filename=""){
-
-    echo ( "***************************************" );
-    echo ( "***************************************" );
-    echo ( "IMPRESION FALSA! !!!!! SIEMPRE SIRVE" );
-    echo ( "probar flujo".  $filename );
-    echo ( "***************************************" );
-    echo ( "***************************************" );
-
-    return "true";
- 
-   }
-
-
   function sendCorte(){
 
     $itObj = new Tfhka();
@@ -467,7 +453,8 @@ class Utils
     // enviarlo a imprimir (PROBARLO Y EJECUTARLO IMPRESORA)(FALTA)
     // ... enviar a imprimir
     // $respuesta_impresora = $itObj->SendCmd("I0X");
-    $respuesta_impresora = $itObj->SendFileCmd("Corte.txt");
+    // $respuesta_impresora = $itObj->SendFileCmd("Corte.txt");
+    shell_exec("IntTFHKA.exe SendFileCmd(Corte.txt");
 
     // ... para probar voy a decir que la impresora dijo algo 
     // $respuestas_impresora = ["true","false"];
@@ -493,20 +480,6 @@ class Utils
   }
 
 
-  function sendCorteFalso(){
-
-    echo ( "***************************************" );
-    echo ( "***************************************" );
-    echo ( "IMPRESION FALSA! !!!!! Corte" );
-    echo ( "probar flujo con corte" );
-    echo ( "***************************************" );
-    echo ( "***************************************" );
-
-    return "true";
- 
-  }
-
-  
   function sendCierre(){
 
     $itObj = new Tfhka();
@@ -535,7 +508,8 @@ class Utils
     // enviarlo a imprimir (PROBARLO Y EJECUTARLO IMPRESORA)(FALTA)
     // ... enviar a imprimir
     // $respuesta_impresora = $itObj->SendCmd("I0Z");
-    $respuesta_impresora = $respuesta_impresora = $itObj->SendFileCmd("Cierre.txt");
+    // $respuesta_impresora = $respuesta_impresora = $itObj->SendFileCmd("Cierre.txt");
+    shell_exec("IntTFHKA.exe SendFileCmd(Cierre.txt");
 
 
     // ... para probar voy a decir que la impresora dijo algo 
@@ -559,18 +533,6 @@ class Utils
       return "false";
     }
 
-  }
-
-  function sendCierreFalso(){
-
-    echo ( "***************************************" );
-    echo ( "***************************************" );
-    echo ( "IMPRESION FALSA! !!!!! Cierre" );
-    echo ( "probar flujo con corte" );
-    echo ( "***************************************" );
-    echo ( "***************************************" );
-
-    return "true";
   }
 
 
