@@ -1,1 +1,2 @@
-START /B C:\xampp\php\php.exe C:\xampp\htdocs\Printer-Interpreter\daemon.php > C:\xampp\htdocs\Printer-Interpreter\daemon.log 
+cd  C:\xampp\htdocs\Printer-Interpreter\
+START /B C:\xampp\php\php.exe daemon.php > daemon.log 
