@@ -435,7 +435,7 @@ class Utils
      echo ( $filename );
     
      // interpretar la respuesta de la impresora
-     $respuesta_impresora = "true"
+     $respuesta_impresora = "true";
  
      if($respuesta_impresora == "true"){
        
