@@ -424,6 +424,35 @@ class Utils
 
   }
 
+ 
+  function printFileFalso( $filename=""){
+
+     // puedes validar el query aca
+     echo ( "---------------------IMPRIMIENDO------- \n");
+
+     // puedes validar el query aca
+     echo ( "nombre de archivo  \n");
+     echo ( $filename );
+    
+     // interpretar la respuesta de la impresora
+     $respuesta_impresora = "true"
+ 
+     if($respuesta_impresora == "true"){
+       
+       return "true";
+ 
+     }else{
+       // (3) (false)  verifico el mensaje del controlador al imprimir, (condiciones de parseo), si sale un error
+       // ... se mantiene la factura en current (sin cambios)
+       echo "la impresora fallo... (hay que colocar los errores en log)\n";
+       // ... busco en checkprinter cual puede ser la razon del error.
+       return "false";
+     }
+ 
+ 
+   }
+ 
+
   
   function sendCorte(){
 
