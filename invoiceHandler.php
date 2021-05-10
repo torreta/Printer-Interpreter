@@ -296,6 +296,10 @@ class invoiceHandler
     $filename = "Factura".$numero_factura.".txt";	
     $file = $Utils->printFileFromArray($factura_en_contruccion, $filename);
     
+    // en caso de que se necesite imprimir o sacar algo de la cola que 
+    // se haya quedado pegada. el falso se puede usar para saltar alguno.
+    // (en este caso el falso es para poder probar solo con consola)
+    // pues los archivos deberia crearlos bien formateados de todos modos.
     // $respuesta_impresora = $Utils->printFile($filename);
     $respuesta_impresora = $Utils->printFileFalso($filename);
 
