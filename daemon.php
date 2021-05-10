@@ -196,6 +196,15 @@ while (true) {
         $respuesta_impresora = $Utils->sendCierre(); 
          
        break;
+       case "9":// test de impresion
+        echo "********************\n";
+        echo "TEST DE IMPRESION!!!\n";
+        echo "*********************\n";
+        
+        $tipo_documento = "Test de Impresion";
+        $respuesta_impresora = $Utils->sendTest(); 
+         
+       break;
 
       default: // Documento indeterminado
         die("Documento indeterminado: (daemon) ". $documento_imprimiendo["document_type_id"] ); 

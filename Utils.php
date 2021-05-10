@@ -561,6 +561,60 @@ class Utils
 
   }
 
+  function sendTest(){
+
+    $itObj = new Tfhka();
+
+    // verifico si la impresora esta encendida
+    // ... colocar condicionales para proceder (FALTA)
+    $impresora_encendida = $itObj->CheckFprinter();
+    $impresora_encendida = $this->check_impresora_encendida($impresora_encendida);
+                  
+    // puedes validar el query aca
+    echo ( "impresora encendida \n");
+    echo ( $impresora_encendida );
+    echo ( "\n");
+
+
+    // verifico estados de la impresora
+    $respuesta_impresora_estado = $itObj->ReadFpStatus();
+    $respuesta_impresora_estado = $this->check_estado_impresora($respuesta_impresora_estado);
+
+                  
+    // puedes validar el query aca
+    echo ( "impresora estado de impresora aparte \n");
+    echo ( $respuesta_impresora_estado );
+    echo ( "\n");
+
+    // enviarlo a imprimir (PROBARLO Y EJECUTARLO IMPRESORA)(FALTA)
+    // ... enviar a imprimir
+    // $respuesta_impresora = $itObj->SendCmd("I0Z");
+    // $respuesta_impresora = $respuesta_impresora = $itObj->SendFileCmd("Cierre.txt");
+    shell_exec("IntTFHKA.exe SendFileCmd(Test.txt");
+
+    // ... para probar voy a decir que la impresora dijo algo 
+    // $respuestas_impresora = ["true","false"];
+    //$respuesta_impresora = $respuestas_impresora[array_rand($respuestas_impresora, 1)];
+
+    // interpretar la respuesta de la impresora
+    //$respuesta_impresora = $this->respuesta_impresora($respuesta_impresora);
+    $respuesta_impresora = "true";
+
+
+    if($respuesta_impresora == "true"){
+      
+      return "true";
+
+    }else{
+      // (3) (false)  verifico el mensaje del controlador al imprimir, (condiciones de parseo), si sale un error
+      // ... se mantiene la factura en current (sin cambios)
+      echo "la impresora fallo... (hay que colocar los errores en log)\n";
+      // ... busco en checkprinter cual puede ser la razon del error.
+      return "false";
+    }
+
+  }
+
 
 }
 ?>
