@@ -168,9 +168,32 @@ while (true) {
         $respuesta_impresora = $debitnoteHandler->printDebitnote($conn,$documento_imprimiendo);
 
         break;
-      case "4":// Nota de entrega (solo items)
+      case "4":// Nota de entrega (solo items) // COPIA!
 
         // nota de cualquier otro tipo, 
+        $tipo_documento = "Copia";
+
+        // tomo el id de la factura
+        $invoice_id = $documento_imprimiendo["document_id"];
+        
+        // envio al "manejador" respectivo
+        $invoiceHandler =  new invoiceHandler();
+
+        // numero del documento
+        $info_factura = $invoiceHandler->get_invoice_info($conn, $invoice_id);
+
+        // objeto de los datos de la factura.
+        $factura_actual = $info_factura->fetch_assoc();
+        $numero_documento = $factura_actual["invoice_number"];
+
+        // tipo
+        $es_fiscal = $factura_actual["fiscal"];
+        $tipo_de_factura = "no fiscal";
+        $tipo_documento =  "Copia";
+        $numero_documento = ($es_fiscal == "1")? $factura_actual["invoice_number"]:$factura_actual["saleorder_number"];
+
+
+        $respuesta_impresora = $invoiceHandler->printCopy($conn,$documento_imprimiendo);
 
         break;
       case "5":// documento nulo de caja

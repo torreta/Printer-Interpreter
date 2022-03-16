@@ -249,7 +249,7 @@ class invoiceHandler
     // tipo
     $es_fiscal = $factura_actual["fiscal"];
     $tipo_de_factura = ($es_fiscal == "1")? "fiscal":"no fiscal";
-
+    
     echo "\n";
     echo "el documento a imprimir es la factura ".$tipo_de_factura." de numero: " . $numero_factura .", por cajero ". $nombre_cajero. "\n ";
     echo "\n";
@@ -279,6 +279,106 @@ class invoiceHandler
       $items_factura = $this->get_invoice_items($conn ,$invoice_id, $tipo_de_factura, $subtotal, $tax, $total);
       
     }
+
+    // concateno la informacion fiscal a la de los items de la factura
+    $factura_en_contruccion = $infoFiscalTraducida + $items_factura;
+
+    //cierre de factura (lo coloque en los items de una vez)
+    //.. si quiero luego colocar pie de factura aqui lo puedo hacer con el size de $items_factura + 1 como indice y sumo
+    // $factura_en_contruccion[$index_counter] = "101";
+
+    echo "\n";
+    var_dump($factura_en_contruccion) ;
+    echo "\n";
+    
+    // creo el archivo de la factura y lo mando a imprimir
+    $Utils = new Utils();
+    $filename = "Factura".$numero_factura.".txt";	
+    $file = $Utils->printFileFromArray($factura_en_contruccion, $filename);
+    
+    // en caso de que se necesite imprimir o sacar algo de la cola que 
+    // se haya quedado pegada. el falso se puede usar para saltar alguno.
+    // (en este caso el falso es para poder probar solo con consola)
+    // pues los archivos deberia crearlos bien formateados de todos modos.
+    // $respuesta_impresora = $Utils->printFile($filename);
+    $respuesta_impresora = $Utils->printFileFalso($filename);
+
+    // linea para emular impresion exitosa.
+    // $respuesta_impresora = "true";
+
+    if($respuesta_impresora == "true"){
+
+      return "true";
+
+    }else{
+      echo "la impresora fallo... (hay que colocar los errores en log)\n";
+      return "false";
+
+    }
+
+
+  }
+
+
+  function printCopy($conn, $documento_imprimiendo ){
+
+    // Check connection
+    if ($conn->connect_error) {
+      die("(printInvoice) Connection failed: " . $conn->connect_error);
+    }
+    
+
+    if($documento_imprimiendo ==  null){
+      die("dato vital vacio (printInvoiceCopy)\n");
+    }
+
+    // tomo el id de la factura
+    $invoice_id = $documento_imprimiendo["document_id"];
+
+    // detalles de documento
+    $info_factura = $this->get_invoice_info($conn,$invoice_id);
+
+    // objeto de los datos de la factura.
+    $factura_actual = $info_factura->fetch_assoc();
+
+    // informacion fiscal
+    $info_fiscal_factura =  $this->get_info_fiscal($conn,$invoice_id);
+
+    // objeto informacion fiscal factura
+    $factura_fiscal_actual = $info_fiscal_factura->fetch_assoc();
+
+
+    // info de factura
+    $numero_factura = $factura_actual["invoice_number"];
+    $subtotal = $factura_actual["subtotal"];
+    $tax = $factura_actual["tax"];
+    $total = $factura_actual["total"];
+
+    // nombre Cajero
+    $nombre_cajero = $documento_imprimiendo["cashier_name"];
+
+    // tipo
+    $es_fiscal = $factura_actual["fiscal"];
+    $tipo_de_factura = "no fiscal";
+
+    echo "\n";
+    echo "el documento a imprimir es la copia de la factura ".$tipo_de_factura." de numero: " . $numero_factura .", por cajero ". $nombre_cajero. "\n ";
+    echo "\n";
+
+    // inicializo una instancia de interprete para el tipo de doc.
+    // ...(hago una instancia del interprete del tipo de doc)
+    $interpreter_nofiscal = new interpreter_nofiscal();
+
+    // counter for translation
+    $factura_en_contruccion = array();
+    $index_counter = 0;
+    $index_inverse_counter = 0;
+
+    // consultar informacion fiscal de la factura antes de armarla
+    $infoFiscalTraducida = $interpreter_nofiscal->translateFiscalInfoArrayCopy($factura_fiscal_actual);
+
+    // arreglo de los items de la factura
+    $items_factura = $this->get_invoice_items($conn ,$invoice_id, $tipo_de_factura, $subtotal, $tax, $total);
 
     // concateno la informacion fiscal a la de los items de la factura
     $factura_en_contruccion = $infoFiscalTraducida + $items_factura;
