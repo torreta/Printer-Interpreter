@@ -12,6 +12,7 @@ include_once ("debitnoteHandler.php");
 
 include_once ("Utils.php"); 
 
+// armando la conexion a la BD
 $DatabaseBridge =  new DatabaseBridge();
 $Utils =  new Utils();
 
@@ -19,11 +20,13 @@ $Utils =  new Utils();
 // Database settings - change these to your own
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'pos_development');
+define('DB_PORT', '3306');
 define('DB_CHARSET', 'utf8');
-define('DB_USER', 'root');
-define('DB_PASSWORD', null);
+define('DB_USER', '********');
+define('DB_PASSWORD', '********');
 
-// // Database settings - change these to your own
+
+// Database settings - change these to your own
 // define('DB_HOST', 'strixerp.gotdns.com');
 // define('DB_NAME', 'pos_development');
 // define('DB_PORT', '3306');
@@ -32,7 +35,7 @@ define('DB_PASSWORD', null);
 // define('DB_PASSWORD', '-------'); // ask // man***
 
 // Printer config (and identification)
-define('PRINTER_ID', 1); //la impresora en uso (numerada en BD)
+define('PRINTER_ID', 2); //la impresora en uso (numerada en BD)
 
 // Error and reporting
 ini_set("display_errors", 1);
@@ -47,7 +50,7 @@ function addlog ($message="") {
 }
 
 // Cycle
-define('LOOP_CYCLE', 1); // Loop every 60 secs
+define('LOOP_CYCLE', 1); // Ciclo determinado en segundos, en este caso cada segundo
 
 
 $conn = $DatabaseBridge->connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME , PRINTER_ID);
