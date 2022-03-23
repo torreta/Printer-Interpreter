@@ -428,8 +428,12 @@ class Utils
   function printFileFalso( $filename=""){
 
     // puedes validar el query aca
-    echo ( "---------------------IMPRIMIENDO------- \n");
-
+    echo ( "-------********************************-------\n");
+    echo ( "-------                                ------ \n");
+    echo ( "-------          IMPRIMIENDO           ------ \n");
+    echo ( "-------       (solo consola )          ------ \n");
+    echo ( "-------   (  sin conexion FISCAL  )    ------ \n");
+    echo ( "-------********************************-------\n");
     // puedes validar el query aca
     echo ( "nombre de archivo  \n");
     echo ( $filename );
