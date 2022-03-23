@@ -13,3 +13,10 @@ Cocos:
 
 Hacer archivo de configuracion
 
+---------------------
+
+crear archivos configuracion parl padding fiscales
+    BIXOLON 350
+    SRP-350
+    HKA-80
+    HKA80_VE (con flags)
