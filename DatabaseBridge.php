@@ -3,16 +3,19 @@
   include_once ("TfhkaPHP.php"); 
   include_once ("interpreter.php"); 
   include_once ("Utils.php"); 
+  include_once ("DBConfig.php"); 
 
   $itObj = new Tfhka(); // printer api
 
 class DatabaseBridge
 {
   
-  function connect($servername, $username, $password, $dbname, $printer_id){
+  function connect(){
     /*** (C) CONNECT DATABASE ***/
-    // Create connection
-    $conn = new mysqli($servername, $username, $password, $dbname);
+    // Create connection (defined DBConfig.php)
+    // these setting are defined on DBConfig.php
+    // (if file doesnt exist.... make one... copy the example)
+    $conn = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME , DB_PORT);
 
     // Check connection
     if ($conn->connect_error) {
@@ -99,7 +102,7 @@ class DatabaseBridge
     if ($insertar_registro->execute()) {
       echo "Se ha registrado un documento a imprimiendo \n";
     } else {
-      echo "(al insertar a imrpimiendo) Error: " . $sql . "\n" . mysqli_error($conn);
+      echo "(al insertar a imrpimiendo) Error: " . $query_a_imprimiendo . "\n" . mysqli_error($conn);
     }
 
   }
@@ -134,7 +137,7 @@ class DatabaseBridge
     if ($borrar_pendiente_registro->execute()) {
       echo "Se ha borrado el documento de pendientes, por haber sido llevada a imprimir. \n";
     } else {
-      echo "(al borrar de pendientes) Error: " . $sql . "\n" . mysqli_error($conn);
+      echo "(al borrar de pendientes) Error: " . $query_delete_pending . "\n" . mysqli_error($conn);
     }
 
 
@@ -175,7 +178,7 @@ class DatabaseBridge
     if ($insertar_registro->execute()) {
       echo "Se ha registrado el documento en el historial de impresos \n";
     } else {
-      echo "(al insertar a historial) Error: " . $sql . "\n" . mysqli_error($conn);
+      echo "(al insertar a historial) Error: " . $query_a_historico . "\n" . mysqli_error($conn);
     }
 
   }
@@ -210,7 +213,7 @@ class DatabaseBridge
     if ($borrar_current_registro->execute()) {
       echo "Se ha borrado el documeto de la cola de impresion, por haber sido completada. \n";
     } else {
-      echo "(al borrar de current) Error: " . $sql . "\n" . mysqli_error($conn);
+      echo "(al borrar de current) Error: " . $query_delete_current . "\n" . mysqli_error($conn);
     }
 
 
@@ -253,7 +256,7 @@ class DatabaseBridge
         if ($marcar_current_registro->execute()) {
           echo "Se ha marcado el documento como impreso.. \n";
         } else {
-          echo "(marcar_impreso) Error: " . $sql . "\n" . mysqli_error($conn);
+          echo "(marcar_impreso) Error: " . $query_mark_printed . "\n" . mysqli_error($conn);
         }
 
 
@@ -328,7 +331,7 @@ class DatabaseBridge
     if ($actualizar_mensaje_impresora->execute()) {
       echo "se ha actualizado el mensaje de la impresora. \n";
     } else {
-      echo "(al actualizar mensaje de la impresora) Error: " . $sql . "\n" . mysqli_error($conn);
+      echo "(al actualizar mensaje de la impresora) Error: " . $query_update_message . "\n" . mysqli_error($conn);
     }
 
     // esta comprovacion evita que se repitan los errores en el log historico una vez falle una vez
@@ -355,7 +358,7 @@ class DatabaseBridge
         echo "se ha escrito un registro nuevo en log de impresiones.  \n";
         
       } else {
-        echo "(al actualizar mensaje de la impresora)(error impresion)Error: " . $sql . "\n" . mysqli_error($conn);
+        echo "(al actualizar mensaje de la impresora)(error impresion)Error: " . $query_log_message . "\n" . mysqli_error($conn);
       }
     }
 

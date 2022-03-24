@@ -16,26 +16,12 @@ include_once ("Utils.php");
 $DatabaseBridge =  new DatabaseBridge();
 $Utils =  new Utils();
 
-/*** (B) SETTINGS ***/
-// Database settings - change these to your own
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'pos_development');
-define('DB_PORT', '3306');
-define('DB_CHARSET', 'utf8');
-define('DB_USER', '********');
-define('DB_PASSWORD', '********');
-
-
-// Database settings - change these to your own
-// define('DB_HOST', 'strixerp.gotdns.com');
-// define('DB_NAME', 'pos_development');
-// define('DB_PORT', '3306');
-// define('DB_CHARSET', 'utf8');
-// define('DB_USER', '-------'); // remember // anibal
-// define('DB_PASSWORD', '-------'); // ask // man***
-
+// DAEMON SETTINGS
 // Printer config (and identification)
 define('PRINTER_ID', 2); //la impresora en uso (numerada en BD)
+
+// Cycle
+define('LOOP_CYCLE', 1); // Ciclo determinado en segundos, en este caso cada segundo
 
 // Error and reporting
 ini_set("display_errors", 1);
@@ -49,18 +35,12 @@ function addlog ($message="") {
   );
 }
 
-// Cycle
-define('LOOP_CYCLE', 1); // Ciclo determinado en segundos, en este caso cada segundo
+// CREATING DB LINK
+$conn = $DatabaseBridge->connect();
 
-
-$conn = $DatabaseBridge->connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME , PRINTER_ID);
-
-// cerrando db (FALTA COLOCARLO EN UN MEJOR LUGAR)
-// $conn->close();
 
 // con esta variable verifico si debo imprimir varias veces el error de impresion
 $print_error = false;
-
 
 /*** (D) LOOP CHECK ***/
 while (true) {
@@ -300,19 +280,21 @@ while (true) {
   sleep(LOOP_CYCLE);
 }
     
-    // cd C:\xampp\htdocs\pos_app\src\printer_daemon && php daemon.php
-    // D:\xamp\htdocs\Printer-Interpreter
-    // cd C:\xampp\htdocs\Printer-Interpreter && php daemon.php
-    // php daemon.php
-    // cd  d:\xamp\htdocs\Printer-Interpreter && php daemon.php
-    // D:\xamp\htdocs\Printer-Interpreter
+  // EXAMPLES CONSOLE EXECUTION
 
-    // cmd normal:
-    // C:\xampp\php\php.exe C:\xampp\htdocs\Printer-Interpreter\daemon.php
-    // (de no funcionar, vigilar variables de entorno y lo que vaya diciendo el log.)
-    // C:\xampp\xampp_shell.bat cd C:\xampp\htdocs\Printer-Interpreter && php daemon.php
-    // C:\xampp\xampp_shell.bat C:\xampp\php\php.exe C:\xampp\htdocs\Printer-Interpreter\daemon.php.
+  // cd C:\xampp\htdocs\pos_app\src\printer_daemon && php daemon.php
+  // D:\xamp\htdocs\Printer-Interpreter
+  // cd C:\xampp\htdocs\Printer-Interpreter && php daemon.php
+  // php daemon.php
+  // cd  d:\xamp\htdocs\Printer-Interpreter && php daemon.php
+  // D:\xamp\htdocs\Printer-Interpreter
 
-    // background:
-    // cd C:\xampp\htdocs\Printer-Interpreter && START /B php daemon.php > daemon.log
+  // cmd normal:
+  // C:\xampp\php\php.exe C:\xampp\htdocs\Printer-Interpreter\daemon.php
+  // (de no funcionar, vigilar variables de entorno y lo que vaya diciendo el log.)
+  // C:\xampp\xampp_shell.bat cd C:\xampp\htdocs\Printer-Interpreter && php daemon.php
+  // C:\xampp\xampp_shell.bat C:\xampp\php\php.exe C:\xampp\htdocs\Printer-Interpreter\daemon.php.
+
+  // background:
+  // cd C:\xampp\htdocs\Printer-Interpreter && START /B php daemon.php > daemon.log
 ?>
