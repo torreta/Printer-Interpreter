@@ -36,6 +36,11 @@
   $default_price_decimals = "00";
   $default_price_decimals_quantity = 2;
   $default_price_integer_quantity = 8;
+
+  // Payments
+  $default_payments_decimals = "00";
+  $default_payments_decimals_quantity = 2;
+  $default_payments_integer_quantity = 10;
     
   // quantity
   $default_quantity_decimals = "000";
@@ -55,7 +60,10 @@
       $price_decimals = $default_price_decimals;
       $price_decimals_quantity = $default_price_decimals_quantity;
       $price_integer_quantity = $default_price_integer_quantity;
-    
+      // Payments
+      $payments_decimals =  $default_payments_decimals;
+      $payments_decimals_quantity = $default_payments_decimals_quantity;
+      $payments_integer_quantity =  $default_payments_integer_quantity;
       // quantity
       $quantity_decimals = $default_quantity_decimals;
       $quantity_decimals_quantity = $default_quantity_decimals_quantity;
@@ -71,7 +79,10 @@
       $price_decimals = "00";
       $price_decimals_quantity = 2;
       $price_integer_quantity = 8;
-    
+      // Payments
+      $payments_decimals = "00";
+      $payments_decimals_quantity = 2;
+      $payments_integer_quantity = 10;
       // quantity
       $quantity_decimals = "000";
       $quantity_decimals_quantity = 3;
@@ -87,7 +98,10 @@
       $price_decimals = "00";
       $price_decimals_quantity = 2;
       $price_integer_quantity = 8;
-    
+      // Payments
+      $payments_decimals = "00";
+      $payments_decimals_quantity = 2;
+      $payments_integer_quantity = 10;
       // quantity
       $quantity_decimals = "000";
       $quantity_decimals_quantity = 3;
@@ -103,7 +117,10 @@
       $price_decimals = "00";
       $price_decimals_quantity = 2;
       $price_integer_quantity = 14;
-    
+      // Payments
+      $payments_decimals = "00";
+      $payments_decimals_quantity = 2;
+      $payments_integer_quantity = 14;
       // quantity
       $quantity_decimals = "000";
       $quantity_decimals_quantity = 3;
@@ -121,7 +138,10 @@
       $price_decimals = $default_price_decimals;
       $price_decimals_quantity = $default_price_decimals_quantity;
       $price_integer_quantity = $default_price_integer_quantity;
-    
+      // Payments
+      $payments_decimals =  $default_payments_decimals;
+      $payments_decimals_quantity = $default_payments_decimals_quantity;
+      $payments_integer_quantity =  $default_payments_integer_quantity;
       // quantity
       $quantity_decimals = $default_quantity_decimals;
       $quantity_decimals_quantity = $default_quantity_decimals_quantity;
@@ -138,6 +158,10 @@
   define('D_PRICE_DECIMALS',  $price_decimals);
   define('D_PRICE_DECIMALS_QUANTITY',  $price_decimals_quantity);
   define('D_PRICE_INTEGER_QUANTITY',  $price_integer_quantity);
+  //  Payments
+  define('D_PAYMENTS_DECIMALS',  $payments_decimals);
+  define('D_PAYMENTS_DECIMALS_QUANTITY',  $payments_decimals_quantity);
+  define('D_PAYMENTS_INTEGER_QUANTITY',  $payments_integer_quantity);
   //  Quantities
   define('D_QUANTITY_DECIMALS',  $quantity_decimals);
   define('D_QUANTITY_DECIMALS_QUANTITY',  $quantity_decimals_quantity);
