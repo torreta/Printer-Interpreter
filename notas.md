@@ -26,13 +26,13 @@ crear archivos configuracion parl padding fiscales
 
 select
 -- count(*) as n,
-dbo_administration_invoices.id,
+dbo_administration_invoices.id as invoice_id,
 dbo_administration_invoices.invoice_number,
 dbo_administration_invoices.saleorder_number,
 dbo_administration_invoices.total as invoice_total,
 dbo_administration_invoices.real_total as invoice_real_total,
 dbo_finance_payments.amount as payment_amount,
-dbo_config_exchange_rates.currency_id as exchange_id_currency_id,
+round(if(dbo_config_currencies.name = "Dolar",dbo_finance_payments.amount * dbo_config_exchange_rates.exchange_rate, dbo_finance_payments.amount),2)   as payment_translated,
 dbo_config_exchange_rates.exchange_rate as exchange_rate ,
 dbo_finance_payment_types.name as payment_type,
 dbo_config_currencies.name as payment_currency,
@@ -43,9 +43,12 @@ join dbo_administration_invoices on dbo_administration_invoices.id = dbo_finance
 join dbo_config_exchange_rates on dbo_administration_invoices.exchange_rate_id = dbo_config_exchange_rates.id 
 join dbo_finance_payment_types on dbo_finance_payment_types.id = dbo_finance_payments.payment_type_id 
 join dbo_config_currencies on dbo_config_currencies.id = dbo_finance_payments.currency_id 
+-- limit 100 offset 1000
 -- group by invoice_number 
 -- having n > 2
 where dbo_administration_invoices.id = 1210
+-- where dbo_administration_invoices.currency_id = 2
+-- order by dbo_finance_payments.id desc
 
 
 auxquery
