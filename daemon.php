@@ -1,43 +1,32 @@
 <?php
 
 /*** (A) CHECK ***/
+// line that avoids this to be executed on a browser
 if (PHP_SAPI != "cli") {
   die("Este daemonio solo funciona ejecutandose desde consola. de momento no muestro errores en el browser.");
 }
 
+// DB Connection
 include_once ("DatabaseBridge.php"); 
+include_once ("DBConfig.php"); 
+
+// Documents Handlers
 include_once ("invoiceHandler.php"); 
 include_once ("creditnoteHandler.php"); 
 include_once ("debitnoteHandler.php"); 
 
+// Utilities
 include_once ("Utils.php"); 
+
+// General Configurations
+include_once ("Configs.php"); // <--- GENERAL SETTINGS
 
 // armando la conexion a la BD
 $DatabaseBridge =  new DatabaseBridge();
 $Utils =  new Utils();
 
-// DAEMON SETTINGS
-// Printer config (and identification)
-define('PRINTER_ID', 2); //la impresora en uso (numerada en BD)
-
-// Cycle
-define('LOOP_CYCLE', 1); // Ciclo determinado en segundos, en este caso cada segundo
-
-// Error and reporting
-ini_set("display_errors", 1);
-error_reporting(E_ALL & ~E_NOTICE);
-define('LOG_KEEP', true);
-define('LOG_FILE', 'daemon.log');
-function addlog ($message="") {
-  error_log(
-    "[" . date("Y-m-d H:i:s") . "] " . $message . PHP_EOL,
-    3, LOG_FILE
-  );
-}
-
 // CREATING DB LINK
 $conn = $DatabaseBridge->connect();
-
 
 // con esta variable verifico si debo imprimir varias veces el error de impresion
 $print_error = false;
