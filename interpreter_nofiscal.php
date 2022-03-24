@@ -218,6 +218,21 @@ class interpreter_nofiscal{
 
   }
   
+  function translateLinePago($tasa="", $precio = "", $cant = "", $desc = ""){
+    // PENDIENTE
+    
+    $Utils = new Utils();
+    
+    $titulo = $this->translateDescription($desc). $this->translateTasa($tasa);
+
+    $numero = "Bs".$this->translatePrecio($precio);
+
+    $comando = "80*".$Utils->formal_padding($titulo, $numero, 42);
+
+    return  $comando;
+
+  }
+  
 
   function translateLineCredito($tasa="", $precio = "", $cant = "", $desc = ""){
   

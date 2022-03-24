@@ -1,6 +1,7 @@
 <?php
 
   include_once ("Utils.php"); 
+  include_once ("Configs.php"); 
 
 class interpreter{
 
@@ -165,8 +166,8 @@ class interpreter{
         // con solo parte entera tengo que agregar padding decimal
         //echo "solo numero sin decimales\n";
         //echo("valor entero\n ". $cifras_separadas[0] . "\n");
-        $decimales = "00";
-        $enteros = $Utils->padding_number_format($cifras_separadas[0],8);
+        $enteros = $Utils->padding_number_format($cifras_separadas[0],D_PRICE_INTEGER_QUANTITY);
+        $decimales = D_PRICE_DECIMALS;
         //echo($enteros);
         break;
       case 2:
@@ -175,8 +176,8 @@ class interpreter{
         //  echo("valor entero\n ". $cifras_separadas[0] . "\n");
         //  echo("valor decimal\n ". $cifras_separadas[1] . "\n");
         
-        $enteros = $Utils->padding_number_format($cifras_separadas[0],8);
-        $decimales = $Utils->padding_decimal_format($cifras_separadas[1],2);  
+        $enteros = $Utils->padding_number_format($cifras_separadas[0],D_PRICE_INTEGER_QUANTITY);
+        $decimales = $Utils->padding_decimal_format($cifras_separadas[1], D_PRICE_DECIMALS_QUANTITY);  
 
         break;
       default:
@@ -233,8 +234,8 @@ class interpreter{
         // con solo parte entera tengo que agregar padding decimal
         //  echo "solo numero sin decimales\n";
         //  echo("valor entero\n ". $cifras_separadas[0] . "\n");
-        $decimales = "000";
-        $enteros = $Utils->padding_number_format($cifras_separadas[0],5);
+        $enteros = $Utils->padding_number_format($cifras_separadas[0],D_QUANTITY_INTEGER_QUANTITY);
+        $decimales = D_QUANTITY_DECIMALS;
         //echo($enteros);
         break;
       case 2:
@@ -242,8 +243,8 @@ class interpreter{
         //  echo("valor entero\n ". $cifras_separadas[0] . "\n");
         //  echo("valor decimal\n ". $cifras_separadas[1] . "\n");
         
-        $enteros = $Utils->padding_number_format($cifras_separadas[0],5);
-        $decimales = $Utils->padding_decimal_format($cifras_separadas[1],3);  
+        $enteros = $Utils->padding_number_format($cifras_separadas[0],D_QUANTITY_INTEGER_QUANTITY);
+        $decimales = $Utils->padding_decimal_format($cifras_separadas[1],D_QUANTITY_DECIMALS_QUANTITY);  
 
         break;
       default:
@@ -258,7 +259,7 @@ class interpreter{
 
   function translateDescription($desc = ""){
     
-    $max_caracteres = 20; //definido en el manual
+    $max_caracteres = D_MAX_CHARACTERS_DESCRIPTION; //definido en el manual
 
     if($desc == ""){
       //echo("Descripcion Vacia\n");
@@ -293,6 +294,20 @@ class interpreter{
 
   }
 
+  function translateLinePago( $tasa="", $precio = "", $cant = "", $desc = ""){
+    // PENDIENTE
+
+    var_dump("datos que me llegan a la linea de producto");
+
+    var_dump( $tasa, $precio, $cant ,$desc );
+
+    $comando = $this->translateTasa($tasa) .$this->translatePrecio($precio) . $this->translateCantidad($cant) .$this->translateDescription($desc);
+    
+    //echo "\n\nComando Final\n"; 
+    return  $comando;
+
+  }
+
 
   function translateLineCredito( $tasa="", $precio = "", $cant = "", $desc = ""){
   
@@ -315,7 +330,7 @@ class interpreter{
 
 
   function translateLineCommentCredito( $observations=""){
-    $max_caracteres_comentario = 40;
+    $max_caracteres_comentario = D_MAX_CHARACTERS_COMMENTS;
 
     // este texto por articulo no concuerda con el manual
     $comando = substr("@". $observations, 0, $max_caracteres_comentario)."\n";;
@@ -358,10 +373,10 @@ class interpreter{
     // ["complete_identification"]=> string(xx) "J002985321"
     // $contador_inverso = -8; // aqui tengo que poner la cantidad de items que me llegan en reversa. era 10 con las 3 lineas de abajo comentadas.
     $InfoFiscalTraducida = [];
-    $max_caracteres = 40; //definido en el manual
-    $max_caracteres_info_adicional = 40; //manual again
-    $max_lineas_info_adicional = 10; //manual again
-    $max_caracteres_comentario = 40;
+    $max_caracteres = D_MAX_CHARACTERS_TEXT;
+    $max_caracteres_info_adicional = D_MAX_CHARACTERS_INFO;
+    // $max_lineas_info_adicional = 10; //manual again
+    // $max_caracteres_comentario = 40;
 
 
     $Utils = new Utils();
@@ -443,10 +458,10 @@ class interpreter{
 
     // $contador_inverso = -9; // aqui tengo que poner la cantidad de items que me llegan en reversa. era 10 con las 3 lineas de abajo comentadas.
     $InfoFiscalTraducida = [];
-    $max_caracteres = 40; //definido en el manual
-    $max_caracteres_info_adicional = 40; //manual again
-    $max_lineas_info_adicional = 10; //manual again
-    $max_caracteres_comentario = 40;
+    $max_caracteres = D_MAX_CHARACTERS_TEXT;
+    $max_caracteres_info_adicional = D_MAX_CHARACTERS_INFO;
+    // $max_lineas_info_adicional = 10; //manual again
+    // $max_caracteres_comentario = 40;
 
     $Utils = new Utils();
     $contador = 0;
@@ -541,10 +556,10 @@ class interpreter{
 
     // $contador_inverso = -9; // aqui tengo que poner la cantidad de items que me llegan en reversa. era 10 con las 3 lineas de abajo comentadas.
     $InfoFiscalTraducida = [];
-    $max_caracteres = 40; //definido en el manual
-    $max_caracteres_info_adicional = 40; //manual again
-    $max_lineas_info_adicional = 10; //manual again
-    $max_caracteres_comentario = 40;
+    $max_caracteres = D_MAX_CHARACTERS_TEXT;
+    $max_caracteres_info_adicional = D_MAX_CHARACTERS_INFO; 
+    // $max_lineas_info_adicional = 10; //manual again
+    // $max_caracteres_comentario = 40;
 
     $Utils = new Utils();
     $contador = 0;
