@@ -300,8 +300,47 @@ class interpreter{
     $codigo = "";
 
     switch ($tipo_pago) {
-      case "T.Débito":
+      case "efectivo":
+        $codigo = "01";
+      break;
+      case "cheque":
+        $codigo = "02";
+      break;
+      case "T. Credito":
+        $codigo = "03";
+      break;
+      case "T. Debito":
         $codigo = "04";
+      break;
+      case "Cestaticket":
+        $codigo = "05";
+      break;
+      case "cupon":
+        $codigo = "06";
+      break;
+      case "dep. Bancario":
+        $codigo = "07";
+      break;
+      case "trans. bancaria":
+        $codigo = "08";
+      break;
+      case "anticipo":
+        $codigo = "09";
+      break;
+      case "credito":
+        $codigo = "10";
+      break;
+      case "nota de credito":
+        $codigo = "11";
+      break;
+      case "retenciones":
+        $codigo = "12";
+      break;
+      case "vuelto":
+        $codigo = "13";
+      break;
+      case "divisa":
+        $codigo = "14";
       break;
       case "T.Débito":
         $codigo = "04";
