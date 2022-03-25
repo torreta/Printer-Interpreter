@@ -43,6 +43,14 @@ class interpreter{
 
   }
 
+  function caracterPagoTotal(){
+    return  "1";
+  }
+
+  function caracterPagoParcial(){
+    return  "2";
+  }
+
 
   function translateTasaCredito($tasa=""){
     // de momento tengo entendido 4 tipos de tasa
@@ -255,6 +263,157 @@ class interpreter{
       return  $enteros.$decimales;
 
   }
+
+  function translateCodigoPago($tipo_pago = ""){
+
+    // base de datos:
+    // T.Débito
+    // Efectivo Bs
+    // Efectivo $
+    // Zelle
+    // Cheque
+    // Transf/Dep
+    // T.Crédito
+    // Cesta Ticket
+    // Saldo
+    // Credito
+    // Pago Movil
+
+    // en el D de la impresora (HKA_80) este caso
+    // 01: efectivo
+    // 02: cheque
+    // 03: T. Credito
+    // 04: T. Debito
+    // 05: Cestaticket
+    // 06: cupon
+    // 07: dep. Bancario
+    // 08: trans. bancaria
+    // 09: anticipo
+    // 10: credito
+    // 11: nota de credito
+    // 12: retenciones
+    // 13: vuelto
+    // 14: divisa
+    // 15: tarjeta 3
+    // 16+ - 24 : no definidos
+
+    $codigo = "";
+
+    switch ($tipo_pago) {
+      case "T.Débito":
+        $codigo = "04";
+      break;
+      case "T.Débito":
+        $codigo = "04";
+      break;
+      case "Efectivo Bs":
+        $codigo = "01";
+      break;
+      case "Efectivo $":
+        $codigo = "14";
+      break;
+      case "Zelle":
+        $codigo = "14";
+      break;
+      case "Cheque":
+        $codigo = "02";
+      break;
+      case "Transf/Dep":
+        $codigo = "08";
+      break;
+      case "T.Crédito":
+        $codigo = "03";
+      break;
+      case "Cesta Ticket":
+        $codigo = "05";
+      break;
+      case "Saldo":
+        $codigo = "09";
+      break;
+      case "Credito":
+        $codigo = "10";
+      break;
+      case "Pago Movil":
+        $codigo = "08";
+      break;
+      default:
+        // tranferencia bancaria por defecto
+        $codigo = "08";
+      break; 
+    }
+
+    return  $codigo;
+
+  }
+
+
+  function translateMontoPago($monto_pago = ""){
+
+    $Utils = new Utils();
+
+    //validaciones de tipo MONTO
+    // MONTO del ítem (10 enteros + 2 decimales)
+    $enteros = "";   // 10 siempre, cualquier numero + relleno en ceros
+    $decimales = ""; // 2 siempre, cualquier numero + relleno en ceros 
+
+    // pico el numero en 2, quizas no se pique por ser un entero
+    // $MONTO = "12.6";
+    if($monto_pago == ""){
+      // echo("valor vacio de monto_pago\n");
+      return false;
+    }
+
+    // aqui va la funcion expresion regular validador de numeros
+    if (is_numeric($monto_pago) == false){
+      // echo("valor invalido cifras\n" + $monto_pago );
+      return false;
+    }else{
+        // echo("valor numerico\n");
+    }
+
+    // se hace esto porque la cifra y los decimales en la traduccion no tienen
+    // ningun tipo de marcacion, solo se asume que son los ultimos 2 digitos los decimales
+    
+    // separo la cifra en 2 pedazos, entero y decimal para poder evaluarlo aparte
+    $cifras_separadas = explode(".",$monto_pago); 
+
+    // evaluo en la cantidad de pedazos en que se pico el numero, si es anormal se descarta
+    $cant_cifras = count($cifras_separadas);
+    
+    //echo("cant cifras \n" . $cant_cifras."\n");
+
+    // con solo parte entera tengo que agregar padding decimal
+    // y tengo que completar lo que sea el numero entero a 8 digitos con padding
+    // de ceros.
+
+    switch ($cant_cifras) {
+      case 1:
+        // con solo parte entera tengo que agregar padding decimal
+        //echo "solo numero sin decimales\n";
+        //echo("valor entero\n ". $cifras_separadas[0] . "\n");
+        $enteros = $Utils->padding_number_format($cifras_separadas[0],D_PAYMENTS_INTEGER_QUANTITY);
+        $decimales = D_PAYMENTS_DECIMALS;
+        //echo($enteros);
+        break;
+      case 2:
+        // 
+        //  echo "numero + decimales\n";
+        //  echo("valor entero\n ". $cifras_separadas[0] . "\n");
+        //  echo("valor decimal\n ". $cifras_separadas[1] . "\n");
+        
+        $enteros = $Utils->padding_number_format($cifras_separadas[0],D_PAYMENTS_INTEGER_QUANTITY);
+        $decimales = $Utils->padding_decimal_format($cifras_separadas[1], D_PAYMENTS_DECIMALS_QUANTITY);  
+
+        break;
+      default:
+        //echo "formato de numero no reconocido\n";
+        return false;
+
+    }
+    
+      return  $enteros.$decimales;
+
+  }
     
 
   function translateDescription($desc = ""){
@@ -294,16 +453,28 @@ class interpreter{
 
   }
 
-  function translateLinePago( $tasa="", $precio = "", $cant = "", $desc = ""){
-    // PENDIENTE
 
-    var_dump("datos que me llegan a la linea de producto");
+  function translateLinePagoTotal( $tipo_pago=""){
 
-    var_dump( $tasa, $precio, $cant ,$desc );
+    var_dump("datos que me llega del pago total");
 
-    $comando = $this->translateTasa($tasa) .$this->translatePrecio($precio) . $this->translateCantidad($cant) .$this->translateDescription($desc);
+    var_dump( $tipo_pago );
+
+    $comando = $this->caracterPagoTotal().$this->translateCodigoPago($tipo_pago);
     
-    //echo "\n\nComando Final\n"; 
+    return  $comando;
+
+  }
+
+
+  function translateLinePagoParcial( $tipo_pago="", $monto_pago){
+
+    var_dump("datos que me llega del pago parcial");
+
+    var_dump( $tipo_pago, $monto_pago );
+
+    $comando = $this->caracterPagoParcial() .$this->translateCodigoPago($tipo_pago).$this->translateMontoPago($monto_pago);
+    
     return  $comando;
 
   }

@@ -171,8 +171,71 @@ class invoiceHandler
     }
 
     if($tipo_de_factura == "fiscal"){
+
+      $query_pagos_factura = 
+        "SELECT
+          dbo_administration_invoices.id as invoice_id,
+          dbo_administration_invoices.invoice_number,
+          dbo_administration_invoices.saleorder_number,
+          dbo_administration_invoices.total as invoice_total,
+          dbo_administration_invoices.real_total as invoice_real_total,
+          dbo_finance_payments.amount as payment_amount,
+          ROUND(if(dbo_config_currencies.name = 'Dolar',dbo_finance_payments.amount * dbo_config_exchange_rates.exchange_rate, dbo_finance_payments.amount),2)   as payment_translated,
+          dbo_config_exchange_rates.exchange_rate as exchange_rate ,
+          dbo_finance_payment_types.name as payment_type,
+          dbo_config_currencies.name as payment_currency,
+          dbo_config_currencies.abbreviation as currency_sign
+        FROM dbo_finance_payments
+        join dbo_administration_invoices on dbo_administration_invoices.id = dbo_finance_payments.invoice_id 
+        join dbo_config_exchange_rates on dbo_administration_invoices.exchange_rate_id = dbo_config_exchange_rates.id 
+        join dbo_finance_payment_types on dbo_finance_payment_types.id = dbo_finance_payments.payment_type_id 
+        join dbo_config_currencies on dbo_config_currencies.id = dbo_finance_payments.currency_id 
+        where dbo_administration_invoices.id = " .$invoice_id;      
+
+      var_dump($query_pagos_factura);
+
+      $items_pagos = $conn->query($query_pagos_factura);
+
+      var_dump($items_pagos);
+
+      // Ningun Pago registrado asi que lo tomo a credito
+      if ($items_pagos->num_rows == 0) {
+        echo("no hay pagos asociados esa factura \n ");
+        $factura_en_contruccion[$index_counter] = $interpreter->translateLinePagoTotal("Credito")."\n"; // segun manual
+      }
+
+      // Ningun Pago registrado asi que lo tomo a credito
+      if ($items_pagos->num_rows == 1) {
+        var_dump($items_pagos);
+        echo("1 solo pago asociado a esa factura \n ");
+        $pago = $items_pagos->fetch_assoc();
+        $factura_en_contruccion[$index_counter] = $interpreter->translateLinePagoTotal($pago["payment_type"])."\n";
+      }
+
+      //  MAS DE UN PAGO
+      if ($items_pagos->num_rows > 1) {
+        // tomo la cantidad de pagos que quedan
+        $counter_pagos =  $items_pagos->num_rows;
+        // output data of each row
+        while($pago = $items_pagos->fetch_assoc()) {
+
+          if($counter_pagos == 1){
+            $factura_en_contruccion[$index_counter] = $interpreter->translateLinePagoTotal($pago["payment_type"])."\n";
+
+          }else{
+            $factura_en_contruccion[$index_counter] = $interpreter->translateLinePagoParcial($pago["payment_type"],$pago["payment_translated"])."\n";
+            $index_counter++;
+            // voy restando los pagos parciales para asegurarme de que hago el ultimo
+            // pago como total
+            $counter_pagos = $counter_pagos - 1;
+          }
+            
+        }
+
+      }
+
       //cierre de factura (viene despues de los items)
-      $factura_en_contruccion[$index_counter] = "101";
+      // $factura_en_contruccion[$index_counter] = "105";
     }else{
       //cierre de factura no fiscal (viene despues de los items)
       $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->separador();
@@ -199,6 +262,9 @@ class invoiceHandler
       // // total
       $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateFinalTotal($total)."\n";
       $index_counter++;
+
+      // AQUI AHORA TOCA METODOS DE PAGO PARA LAS NO FISCALES
+      // ESO incluye su propio traductor de linea
 
       $factura_en_contruccion[$index_counter] = "810";
     }
@@ -300,8 +366,8 @@ class invoiceHandler
     // se haya quedado pegada. el falso se puede usar para saltar alguno.
     // (en este caso el falso es para poder probar solo con consola)
     // pues los archivos deberia crearlos bien formateados de todos modos.
-    // $respuesta_impresora = $Utils->printFile($filename);
-    $respuesta_impresora = $Utils->printFileFalso($filename);
+    $respuesta_impresora = $Utils->printFile($filename);
+    // $respuesta_impresora = $Utils->printFileFalso($filename);
 
     // linea para emular impresion exitosa.
     // $respuesta_impresora = "true";
@@ -400,8 +466,8 @@ class invoiceHandler
     // se haya quedado pegada. el falso se puede usar para saltar alguno.
     // (en este caso el falso es para poder probar solo con consola)
     // pues los archivos deberia crearlos bien formateados de todos modos.
-    // $respuesta_impresora = $Utils->printFile($filename);
-    $respuesta_impresora = $Utils->printFileFalso($filename);
+    $respuesta_impresora = $Utils->printFile($filename);
+    // $respuesta_impresora = $Utils->printFileFalso($filename);
 
     // linea para emular impresion exitosa.
     // $respuesta_impresora = "true";
