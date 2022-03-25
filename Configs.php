@@ -120,7 +120,7 @@
       // Payments
       $payments_decimals = "00";
       $payments_decimals_quantity = 2;
-      $payments_integer_quantity = 14;
+      $payments_integer_quantity = 15;
       // quantity
       $quantity_decimals = "000";
       $quantity_decimals_quantity = 3;
