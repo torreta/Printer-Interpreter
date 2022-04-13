@@ -603,7 +603,7 @@ class interpreter{
     $InfoFiscalTraducida[$contador] = "iD*".$InfoFiscal["createdAt"]."\n";
     $contador++;
     // -6 => "iS*Pedro Mendez\n", // mombre persona
-    $linea_sin_caracteres_especiales = $InfoFiscal["name"].$InfoFiscal["last_name"];
+    $linea_sin_caracteres_especiales = $InfoFiscal["name"]." ".$InfoFiscal["last_name"];
     $linea_sin_caracteres_especiales = $Utils->cleanSpecialChars($linea_sin_caracteres_especiales); //solo acepta caracteres normales
     $InfoFiscalTraducida[$contador] =  substr("iS*".$linea_sin_caracteres_especiales,0,$max_caracteres)."\n";
     $contador++;
