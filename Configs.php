@@ -53,6 +53,11 @@
   $default_max_characters_info = 40;
   $default_max_characters_comments = 40;
 
+  // discounts
+  $default_discounts_decimals = "00";
+  $default_discounts_decimals_quantity = 2;
+  $default_discounts_integer_quantity = 7;
+
   // MODEL CASES
   switch ($Printer_model) {
     case "EMULATOR":
@@ -73,6 +78,10 @@
       $max_characters_text = $default_max_characters_text;
       $max_characters_info = $default_max_characters_info;
       $max_characters_comments = $default_max_characters_comments;
+      // discounts
+      $discounts_decimals = $default_discounts_decimals;
+      $discounts_decimals_quantity = $default_discounts_decimals_quantity;
+      $discounts_integer_quantity =  $default_discounts_integer_quantity;
     break;
     case "SRP-350":
       // prices
@@ -92,6 +101,10 @@
       $max_characters_text = 40;
       $max_characters_info = 40;
       $max_characters_comments = 40;
+      // discounts
+      $discounts_decimals = "00";
+      $discounts_decimals_quantity = 2;
+      $discounts_integer_quantity = 7;
     break;
     case "BIXOLON":
       // prices
@@ -111,6 +124,10 @@
       $max_characters_text = 40;
       $max_characters_info = 40;
       $max_characters_comments = 40;
+      // discounts
+      $discounts_decimals = "00";
+      $discounts_decimals_quantity = 2;
+      $discounts_integer_quantity = 7;
     break;
     case "HK80_VE":
       // prices
@@ -125,12 +142,15 @@
       $quantity_decimals = "000";
       $quantity_decimals_quantity = 3;
       $quantity_integer_quantity = 14;
-
       // texts
       $max_characters_description = 20;
       $max_characters_text = 40;
       $max_characters_info = 40;
       $max_characters_comments = 40;
+      // discounts
+      $discounts_decimals = "00";
+      $discounts_decimals_quantity = 2;
+      $discounts_integer_quantity = 15;
     break;
 
     default: // undetermined printer
@@ -151,6 +171,11 @@
       $max_characters_text = $default_max_characters_text;
       $max_characters_info = $default_max_characters_info;
       $max_characters_comments = $default_max_characters_comments;
+      // discounts
+      $discounts_decimals = $default_discounts_decimals;
+      $discounts_decimals_quantity = $default_discounts_decimals_quantity;
+      $discounts_integer_quantity =  $default_discounts_integer_quantity;
+
     break;
   }
 
@@ -171,5 +196,9 @@
   define('D_MAX_CHARACTERS_TEXT',  $max_characters_text);
   define('D_MAX_CHARACTERS_INFO',  $max_characters_info);
   define('D_MAX_CHARACTERS_COMMENTS',  $max_characters_comments);
+  // discounts
+  define('D_DISCOUNTS_DECIMALS',  $discounts_decimals);
+  define('D_DISCOUNTS_DECIMALS_QUANTITY',  $discounts_decimals_quantity);
+  define('D_DISCOUNTS_INTEGER_QUANTITY',  $discounts_integer_quantity);
 
 ?>
