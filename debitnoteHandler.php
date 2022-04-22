@@ -238,7 +238,7 @@ class debitnoteHandler
     
     // creo el archivo de la nota de debito y lo mando a imprimir
     $Utils = new Utils();
-    $filename = "NotadeDebito".$numero_debitnote.".txt";	
+    $filename = "/ND/NotadeDebito".$numero_debitnote.".txt";	
     $file = $Utils->printFileFromArray($debitnote_en_contruccion, $filename);
     
     $respuesta_impresora = $Utils->printFile($filename);

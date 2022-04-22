@@ -6,6 +6,6 @@
     // shell_exec("IntTFHKA.exe SendFileCmd(Credito.txt");
     // shell_exec("IntTFHKA.exe SendFileCmd(Retiro.txt");
     // shell_exec("IntTFHKA.exe SendFileCmd(NoFiscal.txt");
-    shell_exec("IntTFHKA.exe SendFileCmd(Test.txt");
+    shell_exec("IntTFHKA.exe SendFileCmd(/CMD/Test.txt");
 
 ?>

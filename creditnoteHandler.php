@@ -322,7 +322,7 @@ class creditnoteHandler
     
     // creo el archivo de la factura y lo mando a imprimir
     $Utils = new Utils();
-    $filename = "NotadeCredito".$numero_creditnote.".txt";	
+    $filename = "/NC/NotadeCredito".$numero_creditnote.".txt";	
     $file = $Utils->printFileFromArray($creditnote_en_contruccion, $filename);
     
     $respuesta_impresora = $Utils->printFile($filename);

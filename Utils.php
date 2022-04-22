@@ -159,11 +159,11 @@ class Utils
       // ya que tengo la respuesta en un arreglo. interpreto si tengo errores
     switch ($respuesta_fragmentada[1]) {
       case "TRUE": 
-            // si el strig del arreglo en el retorno tiene algo diferente a true se considera apagada o con errores
+            // si el string del arreglo en el retorno tiene algo diferente a true se considera apagada o con errores
             return  "true";
       break;
       case "FALSE":
-          // signigica que la impresora esta apagada
+          // significa que la impresora esta apagada
           return  "false";
         break;
       default: 
@@ -223,7 +223,7 @@ class Utils
             if($respuesta_fragmentada[5] == "100"){
               return  "Error Memoria Fiscal.";
             }else{
-              echo("respuesta del estado  impresora, no esta dentro de las respuesas esperadas");
+              echo("respuesta del estado  impresora, no esta dentro de las respuestas esperadas");
               echo("status: ".$respuesta_fragmentada[3]);
               echo("Error: ".$respuesta_fragmentada[5]);
               echo("\n");
@@ -250,7 +250,7 @@ class Utils
                   return  "OK. (Memoria Fiscal Casi LLena)";
                 break;
                 default: 
-                  echo("error del estado de  impresora, no esta dentro de las respuesas esperadas");
+                  echo("error del estado de  impresora, no esta dentro de las respuestas esperadas");
                   echo("error: ". $respuesta_fragmentada[5]);
                   echo("\n");
                   die("respuesta inesperada al consultar estado, buscar error."); 
@@ -264,14 +264,14 @@ class Utils
                 return  "Error de formato de linea a imprimir (comando).";
               break;
               default: 
-                echo("error del estado de  impresora, no esta dentro de las respuesas esperadas");
+                echo("error del estado de  impresora, no esta dentro de las respuestas esperadas");
                 echo("error: ". $respuesta_fragmentada[5]);
                 echo("\n");
                 // die("respuesta inesperada al consultar estado, buscar error."); 
             }
           break;
           default: 
-            echo("respuesta del estado  impresora, no esta dentro de las respuesas esperadas");
+            echo("respuesta del estado  impresora, no esta dentro de las respuestas esperadas");
             echo("status: ". $respuesta_fragmentada[3]);
             echo("\n");
             // die("respuesta inesperada al consultar estado, buscar error."); 
@@ -283,7 +283,7 @@ class Utils
           if($respuesta_fragmentada[3] == "0" && $respuesta_fragmentada[5] == "137"){
             return  "Impresora Apagada.";
           }else{
-            echo("respuesta del estado  impresora, no esta dentro de las respuesas esperadas");
+            echo("respuesta del estado  impresora, no esta dentro de las respuestas esperadas");
             echo("status: ".$respuesta_fragmentada[3]);
             echo("Error: ".$respuesta_fragmentada[5]);
             echo("\n");
@@ -291,7 +291,7 @@ class Utils
           }
       break;
       default: 
-        echo("respuesta del estado  impresora, no esta dentro de las respuesas esperadas");
+        echo("respuesta del estado  impresora, no esta dentro de las respuestas esperadas");
         echo($respuesta_fragmentada[1]);
         echo("\n");
         die("respuesta inesperada al consultar estado, buscar error (cambio API?)"); 
@@ -340,7 +340,7 @@ class Utils
 
 
   function makeComment( $comments = [], $prefix = "i00" ){
-  //transformando elementos de un arreglo en lineas de codigo de comentario.
+  // transformando elementos de un arreglo en lineas de codigo de comentario.
     $arreglo = [];
 
     for ($i = 0; $i < sizeof($comments); $i++) {
@@ -404,7 +404,7 @@ class Utils
 
     // ... para probar voy a decir que la impresora dijo algo 
     // $respuestas_impresora = ["true","false"];
-    //$respuesta_impresora = $respuestas_impresora[array_rand($respuestas_impresora, 1)];
+    // $respuesta_impresora = $respuestas_impresora[array_rand($respuestas_impresora, 1)];
 
     // interpretar la respuesta de la impresora
     $respuesta_impresora = $this->respuesta_impresora($respuesta_impresora);
@@ -428,12 +428,15 @@ class Utils
   function printFileFalso( $filename=""){
 
     // puedes validar el query aca
-    echo ( "-------********************************-------\n");
+    echo ( "-------********************************------ \n");
     echo ( "-------                                ------ \n");
-    echo ( "-------          IMPRIMIENDO           ------ \n");
+    echo ( "-------         IMPRIMIENDO            ------ \n");
     echo ( "-------       (solo consola )          ------ \n");
     echo ( "-------   (  sin conexion FISCAL  )    ------ \n");
-    echo ( "-------********************************-------\n");
+    echo ( "-------                                ------ \n");
+    echo ( "-------                                ------ \n");
+    echo ( "-------********************************------ \n");
+    
     // puedes validar el query aca
     echo ( "nombre de archivo  \n");
     echo ( $filename );
@@ -485,11 +488,11 @@ class Utils
     // ... enviar a imprimir
     // $respuesta_impresora = $itObj->SendCmd("I0X");
     // $respuesta_impresora = $itObj->SendFileCmd("Corte.txt");
-    shell_exec("IntTFHKA.exe SendFileCmd(Corte.txt");
+    shell_exec("IntTFHKA.exe SendFileCmd(/CMD/Corte.txt");
 
     // ... para probar voy a decir que la impresora dijo algo 
     // $respuestas_impresora = ["true","false"];
-    //$respuesta_impresora = $respuestas_impresora[array_rand($respuestas_impresora, 1)];
+    // $respuesta_impresora = $respuestas_impresora[array_rand($respuestas_impresora, 1)];
 
     // interpretar la respuesta de la impresora
     // $respuesta_impresora = $this->respuesta_impresora($respuesta_impresora);
@@ -540,14 +543,14 @@ class Utils
     // ... enviar a imprimir
     // $respuesta_impresora = $itObj->SendCmd("I0Z");
     // $respuesta_impresora = $respuesta_impresora = $itObj->SendFileCmd("Cierre.txt");
-    shell_exec("IntTFHKA.exe SendFileCmd(Cierre.txt");
+    shell_exec("IntTFHKA.exe SendFileCmd(/CMD/Cierre.txt");
 
     // ... para probar voy a decir que la impresora dijo algo 
     // $respuestas_impresora = ["true","false"];
-    //$respuesta_impresora = $respuestas_impresora[array_rand($respuestas_impresora, 1)];
+    // $respuesta_impresora = $respuestas_impresora[array_rand($respuestas_impresora, 1)];
 
     // interpretar la respuesta de la impresora
-    //$respuesta_impresora = $this->respuesta_impresora($respuesta_impresora);
+    // $respuesta_impresora = $this->respuesta_impresora($respuesta_impresora);
     $respuesta_impresora = "true";
 
 
@@ -594,14 +597,14 @@ class Utils
     // ... enviar a imprimir
     // $respuesta_impresora = $itObj->SendCmd("I0Z");
     // $respuesta_impresora = $respuesta_impresora = $itObj->SendFileCmd("Cierre.txt");
-    shell_exec("IntTFHKA.exe SendFileCmd(Test.txt");
+    shell_exec("IntTFHKA.exe SendFileCmd(/CMD/Test.txt");
 
     // ... para probar voy a decir que la impresora dijo algo 
     // $respuestas_impresora = ["true","false"];
-    //$respuesta_impresora = $respuestas_impresora[array_rand($respuestas_impresora, 1)];
+    // $respuesta_impresora = $respuestas_impresora[array_rand($respuestas_impresora, 1)];
 
     // interpretar la respuesta de la impresora
-    //$respuesta_impresora = $this->respuesta_impresora($respuesta_impresora);
+    // $respuesta_impresora = $this->respuesta_impresora($respuesta_impresora);
     $respuesta_impresora = "true";
 
 
