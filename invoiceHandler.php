@@ -199,8 +199,12 @@ class invoiceHandler
         
       // tomo el descuento total
       while($descuento = $items_descuentos->fetch_assoc()) {
-        $factura_en_contruccion[$index_counter] = $interpreter->translateLineDescuento($descuento["discount_total"])."\n";
-        $index_counter++;
+        // verifico que el descuento sea mayor a cero para reflejarlo
+        if (floatval($descuento["discount_total"]) > 0 ){
+          $factura_en_contruccion[$index_counter] = $interpreter->translateLineDescuento($descuento["discount_total"])."\n";
+          $index_counter++;
+        }
+      
       }
 
     }
