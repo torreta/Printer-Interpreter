@@ -488,7 +488,7 @@ class Utils
     // ... enviar a imprimir
     // $respuesta_impresora = $itObj->SendCmd("I0X");
     // $respuesta_impresora = $itObj->SendFileCmd("Corte.txt");
-    shell_exec("IntTFHKA.exe SendFileCmd(/CMD/Corte.txt");
+    shell_exec("IntTFHKA.exe SendFileCmd(CMD/Corte.txt");
 
     // ... para probar voy a decir que la impresora dijo algo 
     // $respuestas_impresora = ["true","false"];
@@ -543,7 +543,7 @@ class Utils
     // ... enviar a imprimir
     // $respuesta_impresora = $itObj->SendCmd("I0Z");
     // $respuesta_impresora = $respuesta_impresora = $itObj->SendFileCmd("Cierre.txt");
-    shell_exec("IntTFHKA.exe SendFileCmd(/CMD/Cierre.txt");
+    shell_exec("IntTFHKA.exe SendFileCmd(CMD/Cierre.txt");
 
     // ... para probar voy a decir que la impresora dijo algo 
     // $respuestas_impresora = ["true","false"];
@@ -597,7 +597,7 @@ class Utils
     // ... enviar a imprimir
     // $respuesta_impresora = $itObj->SendCmd("I0Z");
     // $respuesta_impresora = $respuesta_impresora = $itObj->SendFileCmd("Cierre.txt");
-    shell_exec("IntTFHKA.exe SendFileCmd(/CMD/Test.txt");
+    shell_exec("IntTFHKA.exe SendFileCmd(CMD/Test.txt");
 
     // ... para probar voy a decir que la impresora dijo algo 
     // $respuestas_impresora = ["true","false"];

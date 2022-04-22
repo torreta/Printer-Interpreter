@@ -359,7 +359,7 @@ class invoiceHandler
     
     // creo el archivo de la factura y lo mando a imprimir
     $Utils = new Utils();
-    $filename = "/FA/Factura".$numero_factura.".txt";	
+    $filename = "FA/Factura".$numero_factura.".txt";	
     $file = $Utils->printFileFromArray($factura_en_contruccion, $filename);
     
     // en caso de que se necesite imprimir o sacar algo de la cola que 
@@ -459,7 +459,7 @@ class invoiceHandler
     
     // creo el archivo de la factura y lo mando a imprimir
     $Utils = new Utils();
-    $filename = "/FA/Factura".$numero_factura.".txt";	
+    $filename = "FA/Factura".$numero_factura.".txt";	
     $file = $Utils->printFileFromArray($factura_en_contruccion, $filename);
     
     // en caso de que se necesite imprimir o sacar algo de la cola que 
