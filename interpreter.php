@@ -51,6 +51,12 @@ class interpreter{
     return  "2";
   }
 
+  function caracterDescuento(){
+    // segun el manual puede ser - para descuento o + para recargo, pero en este caso siempre es descuento
+    // osea, un monto que se le resta al total de factura
+    return  "q-";
+  }
+
 
   function translateTasaCredito($tasa=""){
     // de momento tengo entendido 4 tipos de tasa
@@ -453,6 +459,75 @@ class interpreter{
       return  $enteros.$decimales;
 
   }
+
+
+  function translateMontoDescuento($monto_descuento = ""){
+
+    $Utils = new Utils();
+
+    //validaciones de tipo MONTO
+    // MONTO del ítem (10 enteros + 2 decimales)
+    $enteros = "";   // 10 siempre, cualquier numero + relleno en ceros
+    $decimales = ""; // 2 siempre, cualquier numero + relleno en ceros 
+
+    // pico el numero en 2, quizas no se pique por ser un entero
+    // $MONTO = "12.6";
+    if($monto_descuento == ""){
+      // echo("valor vacio de monto_descuento\n");
+      return false;
+    }
+
+    // aqui va la funcion expresion regular validador de numeros
+    if (is_numeric($monto_descuento) == false){
+      // echo("valor invalido cifras\n" + $monto_descuento );
+      return false;
+    }else{
+        // echo("valor numerico\n");
+    }
+
+    // se hace esto porque la cifra y los decimales en la traduccion no tienen
+    // ningun tipo de marcacion, solo se asume que son los ultimos 2 digitos los decimales
+    
+    // separo la cifra en 2 pedazos, entero y decimal para poder evaluarlo aparte
+    $cifras_separadas = explode(".",$monto_descuento); 
+
+    // evaluo en la cantidad de pedazos en que se pico el numero, si es anormal se descarta
+    $cant_cifras = count($cifras_separadas);
+    
+    //echo("cant cifras \n" . $cant_cifras."\n");
+
+    // con solo parte entera tengo que agregar padding decimal
+    // y tengo que completar lo que sea el numero entero a 8 digitos con padding
+    // de ceros.
+
+    switch ($cant_cifras) {
+      case 1:
+        // con solo parte entera tengo que agregar padding decimal
+        //echo "solo numero sin decimales\n";
+        //echo("valor entero\n ". $cifras_separadas[0] . "\n");
+        $enteros = $Utils->padding_number_format($cifras_separadas[0],D_DISCOUNTS_INTEGER_QUANTITY);
+        $decimales = D_DISCOUNTS_DECIMALS;
+        //echo($enteros);
+        break;
+      case 2:
+        // 
+        //  echo "numero + decimales\n";
+        //  echo("valor entero\n ". $cifras_separadas[0] . "\n");
+        //  echo("valor decimal\n ". $cifras_separadas[1] . "\n");
+        
+        $enteros = $Utils->padding_number_format($cifras_separadas[0],D_DISCOUNTS_INTEGER_QUANTITY);
+        $decimales = $Utils->padding_decimal_format($cifras_separadas[1], D_DISCOUNTS_DECIMALS_QUANTITY);  
+
+        break;
+      default:
+        //echo "formato de numero no reconocido\n";
+        return false;
+
+    }
+    
+      return  $enteros.$decimales;
+
+  }
     
 
   function translateDescription($desc = ""){
@@ -513,6 +588,19 @@ class interpreter{
     var_dump( $tipo_pago, $monto_pago );
 
     $comando = $this->caracterPagoParcial() .$this->translateCodigoPago($tipo_pago).$this->translateMontoPago($monto_pago);
+    
+    return  $comando;
+
+  }
+
+
+  function translateLineDescuento($monto_descuento){
+
+    var_dump("datos que me llega del descuento");
+
+    var_dump( $monto_descuento );
+
+    $comando = $this->caracterDescuento().$this->translateMontoPago($monto_descuento);
     
     return  $comando;
 
