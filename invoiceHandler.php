@@ -111,6 +111,7 @@ class invoiceHandler
         dbo_administration_invoices_items.tax_base,
         ROUND(dbo_administration_invoices_items.tax_base / dbo_administration_invoices_items.quantity, 2) as real_base_check,
         dbo_administration_invoices_items_prices.unit_price_after_discount as real_base,
+        dbo_administration_invoices_items_prices.total_price_without_discount as real_base_no_discount,
         dbo_config_taxes.percentage,
         dbo_config_taxes.observation,
         dbo_administration_invoices_items.exchange_rate_id,
@@ -141,11 +142,13 @@ class invoiceHandler
       // echo "price: " . $item["price"]. " - quantity: " . $item["quantity"]. ", description " . $item["description"];
       // echo "\n";
 
+      // para dejar constancia, antes era real base lo que se pasaba por parametros
+
       if($tipo_de_factura == "fiscal"){
         // proximamente al interpreter
         // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
         // $tasa="", $precio = "", $cant = "", $desc = ""
-        $factura_en_contruccion[$index_counter] = $interpreter->translateLine($item["observation"],$item["real_base"],$item["quantity"],$item["description"])."\n";
+        $factura_en_contruccion[$index_counter] = $interpreter->translateLine($item["observation"],$item["real_base_no_discount"],$item["quantity"],$item["description"])."\n";
         $index_counter++;
       }else{
         // el interpreter en los no fiscales genera 2 lineas separadas, si es un item de de  mas de 2 items
@@ -153,14 +156,14 @@ class invoiceHandler
         // // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
         // $tasa="", $precio = "", $cant = "", $desc = ""
         if($item["quantity"] == "1"){
-          $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLine($item["observation"],$item["real_base"],$item["quantity"],$item["description"])."\n";
+          $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLine($item["observation"],$item["real_base_no_discount"],$item["quantity"],$item["description"])."\n";
           $index_counter++;
         }else{
           // $precio = "", $cant = ""
-          $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLinePrice($item["observation"],$item["real_base"],$item["quantity"],$item["description"])."\n";
+          $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLinePrice($item["observation"],$item["real_base_no_discount"],$item["quantity"],$item["description"])."\n";
           $index_counter++;
           // $tasa="", $desc = ""
-          $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLineDesc($item["observation"],$item["real_base"],$item["quantity"],$item["description"])."\n";
+          $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLineDesc($item["observation"],$item["real_base_no_discount"],$item["quantity"],$item["description"])."\n";
           $index_counter++;
 
         }
@@ -172,6 +175,35 @@ class invoiceHandler
 
 
     // AQUI TENGO QUE PONER LO QUE SEA QUE SE TIENE DE DESCUENTO SOBRE LA FACTURA BASADO EN LOS ITEMS
+    if($tipo_de_factura == "fiscal"){
+
+      $query_descuento_factura = 
+        "SELECT
+        dbo_administration_invoices_items.id,
+        dbo_config_currencies.`name`	,
+        sum(dbo_administration_invoices_items_prices.discount) as discount_total
+      FROM `dbo_administration_invoices_items`
+      join dbo_config_taxes on dbo_administration_invoices_items.tax_id = dbo_config_taxes.id
+      join dbo_config_exchange_rates on dbo_administration_invoices_items.exchange_rate_id = dbo_config_exchange_rates.id
+      join dbo_config_currencies on dbo_config_exchange_rates.currency_id = dbo_config_currencies.id
+      join dbo_administration_invoices_items_prices on dbo_administration_invoices_items.id = dbo_administration_invoices_items_prices.invoice_item_id 
+      and dbo_administration_invoices_items_prices.currency_id = 2
+      WHERE 	dbo_administration_invoices_items.invoice_id = " .$invoice_id;      
+
+      var_dump($query_descuento_factura);
+
+      $items_descuentos = $conn->query($query_descuento_factura);
+
+      var_dump($items_descuentos);
+
+        
+      // tomo el descuento total
+      while($descuento = $items_descuentos->fetch_assoc()) {
+        $factura_en_contruccion[$index_counter] = $interpreter->translateLineDescuento($descuento["discount_total"])."\n";
+        $index_counter++;
+      }
+
+    }
 
 
 
