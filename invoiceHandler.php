@@ -170,6 +170,11 @@ class invoiceHandler
 
     }
 
+
+    // AQUI TENGO QUE PONER LO QUE SEA QUE SE TIENE DE DESCUENTO SOBRE LA FACTURA BASADO EN LOS ITEMS
+
+
+
     if($tipo_de_factura == "fiscal"){
 
       $query_pagos_factura = 
@@ -213,6 +218,9 @@ class invoiceHandler
       }
 
       //  MAS DE UN PAGO
+      // para acumular los montos de los pagos y verificar que no nos pasemos
+      $sumador_de_pagos = 0;
+
       if ($items_pagos->num_rows > 1) {
         // tomo la cantidad de pagos que quedan
         $counter_pagos =  $items_pagos->num_rows;
@@ -223,11 +231,20 @@ class invoiceHandler
             $factura_en_contruccion[$index_counter] = $interpreter->translateLinePagoTotal($pago["payment_type"])."\n";
 
           }else{
+            $sumador_de_pagos =  $sumador_de_pagos + floatval($pago["payment_translated"]);
+            
+            // verificando que mi pago no exceda el total de factura (sino, debo romper el ciclo y colocar ese pago como pago total)
+            if (floatval($pago["invoice_real_total"]) < $sumador_de_pagos ){
+              $factura_en_contruccion[$index_counter] = $interpreter->translateLinePagoTotal($pago["payment_type"])."\n";
+              break;
+            }
+            
             $factura_en_contruccion[$index_counter] = $interpreter->translateLinePagoParcial($pago["payment_type"],$pago["payment_translated"])."\n";
             $index_counter++;
             // voy restando los pagos parciales para asegurarme de que hago el ultimo
             // pago como total
             $counter_pagos = $counter_pagos - 1;
+
           }
             
         }
