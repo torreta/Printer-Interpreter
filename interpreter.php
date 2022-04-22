@@ -600,7 +600,7 @@ class interpreter{
 
     var_dump( $monto_descuento );
 
-    $comando = $this->caracterDescuento().$this->translateMontoPago($monto_descuento);
+    $comando = $this->caracterDescuento().$this->translateMontoDescuento($monto_descuento);
     
     return  $comando;
 
