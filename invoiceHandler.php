@@ -111,7 +111,7 @@ class invoiceHandler
         dbo_administration_invoices_items.tax_base,
         ROUND(dbo_administration_invoices_items.tax_base / dbo_administration_invoices_items.quantity, 2) as real_base_check,
         dbo_administration_invoices_items_prices.unit_price_after_discount as real_base,
-        dbo_administration_invoices_items_prices.total_price_without_discount as real_base_no_discount,
+        dbo_administration_invoices_items_prices.subtotal_without_discount as real_base_no_discount,
         dbo_config_taxes.percentage,
         dbo_config_taxes.observation,
         dbo_administration_invoices_items.exchange_rate_id,
