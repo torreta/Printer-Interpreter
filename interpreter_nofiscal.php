@@ -18,7 +18,18 @@ class interpreter_nofiscal{
       //echo "Exento\n";
       $comando = " (E)";
       break;
+      case "":
+      //echo "Exento\n";
+      $comando = " (E)";
+      break;
+      case " ":
+      //echo "Exento\n";
+      $comando = " (E)";
+      break;
       case "IVA 16%":
+      //echo "Tasa 1\n";
+      $comando = " (G)";
+      case "!":
       //echo "Tasa 1\n";
       $comando = " (G)";
       break;
@@ -26,7 +37,15 @@ class interpreter_nofiscal{
       //echo "Tasa 2\n";
       $comando = " (R)";
       break;
-      case "tasa 3":
+      case "\"":
+      //echo "Tasa 2\n";
+      $comando = " (R)";
+      break;
+      case "Tasa 3":
+      //echo "Tasa 3\n";
+      $comando = " (A)";
+      break;
+      case "#":
       //echo "Tasa 3\n";
       $comando = " (A)";
       break;

@@ -19,15 +19,32 @@ class interpreter{
       //echo "Exento\n";
       $comando = " ";
       break;
+      case "":
+      //echo "Exento\n";
+      $comando = " ";
+      break;
+      case " ":
+      //echo "Exento\n";
+      $comando = " ";
+      break;
       case "IVA 16%":
+      //echo "Tasa 1\n";
+      $comando = "!";
+      case "!":
       //echo "Tasa 1\n";
       $comando = "!";
       break;
       case "Tasa 2":
       //echo "Tasa 2\n";
       $comando = "\"";
+      case "\"":
+      //echo "Tasa 2\n";
+      $comando = "\"";
       break;
       case "Tasa 3":
+      //echo "Tasa 3\n";
+      $comando = "#";
+      case "#":
       //echo "Tasa 3\n";
       $comando = "#";
       break;
@@ -72,7 +89,19 @@ class interpreter{
       //echo "Exento\n";
       $comando = "d0";
       break;
+      case "":
+      //echo "Exento\n";
+      $comando = "d0";
+      break;
+      case " ":
+      //echo "Exento\n";
+      $comando = "d0";
+      break;
       case "IVA 16%":
+      //echo "Tasa 1\n";
+      $comando = "d1";
+      break;
+      case "!":
       //echo "Tasa 1\n";
       $comando = "d1";
       break;
@@ -80,7 +109,15 @@ class interpreter{
       //echo "Tasa 2\n";
       $comando = "d2";
       break;
-      case "tasa 3":
+      case "\"":
+      //echo "Tasa 2\n";
+      $comando = "d2";
+      break;
+      case "Tasa 3":
+      //echo "Tasa 3\n";
+      $comando = "d3";
+      break;
+      case "#":
       //echo "Tasa 3\n";
       $comando = "d3";
       break;
@@ -111,7 +148,19 @@ class interpreter{
       //echo "Exento\n";
       $comando = "`0";
       break;
+      case "":
+      //echo "Exento\n";
+      $comando = "`0";
+      break;
+      case " ":
+      //echo "Exento\n";
+      $comando = "`0";
+      break;
       case "IVA 16%":
+      //echo "Tasa 1\n";
+      $comando = "`1";
+      break;
+      case "!":
       //echo "Tasa 1\n";
       $comando = "`1";
       break;
@@ -119,7 +168,15 @@ class interpreter{
       //echo "Tasa 2\n";
       $comando = "`2";
       break;
-      case "tasa 3":
+      case "\"":
+      //echo "Tasa 2\n";
+      $comando = "`2";
+      break;
+      case "Tasa 3":
+      //echo "Tasa 3\n";
+      $comando = "`3";
+      break;
+      case "#":
       //echo "Tasa 3\n";
       $comando = "`3";
       break;

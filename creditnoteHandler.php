@@ -114,6 +114,7 @@ class creditnoteHandler
         dbo_finance_creditnotes_items.net_amount,
         dbo_finance_creditnotes_items.product_quantity,
         dbo_finance_creditnotes_items.observations,
+        dbo_config_taxes.tax_code,
         dbo_config_taxes.observation as tax_observation
       FROM `dbo_finance_creditnotes_items`
       join dbo_finance_creditnotes on dbo_finance_creditnotes.id = dbo_finance_creditnotes_items.creditnote_id
@@ -153,7 +154,7 @@ class creditnoteHandler
           // proximamente al interpreter
           // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
           // $tasa="", $precio = "", $cant = "", $desc = ""
-          $creditnote_en_contruccion[$index_counter] = $interpreter->translateLineCredito($item["tax_observation"],$item["price"],$item["product_quantity"],$item["description"])."\n";
+          $creditnote_en_contruccion[$index_counter] = $interpreter->translateLineCredito($item["tax_code"],$item["price"],$item["product_quantity"],$item["description"])."\n";
           $index_counter++;
         }else{
           // el interpreter en los no fiscales genera 2 lineas separadas, si es un item de de  mas de 2 items
