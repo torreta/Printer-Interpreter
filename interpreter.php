@@ -27,7 +27,7 @@ class interpreter{
       //echo "Tasa 2\n";
       $comando = "\"";
       break;
-      case "tasa 3":
+      case "Tasa 3":
       //echo "Tasa 3\n";
       $comando = "#";
       break;
