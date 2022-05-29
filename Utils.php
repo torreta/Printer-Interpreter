@@ -704,7 +704,7 @@ class Utils
 
 
     // var_dump($respuesta_status);
-    $respuesta_impresora  = "true";
+    // $respuesta_impresora  = "true";
 
     if($respuesta_impresora == "true"){
       
