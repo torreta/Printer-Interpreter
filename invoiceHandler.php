@@ -423,8 +423,19 @@ class invoiceHandler
     $respuesta_impresora = $Utils->printFile($filename);
     // $respuesta_impresora = $Utils->printFileFalso($filename);
 
+    
+
+    // respuesta de status cuadrada desde el sistema
+    $respuesta_status = $Utils->system_status();
+
+    // aqui es donde deberia llamar las respectivas funciones que
+    // sincronizan los numeros de factura, corte, etc
+    
+    
+
     // linea para emular impresion exitosa.
     // $respuesta_impresora = "true";
+
 
     if($respuesta_impresora == "true"){
 

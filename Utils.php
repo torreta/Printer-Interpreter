@@ -174,7 +174,8 @@ class Utils
     echo ( "\n<pre> $filetext </pre>\n" );
 
     // aqui cuadro el interpreter de la linea de status 
-    $this->S1Interpreter($filetext);
+    $S1Printer_status = [];
+    $S1Printer_status = $this->S1Interpreter($filetext);
 
     // echo "termino";
     echo("\n----------------------------------------"); 
@@ -182,10 +183,19 @@ class Utils
     echo("\n----------------------------------------\n"); 
     
     // shell_exec('IntTFHKA.exe UploadStatusCmd("S2", "StatusData.txt")');
+    return $S1Printer_status;
+
+  }
+
+
+  function system_others( ){
+
+     // shell_exec('IntTFHKA.exe UploadStatusCmd("S2", "StatusData.txt")');
     return true;
 
   }
 
+  
   function S1Interpreter($filetext = ""){
     $arreglo = [];
 
@@ -696,14 +706,8 @@ class Utils
     // interpretar la respuesta de la impresora
     $respuesta_impresora = $this->respuesta_impresora($respuesta_impresora);
 
-    // respuesta de status cuadrada desde el sistema
-    $respuesta_status = $this->system_status();
-
-    // aqui es donde deberia llamar las respectivas funciones que
-    // sincronizan los numeros de factura, corte, etc
-
-
-    // var_dump($respuesta_status);
+    // en caso de que necesites forzar la respuesta positiva
+    // de que la impresora acaba de imprimir
     // $respuesta_impresora  = "true";
 
     if($respuesta_impresora == "true"){
