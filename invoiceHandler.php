@@ -80,6 +80,35 @@ class invoiceHandler
 
   }
 
+
+  function syncronize_invoice($conn, $invoice_id, $invoice_number ){
+
+    // Check connection
+    if ($conn->connect_error) {
+      die("(syncronize_invoice) Connection failed: " . $conn->connect_error);
+    }
+    
+    if($invoice_id ==  null || $invoice_id ==  "" ){
+      die("dato vital vacio (syncronize_invoice) (invoice_id)\n");
+    }
+
+    if($invoice_number ==  null || $invoice_number ==  "" ){
+      die("dato vital vacio (syncronize_invoice) (invoice_number)\n");
+    }
+
+    // cambiar los datos fiscales de las facturas.
+    $query_sincronizar_nro_factura = "UPDATE dbo_administration_invoices SET invoice_number = ". $invoice_number . " WHERE id = ". $invoice_id;
+
+    $cambiar_registro = $conn->prepare($query_sincronizar_nro_factura);
+
+    if ($cambiar_registro->execute()) {
+      echo "Se ha cambiado el nro factura un del a imprimiendo (sync)\n";
+    } else {
+      echo "(al cambiar el registro de numero de factura) Error: " . $query_sincronizar_nro_factura ."\n" . mysqli_error($conn);
+    }
+
+  }
+
   function get_invoice_items($conn, $invoice_id,$tipo_de_factura, $subtotal, $tax, $total ){
 
     // Check connection
@@ -420,11 +449,31 @@ class invoiceHandler
     // se haya quedado pegada. el falso se puede usar para saltar alguno.
     // (en este caso el falso es para poder probar solo con consola)
     // pues los archivos deberia crearlos bien formateados de todos modos.
+    
+    //  (CONTRA IMPRESORA) (solo uno de printFile o printFileFalso)
+    //  puede estar activo a la vez
     $respuesta_impresora = $Utils->printFile($filename);
+   
+    //  (COMODIN PARA EVADIR IMPRIMIR)(PERO AVANCE LA COLA) 
     // $respuesta_impresora = $Utils->printFileFalso($filename);
+
+    // respuesta de status cuadrada desde el sistema
+    // si estas jugando con los estados deberias comentar todas las
+    // 10 lineas siguientes a esta
+    $respuesta_status = $Utils->system_status();
+
+    // aqui es donde deberia llamar las respectivas funciones que
+    // sincronizan los numeros de factura, corte, etc
+    if($tipo_de_factura == "fiscal"){
+      // sincroniza el numero de factura
+      echo "Ultima factura impresa a sincronizar: ". $respuesta_status[3];
+      $invoice_number = $respuesta_status[3];
+      $this->syncronize_invoice($conn , $invoice_id, $invoice_number);
+    }
 
     // linea para emular impresion exitosa.
     // $respuesta_impresora = "true";
+
 
     if($respuesta_impresora == "true"){
 
