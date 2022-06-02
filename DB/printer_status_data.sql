@@ -19,5 +19,5 @@ CREATE TABLE `printer_status_data` (
   `printer_current_date` varchar(20) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Fecha actual de la impresora (DDMMAA)',
   `update_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de actualizacion de este estado',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 

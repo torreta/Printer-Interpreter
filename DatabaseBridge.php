@@ -291,6 +291,81 @@ class DatabaseBridge
   }
 
 
+  function sincronizar_numero($conn, $documento_imprimiendo ){
+    // la intencion de esta funcion, es dado un id de factura y un numero de factura, verificar si estan alineados,
+    // sino, modificar el numero de factura y asi mantener sincronia con el POS Strix
+
+    // ESTE SEGMENTO AUN NO ESTA EN USO.
+
+    // Check connection
+    if ($conn->connect_error) {
+      die("(marcar_impreso) Connection failed: " . $conn->connect_error);
+    }
+    
+    if($documento_imprimiendo ==  null){
+      die("objeto vacio (marcar_impreso)\n");
+    }
+
+    // query indenpotente... (no hace nada particular...)
+    $query_mark_printed = "SELECT * from `dbo_administration_invoices`;";
+
+
+    switch ($documento_imprimiendo["document_type_id"]) {
+      case "1": // Factura (unico caso de momento)
+        $tipo_documento = "factura";
+
+        // tomo el id de la factura
+        $invoice_id = $documento_imprimiendo["document_id"];
+        
+        // ... marcar como impreso
+        $query_mark_printed = 
+        "UPDATE`dbo_administration_invoices` 
+          SET `printed` = 1 
+          WHERE `id` = ".$invoice_id.";";
+        
+          // puedes validar el query aca
+          // echo ( $query_mark_printed );
+
+        $marcar_current_registro = $conn->prepare($query_mark_printed);
+
+        if ($marcar_current_registro->execute()) {
+          echo "Se ha marcado el documento como impreso.. \n";
+        } else {
+          echo "(marcar_impreso) Error: " . $query_mark_printed . "\n" . mysqli_error($conn);
+        }
+
+
+        break;
+      case "2":// Nota de Credito
+        $tipo_documento = "Nota de Credito";
+
+        // tomo el id de la NotadeCredito (nota de credito)
+        $creditnote_id = $documento_imprimiendo["document_id"];
+        
+        // envio al "manejador" respectivo
+
+        break;
+        break;
+      case "3":// Nota de Entrega
+        break;
+      case "4":// Nota no Fiscal
+        break;
+      case "5":// nota de entrega
+        break;
+      case "6":// corte de caja
+        $tipo_documento = "Corte";
+        break;
+      case "7":// cierre de caja
+        $tipo_documento = "Cierre";
+        break;
+      default: // Documento indeterminado
+        die("Documento indeterminado (bridge) ". $documento_imprimiendo["document_type_id"] ); 
+    }
+
+
+  }
+
+
   function logWithDoc($conn, $message, $documento_imprimiendo, $print_error){
 
     // Check connection
