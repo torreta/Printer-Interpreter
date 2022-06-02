@@ -30,6 +30,10 @@
   // PRINER MODEL (a way to check if we can configure these variables by default)
   $Printer_model = "EMULATOR"; // <---- Check switch to set this
 
+  // IGTF 3% ACTIVE?
+  $IGTF = false;
+
+
   // DEFAULT VALUES
   // you have to check this on the command manual from printer
   // prices
@@ -200,5 +204,8 @@
   define('D_DISCOUNTS_DECIMALS',  $discounts_decimals);
   define('D_DISCOUNTS_DECIMALS_QUANTITY',  $discounts_decimals_quantity);
   define('D_DISCOUNTS_INTEGER_QUANTITY',  $discounts_integer_quantity);
+
+  // IGTF
+  define('D_IGTF', $IGTF);
 
 ?>
