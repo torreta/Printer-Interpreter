@@ -777,6 +777,11 @@ class interpreter{
     $linea_sin_caracteres_especiales = $Utils->cleanSpecialChars($linea_sin_caracteres_especiales); //solo acepta caracteres normales
     $InfoFiscalTraducida[$contador] = substr("i00".$linea_sin_caracteres_especiales,0,$max_caracteres_info_adicional)."\n";
     $contador++;
+    // -1! => "i00 algo\n", // info numero de pedido cliente (pedido)
+    $linea_sin_caracteres_especiales = "Ped: ".$InfoFiscal["saleorder_number"];
+    $linea_sin_caracteres_especiales = $Utils->cleanSpecialChars($linea_sin_caracteres_especiales); //solo acepta caracteres normales
+    $InfoFiscalTraducida[$contador] = substr("i00".$linea_sin_caracteres_especiales,0,$max_caracteres_info_adicional)."\n";
+    $contador++;
 
 
     // esta ultima linea me ayuda a no tener que predecir la cantidad de lineas que tengo
