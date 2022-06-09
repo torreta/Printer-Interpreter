@@ -156,6 +156,29 @@
       $discounts_decimals_quantity = 2;
       $discounts_integer_quantity = 15;
     break;
+    case "LOSCOCOS": //CUSTOM
+      // prices
+      $price_decimals = "00";
+      $price_decimals_quantity = 2;
+      $price_integer_quantity = 14;
+      // Payments
+      $payments_decimals = "00";
+      $payments_decimals_quantity = 2;
+      $payments_integer_quantity = 15;
+      // quantity
+      $quantity_decimals = "000";
+      $quantity_decimals_quantity = 3;
+      $quantity_integer_quantity = 14;
+      // texts
+      $max_characters_description = 20;
+      $max_characters_text = 40;
+      $max_characters_info = 40;
+      $max_characters_comments = 40;
+      // discounts
+      $discounts_decimals = "00";
+      $discounts_decimals_quantity = 2;
+      $discounts_integer_quantity = 15;
+    break;
 
     default: // undetermined printer
       // prices
@@ -206,6 +229,10 @@
   define('D_DISCOUNTS_INTEGER_QUANTITY',  $discounts_integer_quantity);
 
   // IGTF
+  define('D_IMPUESTO_GRANDES_TRANSACCIONES_FISCALES', $IGTF);
   define('D_IGTF', $IGTF);
+
+  // PRINTER MODE (EN CASO DE QUE QUIERA LEER EL VALOR EN OTRO SITIO)
+  define('D_PRINTER_MODEL', $Printer_model);
 
 ?>
