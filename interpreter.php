@@ -404,7 +404,12 @@ class interpreter{
       break;
       case "divisa":
         $codigo = "14";
-      break;
+        // esto cambia cuando el controlador
+        // tiene activado el modo con igtf del 3%
+        if(D_IGTF == true){
+          $codigo = "20";
+        }
+        break;
       case "T.Débito":
         $codigo = "04";
       break;
@@ -416,7 +421,14 @@ class interpreter{
       break;
       case "Zelle":
         $codigo = "14";
-      break;
+        if(D_IGTF == true){
+          $codigo = "20";
+        }
+        // caso especial peticion de los cocos
+        if(D_PRINTER_MODEL == "LOSCOCOS"){
+          $codigo = "08";
+        }
+        break;
       case "Cheque":
         $codigo = "02";
       break;

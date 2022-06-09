@@ -279,11 +279,25 @@ class creditnoteHandler
 
         $cierre = array();
         $cierre[2] = "101";
+
+        if(D_IGTF == true){
+          $cierre[2] = "199";
+        }
+
         $creditnote_en_contruccion = $infoFiscalTraducida +  $items_nota_extra + $cierre;
 
       } else {
+
         // concateno la informacion fiscal a la de los items de la factura
         $creditnote_en_contruccion = $infoFiscalTraducida + $items_nota;
+        
+        // si hay igtf
+        if(D_IGTF == true){
+          $cierre = array();
+          $cierre[0] = "199";
+          $creditnote_en_contruccion = $infoFiscalTraducida + $items_nota + $cierre;
+        }
+
       }
 
     }else{

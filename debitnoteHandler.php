@@ -221,11 +221,24 @@ class debitnoteHandler
 
       $cierre = array();
       $cierre[2] = "101";
+
+        // si hay igtf
+        if(D_IGTF == true){
+          $cierre[2] = "199";
+        }
+
       $debitnote_en_contruccion = $infoFiscalTraducida +  $items_nota_extra + $cierre;
 
     } else {
       // concateno la informacion fiscal a la de los items de la nota de debito
       $debitnote_en_contruccion = $infoFiscalTraducida + $items_nota;
+
+      if(D_IGTF == true){
+        $cierre = array();
+        $cierre[0] = "199";
+        $debitnote_en_contruccion = $infoFiscalTraducida + $items_nota + $cierre;
+      }
+
     }
 
     //cierre de nota de debito (lo coloque en los items de una vez)

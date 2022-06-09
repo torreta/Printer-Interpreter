@@ -349,6 +349,11 @@ class invoiceHandler
 
       //cierre de factura (viene despues de los items)
       // $factura_en_contruccion[$index_counter] = "105";
+
+      if(D_IGTF == true){
+        $factura_en_contruccion[$index_counter] = "199";
+      }
+
     }else{
       //cierre de factura no fiscal (viene despues de los items)
       $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->separador();
