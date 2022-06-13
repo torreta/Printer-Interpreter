@@ -224,7 +224,7 @@ class debitnoteHandler
 
         // si hay igtf
         if(D_IGTF == true){
-          $cierre[2] = "199";
+          $cierre[3] = "199";
         }
 
       $debitnote_en_contruccion = $infoFiscalTraducida +  $items_nota_extra + $cierre;

@@ -281,7 +281,7 @@ class creditnoteHandler
         $cierre[2] = "101";
 
         if(D_IGTF == true){
-          $cierre[2] = "199";
+          $cierre[3] = "199";
         }
 
         $creditnote_en_contruccion = $infoFiscalTraducida +  $items_nota_extra + $cierre;

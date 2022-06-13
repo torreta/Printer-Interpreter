@@ -351,6 +351,7 @@ class invoiceHandler
       // $factura_en_contruccion[$index_counter] = "105";
 
       if(D_IGTF == true){
+        $index_counter++; // sino sobre escribo el pago con 199
         $factura_en_contruccion[$index_counter] = "199";
       }
 
