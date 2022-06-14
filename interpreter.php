@@ -366,7 +366,13 @@ class interpreter{
       case "efectivo":
         $codigo = "01";
       break;
+      case "Efectivo":
+        $codigo = "01";
+      break;
       case "cheque":
+        $codigo = "02";
+      break;
+      case "Cheque":
         $codigo = "02";
       break;
       case "T. Credito":
@@ -418,6 +424,9 @@ class interpreter{
       break;
       case "Efectivo $":
         $codigo = "14";
+        if(D_IGTF == true){
+          $codigo = "20";
+        }
       break;
       case "Zelle":
         $codigo = "14";
