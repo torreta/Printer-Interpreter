@@ -9,42 +9,45 @@
 
 class creditnoteHandler
 {
-  
-  function get_creditnote_info($conn, $creditnote_id ){
+
+  function get_creditnote_info($conn, $creditnote_id)
+  {
 
     // Check connection
     if ($conn->connect_error) {
       die("(get_creditnote_info) Connection failed: " . $conn->connect_error);
     }
-    
-    if($creditnote_id ==  null || $creditnote_id ==  "" ){
+
+    if ($creditnote_id ==  null || $creditnote_id ==  "") {
       die("dato vital vacio (get_creditnote_info)\n");
     }
 
-    $query_info_creditnote = "SELECT * FROM dbo_finance_creditnotes WHERE id = ".$creditnote_id.";";
+    $query_info_creditnote = "SELECT * FROM dbo_finance_creditnotes WHERE id = " . $creditnote_id . ";";
     $info_creditnote = null;
     $info_creditnote = $conn->query($query_info_creditnote);
 
-    if ($info_creditnote->num_rows == 0) { die("Nota de credito con ese id no existe"); }
+    if ($info_creditnote->num_rows == 0) {
+      die("Nota de credito con ese id no existe");
+    }
 
     return  $info_creditnote;
-
   }
 
   
-  function get_info_fiscal($conn, $creditnote_id ){
+  function get_info_fiscal($conn, $creditnote_id)
+  {
 
     // Check connection
     if ($conn->connect_error) {
       die("(get_creditnote_info) Connection failed: " . $conn->connect_error);
     }
-    
-    if($creditnote_id ==  null || $creditnote_id ==  "" ){
+
+    if ($creditnote_id ==  null || $creditnote_id ==  "") {
       die("dato vital vacio (get_creditnote_info)\n");
     }
 
     // detalles fiscales del documento
-    $query_info_fiscal_creditnote = 
+    $query_info_fiscal_creditnote =
       "SELECT
         IFNULL(dbo_finance_creditnotes.creditnote_number,'na') as creditnote_number,
         IFNULL(dbo_administration_invoices.invoice_number,'na') as invoice_number,
@@ -70,30 +73,32 @@ class creditnoteHandler
       left join dbo_config_identifications_types on dbo_sales_clients.identification_type_id = dbo_config_identifications_types.id
       left join dbo_system_users on dbo_finance_creditnotes.user_id = dbo_system_users.id
       left join dbo_administration_invoices on dbo_finance_creditnotes.invoice_id = dbo_administration_invoices.id
-      where dbo_finance_creditnotes.id =".$creditnote_id.";";
+      where dbo_finance_creditnotes.id =" . $creditnote_id . ";";
 
     var_dump("query a revisarsisimo");
     var_dump($query_info_fiscal_creditnote);
 
     $info_fiscal_creditnote = $conn->query($query_info_fiscal_creditnote);
 
-    if ($info_fiscal_creditnote->num_rows == 0) { die("nota de credito con info fiscal con ese id no existe, o faltan datos"); }
+    if ($info_fiscal_creditnote->num_rows == 0) {
+      die("nota de credito con info fiscal con ese id no existe, o faltan datos");
+    }
 
     return  $info_fiscal_creditnote;
-
   }
 
-  function get_creditnote_items($conn, $creditnote_id ,$tipo_de_nota, $total){
+  function get_creditnote_items($conn, $creditnote_id, $tipo_de_nota, $total)
+  {
 
     // Check connection
     if ($conn->connect_error) {
       die("(get_creditnote_items) Connection failed: " . $conn->connect_error);
     }
-    
-    if($creditnote_id ==  null || $creditnote_id ==  "" ){
+
+    if ($creditnote_id ==  null || $creditnote_id ==  "") {
       die("dato vital vacio (get_creditnote_items)\n");
     }
-    
+
     // inicializo una instancia de interprete para el tipo de doc.
     // ...(hago una instancia del interprete del tipo de doc)
     $interpreter = new interpreter();
@@ -104,7 +109,7 @@ class creditnoteHandler
     $index_inverse_counter = 0;
 
 
-    $query_items_creditnote = 
+    $query_items_creditnote =
       "SELECT
         dbo_finance_creditnotes_items.creditnote_id,
         dbo_storage_products.`code`,
@@ -124,7 +129,7 @@ class creditnoteHandler
       join dbo_config_taxes on dbo_config_taxes.id = dbo_administration_invoices_items.tax_id
       join dbo_administration_invoices_items_prices on dbo_administration_invoices_items.id = dbo_administration_invoices_items_prices.invoice_item_id 
       and dbo_administration_invoices_items_prices.currency_id = 2
-      WHERE 	dbo_finance_creditnotes_items.creditnote_id = " .$creditnote_id.";
+      WHERE 	dbo_finance_creditnotes_items.creditnote_id = " . $creditnote_id . ";
     ";
 
     $items_nota_credito = $conn->query($query_items_creditnote);
@@ -133,12 +138,12 @@ class creditnoteHandler
     if (!($items_nota_credito->num_rows > 0)) {
       var_dump("no hay items asociados a esa nota de credito");
       return "false";
-    }else{
+    } else {
 
       // output data of each row
-      while($item = $items_nota_credito->fetch_assoc()) {
+      while ($item = $items_nota_credito->fetch_assoc()) {
         echo "\n";
-        echo "price: " . $item["price"]. " - quantity: " . $item["product_quantity"]. ", description " . $item["description"]. ", observation: " . $item["observations"];
+        echo "price: " . $item["price"] . " - quantity: " . $item["product_quantity"] . ", description " . $item["description"] . ", observation: " . $item["observations"];
         echo "\n";
 
         // proximamente al interpreter
@@ -150,55 +155,53 @@ class creditnoteHandler
         // $index_counter++;
 
 
-        if($tipo_de_nota == "fiscal"){
+        if ($tipo_de_nota == "fiscal") {
           // proximamente al interpreter
           // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
           // $tasa="", $precio = "", $cant = "", $desc = ""
-          $creditnote_en_contruccion[$index_counter] = $interpreter->translateLineCredito($item["tax_code"],$item["price"],$item["product_quantity"],$item["description"])."\n";
+          $creditnote_en_contruccion[$index_counter] = $interpreter->translateLineCredito($item["tax_code"], $item["price"], $item["product_quantity"], $item["description"]) . "\n";
           $index_counter++;
-        }else{
+        } else {
           // el interpreter en los no fiscales genera 2 lineas separadas, si es un item de de  mas de 2 items
-  
+
           // // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
           // $tasa="", $precio = "", $cant = "", $desc = ""
-          if($item["product_quantity"] == "1"){
-            $creditnote_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLineCredito($item["tax_observation"],$item["net_amount"],$item["product_quantity"],$item["description"])."\n";
+          if ($item["product_quantity"] == "1") {
+            $creditnote_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLineCredito($item["tax_observation"], $item["net_amount"], $item["product_quantity"], $item["description"]) . "\n";
             $index_counter++;
-          }else{
+          } else {
             // $precio = "", $cant = ""
-            $creditnote_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLinePrice($item["tax_observation"],$item["net_amount"],$item["product_quantity"],$item["description"])."\n";
+            $creditnote_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLinePrice($item["tax_observation"], $item["net_amount"], $item["product_quantity"], $item["description"]) . "\n";
             $index_counter++;
             // $tasa="", $desc = ""
-            $creditnote_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLineDesc($item["tax_observation"],$item["net_amount"],$item["product_quantity"],$item["description"])."\n";
+            $creditnote_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLineDesc($item["tax_observation"], $item["net_amount"], $item["product_quantity"], $item["description"]) . "\n";
             $index_counter++;
-  
           }
-  
         }
-
-
-
       }
-
     }
 
-    
-    if($tipo_de_nota == "fiscal"){
+
+    if ($tipo_de_nota == "fiscal") {
       //cierre de factura (viene despues de los items)
-      $creditnote_en_contruccion[$index_counter] = "101";
-    }else{
+      $creditnote_en_contruccion[$index_counter] =  "101" . "\n";
+
+      if (D_IGTF == true) {
+        $index_counter++; // sino sobre escribo el pago con 199
+        $creditnote_en_contruccion[$index_counter] = "199";
+      }
+    } else {
       $creditnote_en_contruccion[$index_counter] =  $interpreter_nofiscal->separador();
       $index_counter++;
 
       // total
-      $creditnote_en_contruccion[$index_counter] = $interpreter_nofiscal->translateFinalTotal($total)."\n";
+      $creditnote_en_contruccion[$index_counter] = $interpreter_nofiscal->translateFinalTotal($total) . "\n";
       $index_counter++;
 
       $creditnote_en_contruccion[$index_counter] = "810";
     }
 
     return  $creditnote_en_contruccion;
-
   }
 
 
@@ -210,7 +213,7 @@ class creditnoteHandler
     }
     
 
-    if($documento_imprimiendo ==  null){
+    if ($documento_imprimiendo ==  null) {
       die("dato vital vacio (creditnoteHandler)\n");
     }
 
@@ -218,7 +221,7 @@ class creditnoteHandler
     $creditnote_id = $documento_imprimiendo["document_id"];
 
     // detalles de documento
-    $info_creditnote = $this->get_creditnote_info($conn,$creditnote_id);
+    $info_creditnote = $this->get_creditnote_info($conn, $creditnote_id);
 
     // objeto de los datos de la nota de credito.
     $nota_credito_actual = $info_creditnote->fetch_assoc();
@@ -241,11 +244,11 @@ class creditnoteHandler
 
     // tipo
     $es_fiscal = $nota_credito_actual["fiscal"];
-    $tipo_de_nota= ($es_fiscal == "1")? "fiscal":"no fiscal";
+    $tipo_de_nota = ($es_fiscal == "1") ? "fiscal" : "no fiscal";
 
 
     echo "\n";
-    echo "el documento a imprimir es la nota de credito de numero: " . $numero_creditnote .", por cajero ". $nombre_cajero. "\n ";
+    echo "el documento a imprimir es la nota de credito de numero: " . $numero_creditnote . ", por cajero " . $nombre_cajero . "\n ";
     echo "\n";
 
     // inicializo una instancia de interprete para el tipo de doc.
@@ -261,7 +264,7 @@ class creditnoteHandler
     // consultar informacion fiscal de la factura antes de armarla
     $infoFiscalTraducida = $interpreter->translateFiscalInfoArrayCreditnote($nota_credito_actual);
 
-    if($tipo_de_nota == "fiscal"){
+    if ($tipo_de_nota == "fiscal") {
       // consultar informacion fiscal de la factura antes de armarla
       $infoFiscalTraducida = $interpreter->translateFiscalInfoArrayCreditnote($nota_credito_actual);
 
@@ -269,62 +272,47 @@ class creditnoteHandler
       // $items_nota = $this->get_invoice_items($conn ,$invoice_id, $tipo_de_nota, $subtotal, $tax, $total);
 
       // arreglo de los items de la factura
-      $items_nota = $this->get_creditnote_items($conn ,$creditnote_id, $tipo_de_nota, $total);
+      $items_nota = $this->get_creditnote_items($conn, $creditnote_id, $tipo_de_nota, $total);
 
-      
+
       // en caso de que la nota de credito no tenia items, esto aplica
       if ($items_nota == "false") {
         $items_nota_extra = array();
-        $items_nota_extra[1] = $interpreter->translateLineCredito("Sin IVA",$amount ,1,"Saldo A Favor")."\n";
+        $items_nota_extra[1] = $interpreter->translateLineCredito("Sin IVA", $amount, 1, "Saldo A Favor") . "\n";
 
         $cierre = array();
-        $cierre[2] = "101";
-
-        if(D_IGTF == true){
-          $cierre[3] = "199";
-        }
+        $cierre[2] = "101" . "\n";
 
         $creditnote_en_contruccion = $infoFiscalTraducida +  $items_nota_extra + $cierre;
-
       } else {
 
         // concateno la informacion fiscal a la de los items de la factura
         $creditnote_en_contruccion = $infoFiscalTraducida + $items_nota;
-        
-        // si hay igtf
-        if(D_IGTF == true){
-          $cierre = array();
-          $cierre[0] = "199";
-          $creditnote_en_contruccion = $infoFiscalTraducida + $items_nota + $cierre;
-        }
 
       }
-
-    }else{
+    } else {
       // consultar informacion fiscal de la factura antes de armarla
       $infoFiscalTraducida = $interpreter_nofiscal->translateFiscalInfoArrayCreditnote($nota_credito_actual);
 
       // arreglo de los items de la factura
       // $items_nota = $this->get_invoice_items($conn ,$invoice_id, $tipo_de_nota, $subtotal, $tax, $total);
-      
+
       // arreglo de los items de la factura
-      $items_nota = $this->get_creditnote_items($conn ,$creditnote_id, $tipo_de_nota, $total);
+      $items_nota = $this->get_creditnote_items($conn, $creditnote_id, $tipo_de_nota, $total);
 
 
       // en caso de que la nota de credito no tenia items, esto aplica
       if ($items_nota == "false") {
         $items_nota_extra = array();
-        $items_nota_extra[1] =  $interpreter_nofiscal->translateLineCredito("Sin IVA",$amount ,1,"Saldo A Favor")."\n";
+        $items_nota_extra[1] =  $interpreter_nofiscal->translateLineCredito("Sin IVA", $amount, 1, "Saldo A Favor") . "\n";
 
         $cierre = array();
         $cierre[2] = "810";
         $creditnote_en_contruccion = $infoFiscalTraducida +  $items_nota_extra + $cierre;
-
       } else {
         // concateno la informacion fiscal a la de los items de la factura
         $creditnote_en_contruccion = $infoFiscalTraducida + $items_nota;
       }
-
     }
 
     //cierre de factura (lo coloque en los items de una vez)
@@ -332,33 +320,26 @@ class creditnoteHandler
     // $creditnote_en_contruccion[$index_counter] = "101";
 
     echo "\n";
-    var_dump($creditnote_en_contruccion) ;
+    var_dump($creditnote_en_contruccion);
     echo "\n";
-    
+
     // creo el archivo de la factura y lo mando a imprimir
     $Utils = new Utils();
-    $filename = "NC/NotadeCredito".$numero_creditnote.".txt";	
+    $filename = "NC/NotadeCredito" . $numero_creditnote . ".txt";
     $file = $Utils->printFileFromArray($creditnote_en_contruccion, $filename);
-    
+
+    // $this->cierre_documento();
+
     $respuesta_impresora = $Utils->printFile($filename);
     // linea para emular impresion exitosa.
     // $respuesta_impresora = "true";
-    
-    if($respuesta_impresora == "true"){
+
+    if ($respuesta_impresora == "true") {
 
       return "true";
-
-    }else{
+    } else {
       echo "la impresora fallo... (hay que colocar los errores en log)\n";
       return "false";
-
     }
-
-
   }
-
-
-
-
 }
-?>

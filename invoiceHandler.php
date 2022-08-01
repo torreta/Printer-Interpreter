@@ -8,44 +8,46 @@
 
   $itObj = new Tfhka(); // printer api
 
-class invoiceHandler
-{
-  
-  function get_invoice_info($conn, $invoice_id ){
+class invoiceHandler{
+
+  function get_invoice_info($conn, $invoice_id)
+  {
 
     // Check connection
     if ($conn->connect_error) {
       die("(get_invoice_info) Connection failed: " . $conn->connect_error);
     }
-    
-    if($invoice_id ==  null || $invoice_id ==  "" ){
+
+    if ($invoice_id ==  null || $invoice_id ==  "") {
       die("dato vital vacio (get_invoice_info)\n");
     }
 
-    $query_info_factura = "SELECT * FROM dbo_administration_invoices WHERE id = ".$invoice_id.";";
+    $query_info_factura = "SELECT * FROM dbo_administration_invoices WHERE id = " . $invoice_id . ";";
     $info_factura = null;
     $info_factura = $conn->query($query_info_factura);
 
-    if ($info_factura->num_rows == 0) { die("factura con ese id no existe"); }
+    if ($info_factura->num_rows == 0) {
+      die("factura con ese id no existe");
+    }
 
     return  $info_factura;
-
   }
 
-  
-  function get_info_fiscal($conn, $invoice_id ){
+
+  function get_info_fiscal($conn, $invoice_id)
+  {
 
     // Check connection
     if ($conn->connect_error) {
       die("(get_invoice_info) Connection failed: " . $conn->connect_error);
     }
-    
-    if($invoice_id ==  null || $invoice_id ==  "" ){
+
+    if ($invoice_id ==  null || $invoice_id ==  "") {
       die("dato vital vacio (get_invoice_info)\n");
     }
 
     // detalles fiscales del documento
-    $query_info_fiscal_factura = 
+    $query_info_fiscal_factura =
       "SELECT
         dbo_administration_invoices.invoice_number,
         dbo_administration_invoices.saleorder_number,
@@ -70,54 +72,56 @@ class invoiceHandler
       join dbo_sales_clients on dbo_administration_invoices.client_id = dbo_sales_clients.id
       join dbo_config_identifications_types on dbo_sales_clients.identification_type_id = dbo_config_identifications_types.id
       join dbo_system_users on dbo_administration_invoices.user_id = dbo_system_users.id
-      WHERE dbo_administration_invoices.id = ".$invoice_id.";";
+      WHERE dbo_administration_invoices.id = " . $invoice_id . ";";
 
     $info_fiscal_factura = $conn->query($query_info_fiscal_factura);
 
-    if ($info_fiscal_factura->num_rows == 0) { die("factura con info fiscal con ese id no existe"); }
+    if ($info_fiscal_factura->num_rows == 0) {
+      die("factura con info fiscal con ese id no existe");
+    }
 
     return  $info_fiscal_factura;
-
   }
 
 
-  function syncronize_invoice($conn, $invoice_id, $invoice_number ){
+  function syncronize_invoice($conn, $invoice_id, $invoice_number)
+  {
 
     // Check connection
     if ($conn->connect_error) {
       die("(syncronize_invoice) Connection failed: " . $conn->connect_error);
     }
-    
-    if($invoice_id ==  null || $invoice_id ==  "" ){
+
+    if ($invoice_id ==  null || $invoice_id ==  "") {
       die("dato vital vacio (syncronize_invoice) (invoice_id)\n");
     }
 
-    if($invoice_number ==  null || $invoice_number ==  "" ){
+    if ($invoice_number ==  null || $invoice_number ==  "") {
       die("dato vital vacio (syncronize_invoice) (invoice_number)\n");
     }
 
     // cambiar los datos fiscales de las facturas.
-    $query_sincronizar_nro_factura = "UPDATE dbo_administration_invoices SET invoice_number = ". $invoice_number . " WHERE id = ". $invoice_id;
+    $query_sincronizar_nro_factura = "UPDATE dbo_administration_invoices SET invoice_number = " . $invoice_number . " WHERE id = " . $invoice_id;
 
     $cambiar_registro = $conn->prepare($query_sincronizar_nro_factura);
 
     if ($cambiar_registro->execute()) {
       echo "Se ha cambiado el nro factura un del a imprimiendo (sync)\n";
     } else {
-      echo "(al cambiar el registro de numero de factura) Error: " . $query_sincronizar_nro_factura ."\n" . mysqli_error($conn);
+      echo "(al cambiar el registro de numero de factura) Error: " . $query_sincronizar_nro_factura . "\n" . mysqli_error($conn);
     }
-
   }
 
 
-  function syncronize_status($conn, $printer_status ){
+  function syncronize_status($conn, $printer_status)
+  {
 
     // Check connection
     if ($conn->connect_error) {
       die("(syncronize_status) Connection failed: " . $conn->connect_error);
     }
-    
-    if($printer_status ==  null || $printer_status ==  "" ){
+
+    if ($printer_status ==  null || $printer_status ==  "") {
       die("dato vital vacio (syncronize_status) (printer_status)\n");
     }
 
@@ -125,31 +129,30 @@ class invoiceHandler
     // cambiar los datos fiscales de las facturas.
     $query_sincronizar_estados_impresora = 
     "INSERT INTO printer_status_data ( status_code, cashregister_user_number, total_daily_invoices, last_invoice_number, daily_invoice_quantity, last_debitnote_number, daily_debitnote_quantity, last_creditnote_number, daily_creditnote_quantity, last_nonfiscal_document_number, daily_nonfiscal_documents_quantity, daily_fiscal_memory_reports, daily_closes_counter, registered_enterprise_fiscal_document_number, printer_register_number, printer_current_time, printer_current_date, update_date) 
-     VALUES('".$printer_status[0]."', '".$printer_status[1]."', '".$printer_status[2]."', '".$printer_status[3]."', '".$printer_status[4]."', '".$printer_status[5]."', '".$printer_status[6]."', '".$printer_status[7]."', '".$printer_status[8]."', '".$printer_status[9]."', '".$printer_status[10]."', '".$printer_status[11]."', '".$printer_status[12]."', '".$printer_status[13]."', '".$printer_status[14]."', '".$printer_status[15]."', '".$printer_status[16]."', NOW());
-    ";
+    VALUES('".$printer_status[0]."', '".$printer_status[1]."', '".$printer_status[2]."', '".$printer_status[3]."', '".$printer_status[4]."', '".$printer_status[5]."', '".$printer_status[6]."', '".$printer_status[7]."', '".$printer_status[8]."', '".$printer_status[9]."', '".$printer_status[10]."', '".$printer_status[11]."', '".$printer_status[12]."', '".$printer_status[13]."', '".$printer_status[14]."', '".$printer_status[15]."', '".$printer_status[16]."', NOW());";
 
     $cambiar_registro = $conn->prepare($query_sincronizar_estados_impresora);
 
     if ($cambiar_registro->execute()) {
       echo "Se ha GUARDADO LOS ESTADOS EXTRAIDOS DE LA IMPRESORA\n";
     } else {
-      echo "( Error: GUARDANDO LOS ESTADOS EXTRAIDOS DE LA IMPRESORA)  " . $query_sincronizar_estados_impresora ."\n" . mysqli_error($conn);
+      echo "( Error: GUARDANDO LOS ESTADOS EXTRAIDOS DE LA IMPRESORA)  " . $query_sincronizar_estados_impresora . "\n" . mysqli_error($conn);
     }
-
   }
 
 
-  function get_invoice_items($conn, $invoice_id,$tipo_de_factura, $subtotal, $tax, $total ){
+  function get_invoice_items($conn, $invoice_id, $tipo_de_factura, $subtotal, $tax, $total)
+  {
 
     // Check connection
     if ($conn->connect_error) {
       die("(get_invoice_items) Connection failed: " . $conn->connect_error);
     }
-    
-    if($invoice_id ==  null || $invoice_id ==  "" || $tipo_de_factura ==""){
+
+    if ($invoice_id ==  null || $invoice_id ==  "" || $tipo_de_factura == "") {
       die("dato vital vacio (get_invoice_items)\n");
     }
-    
+
     // inicializo una instancia de interprete para el tipo de doc.
     // ...(hago una instancia del interprete del tipo de doc)
     $interpreter = new interpreter();
@@ -160,7 +163,7 @@ class invoiceHandler
     $index_inverse_counter = 0;
 
 
-    $query_items_factura = 
+    $query_items_factura =
       "SELECT
         dbo_administration_invoices_items.id,
         dbo_administration_invoices_items.invoice_id,
@@ -187,7 +190,7 @@ class invoiceHandler
       join dbo_storage_products on dbo_administration_invoices_items.product_id = dbo_storage_products.id
       join dbo_administration_invoices_items_prices on dbo_administration_invoices_items.id = dbo_administration_invoices_items_prices.invoice_item_id 
       and dbo_administration_invoices_items_prices.currency_id = 2
-      WHERE 	dbo_administration_invoices_items.invoice_id = " .$invoice_id.";
+      WHERE 	dbo_administration_invoices_items.invoice_id = " . $invoice_id . ";
     ";
 
     $items_factura = $conn->query($query_items_factura);
@@ -197,47 +200,43 @@ class invoiceHandler
     }
 
     // output data of each row
-    while($item = $items_factura->fetch_assoc()) {
+    while ($item = $items_factura->fetch_assoc()) {
       // echo "\n";
       // echo "price: " . $item["price"]. " - quantity: " . $item["quantity"]. ", description " . $item["description"];
       // echo "\n";
 
       // para dejar constancia, antes era real base lo que se pasaba por parametros
 
-      if($tipo_de_factura == "fiscal"){
+      if ($tipo_de_factura == "fiscal") {
         // proximamente al interpreter
         // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
         // $tasa="", $precio = "", $cant = "", $desc = ""
-        $factura_en_contruccion[$index_counter] = $interpreter->translateLine($item["tax_code"],$item["real_base_no_discount"],$item["quantity"],$item["description"])."\n";
+        $factura_en_contruccion[$index_counter] = $interpreter->translateLine($item["tax_code"], $item["real_base_no_discount"], $item["quantity"], $item["description"]) . "\n";
         $index_counter++;
-      }else{
+      } else {
         // el interpreter en los no fiscales genera 2 lineas separadas, si es un item de de  mas de 2 items
 
         // // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
         // $tasa="", $precio = "", $cant = "", $desc = ""
-        if($item["quantity"] == "1"){
-          $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLine($item["tax_code"],$item["real_base_no_discount"],$item["quantity"],$item["description"])."\n";
+        if ($item["quantity"] == "1") {
+          $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLine($item["tax_code"], $item["real_base_no_discount"], $item["quantity"], $item["description"]) . "\n";
           $index_counter++;
-        }else{
+        } else {
           // $precio = "", $cant = ""
-          $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLinePrice($item["tax_code"],$item["real_base_no_discount"],$item["quantity"],$item["description"])."\n";
+          $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLinePrice($item["tax_code"], $item["real_base_no_discount"], $item["quantity"], $item["description"]) . "\n";
           $index_counter++;
           // $tasa="", $desc = ""
-          $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLineDesc($item["tax_code"],$item["real_base_no_discount"],$item["quantity"],$item["description"])."\n";
+          $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateLineDesc($item["tax_code"], $item["real_base_no_discount"], $item["quantity"], $item["description"]) . "\n";
           $index_counter++;
-
         }
-
-
       }
-
     }
 
 
     // AQUI TENGO QUE PONER LO QUE SEA QUE SE TIENE DE DESCUENTO SOBRE LA FACTURA BASADO EN LOS ITEMS
-    if($tipo_de_factura == "fiscal"){
+    if ($tipo_de_factura == "fiscal") {
 
-      $query_descuento_factura = 
+      $query_descuento_factura =
         "SELECT
         dbo_administration_invoices_items.id,
         dbo_config_currencies.`name`	,
@@ -248,7 +247,7 @@ class invoiceHandler
       join dbo_config_currencies on dbo_config_exchange_rates.currency_id = dbo_config_currencies.id
       join dbo_administration_invoices_items_prices on dbo_administration_invoices_items.id = dbo_administration_invoices_items_prices.invoice_item_id 
       and dbo_administration_invoices_items_prices.currency_id = 2
-      WHERE 	dbo_administration_invoices_items.invoice_id = " .$invoice_id;      
+      WHERE 	dbo_administration_invoices_items.invoice_id = " . $invoice_id;
 
       var_dump($query_descuento_factura);
 
@@ -258,22 +257,20 @@ class invoiceHandler
 
         
       // tomo el descuento total
-      while($descuento = $items_descuentos->fetch_assoc()) {
+      while ($descuento = $items_descuentos->fetch_assoc()) {
         // verifico que el descuento sea mayor a cero para reflejarlo
-        if (floatval($descuento["discount_total"]) > 0 ){
-          $factura_en_contruccion[$index_counter] = $interpreter->translateLineDescuento($descuento["discount_total"])."\n";
+        if (floatval($descuento["discount_total"]) > 0) {
+          $factura_en_contruccion[$index_counter] = $interpreter->translateLineDescuento($descuento["discount_total"]) . "\n";
           $index_counter++;
         }
-      
       }
-
     }
 
 
 
-    if($tipo_de_factura == "fiscal"){
+    if ($tipo_de_factura == "fiscal") {
 
-      $query_pagos_factura = 
+      $query_pagos_factura =
         "SELECT
           dbo_administration_invoices.id as invoice_id,
           dbo_administration_invoices.invoice_number,
@@ -301,16 +298,16 @@ class invoiceHandler
 
       // Ningun Pago registrado asi que lo tomo a credito
       if ($items_pagos->num_rows == 0) {
-        echo("no hay pagos asociados esa factura \n ");
-        $factura_en_contruccion[$index_counter] = $interpreter->translateLinePagoTotal("Credito")."\n"; // segun manual
+        echo ("no hay pagos asociados esa factura \n ");
+        $factura_en_contruccion[$index_counter] = $interpreter->translateLinePagoTotal("Credito") . "\n"; // segun manual
       }
 
       // Ningun Pago registrado asi que lo tomo a credito
       if ($items_pagos->num_rows == 1) {
         var_dump($items_pagos);
-        echo("1 solo pago asociado a esa factura \n ");
+        echo ("1 solo pago asociado a esa factura \n ");
         $pago = $items_pagos->fetch_assoc();
-        $factura_en_contruccion[$index_counter] = $interpreter->translateLinePagoTotal($pago["payment_type"])."\n";
+        $factura_en_contruccion[$index_counter] = $interpreter->translateLinePagoTotal($pago["payment_type"]) . "\n";
       }
 
       //  MAS DE UN PAGO
@@ -321,41 +318,36 @@ class invoiceHandler
         // tomo la cantidad de pagos que quedan
         $counter_pagos =  $items_pagos->num_rows;
         // output data of each row
-        while($pago = $items_pagos->fetch_assoc()) {
+        while ($pago = $items_pagos->fetch_assoc()) {
 
-          if($counter_pagos == 1){
-            $factura_en_contruccion[$index_counter] = $interpreter->translateLinePagoTotal($pago["payment_type"])."\n";
-
-          }else{
+          if ($counter_pagos == 1) {
+            $factura_en_contruccion[$index_counter] = $interpreter->translateLinePagoTotal($pago["payment_type"]) . "\n";
+          } else {
             $sumador_de_pagos =  $sumador_de_pagos + floatval($pago["payment_translated"]);
-            
+
             // verificando que mi pago no exceda el total de factura (sino, debo romper el ciclo y colocar ese pago como pago total)
-            if (floatval($pago["invoice_real_total"]) < $sumador_de_pagos ){
-              $factura_en_contruccion[$index_counter] = $interpreter->translateLinePagoTotal($pago["payment_type"])."\n";
+            if (floatval($pago["invoice_real_total"]) < $sumador_de_pagos) {
+              $factura_en_contruccion[$index_counter] = $interpreter->translateLinePagoTotal($pago["payment_type"]) . "\n";
               break;
             }
-            
-            $factura_en_contruccion[$index_counter] = $interpreter->translateLinePagoParcial($pago["payment_type"],$pago["payment_translated"])."\n";
+
+            $factura_en_contruccion[$index_counter] = $interpreter->translateLinePagoParcial($pago["payment_type"], $pago["payment_translated"]) . "\n";
             $index_counter++;
             // voy restando los pagos parciales para asegurarme de que hago el ultimo
             // pago como total
             $counter_pagos = $counter_pagos - 1;
-
           }
-            
         }
-
       }
 
       //cierre de factura (viene despues de los items)
       // $factura_en_contruccion[$index_counter] = "105";
 
-      if(D_IGTF == true){
+      if (D_IGTF == true) {
         $index_counter++; // sino sobre escribo el pago con 199
         $factura_en_contruccion[$index_counter] = "199";
       }
-
-    }else{
+    } else {
       //cierre de factura no fiscal (viene despues de los items)
       $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->separador();
       $index_counter++;
@@ -363,7 +355,7 @@ class invoiceHandler
       // // subtotal
       // $factura_en_contruccion[$index_counter] = $interpreter_nofiscal->translateSubtotal($subtotal)."\n";
       // $index_counter++;
-      
+
       // ########################################################################
       // esto dejo de ser valido, ya que el impuesto no es aplicable a notas de venta
       // hay que coordinar para que el calculo total de la factura refleje los montos de 
@@ -389,20 +381,20 @@ class invoiceHandler
     }
 
     return  $factura_en_contruccion;
-
   }
 
 
 
-  function printInvoice($conn, $documento_imprimiendo ){
+  function printInvoice($conn, $documento_imprimiendo)
+  {
 
     // Check connection
     if ($conn->connect_error) {
       die("(printInvoice) Connection failed: " . $conn->connect_error);
     }
-    
 
-    if($documento_imprimiendo ==  null){
+
+    if ($documento_imprimiendo ==  null) {
       die("dato vital vacio (printInvoice)\n");
     }
 
@@ -410,13 +402,13 @@ class invoiceHandler
     $invoice_id = $documento_imprimiendo["document_id"];
 
     // detalles de documento
-    $info_factura = $this->get_invoice_info($conn,$invoice_id);
+    $info_factura = $this->get_invoice_info($conn, $invoice_id);
 
     // objeto de los datos de la factura.
     $factura_actual = $info_factura->fetch_assoc();
 
     // informacion fiscal
-    $info_fiscal_factura =  $this->get_info_fiscal($conn,$invoice_id);
+    $info_fiscal_factura =  $this->get_info_fiscal($conn, $invoice_id);
 
     // objeto informacion fiscal factura
     $factura_fiscal_actual = $info_fiscal_factura->fetch_assoc();
@@ -433,10 +425,10 @@ class invoiceHandler
 
     // tipo
     $es_fiscal = $factura_actual["fiscal"];
-    $tipo_de_factura = ($es_fiscal == "1")? "fiscal":"no fiscal";
-    
+    $tipo_de_factura = ($es_fiscal == "1") ? "fiscal" : "no fiscal";
+
     echo "\n";
-    echo "el documento a imprimir es la factura ".$tipo_de_factura." de numero: " . $numero_factura .", por cajero ". $nombre_cajero. "\n ";
+    echo "el documento a imprimir es la factura " . $tipo_de_factura . " de numero: " . $numero_factura . ", por cajero " . $nombre_cajero . "\n ";
     echo "\n";
 
     // inicializo una instancia de interprete para el tipo de doc.
@@ -449,20 +441,18 @@ class invoiceHandler
     $index_counter = 0;
     $index_inverse_counter = 0;
 
-    if($tipo_de_factura == "fiscal"){
+    if ($tipo_de_factura == "fiscal") {
       // consultar informacion fiscal de la factura antes de armarla
       $infoFiscalTraducida = $interpreter->translateFiscalInfoArray($factura_fiscal_actual);
 
       // arreglo de los items de la factura
-      $items_factura = $this->get_invoice_items($conn ,$invoice_id, $tipo_de_factura, $subtotal, $tax, $total);
-
-    }else{
+      $items_factura = $this->get_invoice_items($conn, $invoice_id, $tipo_de_factura, $subtotal, $tax, $total);
+    } else {
       // consultar informacion fiscal de la factura antes de armarla
       $infoFiscalTraducida = $interpreter_nofiscal->translateFiscalInfoArray($factura_fiscal_actual);
 
       // arreglo de los items de la factura
-      $items_factura = $this->get_invoice_items($conn ,$invoice_id, $tipo_de_factura, $subtotal, $tax, $total);
-      
+      $items_factura = $this->get_invoice_items($conn, $invoice_id, $tipo_de_factura, $subtotal, $tax, $total);
     }
 
     // concateno la informacion fiscal a la de los items de la factura
@@ -473,70 +463,68 @@ class invoiceHandler
     // $factura_en_contruccion[$index_counter] = "101";
 
     echo "\n";
-    var_dump($factura_en_contruccion) ;
+    var_dump($factura_en_contruccion);
     echo "\n";
-    
+
     // creo el archivo de la factura y lo mando a imprimir
     $Utils = new Utils();
-    $filename = "FA/Factura".$numero_factura.".txt";	
+    $filename = "FA/Factura" . $numero_factura . ".txt";
     $file = $Utils->printFileFromArray($factura_en_contruccion, $filename);
-    
+
     // en caso de que se necesite imprimir o sacar algo de la cola que 
     // se haya quedado pegada. el falso se puede usar para saltar alguno.
     // (en este caso el falso es para poder probar solo con consola)
     // pues los archivos deberia crearlos bien formateados de todos modos.
-    
+
     //  (CONTRA IMPRESORA) (solo uno de printFile o printFileFalso)
     //  puede estar activo a la vez
     $respuesta_impresora = $Utils->printFile($filename);
-   
+
     //  (COMODIN PARA EVADIR IMPRIMIR)(PERO AVANCE LA COLA) 
     // $respuesta_impresora = $Utils->printFileFalso($filename);
 
     // respuesta de status cuadrada desde el sistema
     // si estas jugando con los estados deberias comentar todas las
     // 10 lineas siguientes a esta
+
     $respuesta_status = $Utils->system_status();
 
     // aqui es donde deberia llamar las respectivas funciones que
     // sincronizan los numeros de factura, corte, etc
-    if($tipo_de_factura == "fiscal"){
+    if ($tipo_de_factura == "fiscal") {
       // sincroniza el numero de factura
-      echo "Ultima factura impresa a sincronizar: ". $respuesta_status[3];
+      echo "Ultima factura impresa a sincronizar: " . $respuesta_status[3];
       $invoice_number = $respuesta_status[3];
-      $this->syncronize_invoice($conn , $invoice_id, $invoice_number);
+      $this->syncronize_invoice($conn, $invoice_id, $invoice_number);
 
       // estados de la impresora, debe existir tabla previamente
-      $this->syncronize_status($conn,$respuesta_status);
+      $this->syncronize_status($conn, $respuesta_status);
     }
 
     // linea para emular impresion exitosa.
     // $respuesta_impresora = "true";
 
 
-    if($respuesta_impresora == "true"){
+    if ($respuesta_impresora == "true") {
 
       return "true";
-
-    }else{
+    } else {
       echo "la impresora fallo... (hay que colocar los errores en log)\n";
       return "false";
-
     }
-
-
   }
 
 
-  function printCopy($conn, $documento_imprimiendo ){
+  function printCopy($conn, $documento_imprimiendo)
+  {
 
     // Check connection
     if ($conn->connect_error) {
       die("(printInvoice) Connection failed: " . $conn->connect_error);
     }
-    
 
-    if($documento_imprimiendo ==  null){
+
+    if ($documento_imprimiendo ==  null) {
       die("dato vital vacio (printInvoiceCopy)\n");
     }
 
@@ -544,13 +532,13 @@ class invoiceHandler
     $invoice_id = $documento_imprimiendo["document_id"];
 
     // detalles de documento
-    $info_factura = $this->get_invoice_info($conn,$invoice_id);
+    $info_factura = $this->get_invoice_info($conn, $invoice_id);
 
     // objeto de los datos de la factura.
     $factura_actual = $info_factura->fetch_assoc();
 
     // informacion fiscal
-    $info_fiscal_factura =  $this->get_info_fiscal($conn,$invoice_id);
+    $info_fiscal_factura =  $this->get_info_fiscal($conn, $invoice_id);
 
     // objeto informacion fiscal factura
     $factura_fiscal_actual = $info_fiscal_factura->fetch_assoc();
@@ -570,7 +558,7 @@ class invoiceHandler
     $tipo_de_factura = "no fiscal";
 
     echo "\n";
-    echo "el documento a imprimir es la copia de la factura ".$tipo_de_factura." de numero: " . $numero_factura .", por cajero ". $nombre_cajero. "\n ";
+    echo "el documento a imprimir es la copia de la factura " . $tipo_de_factura . " de numero: " . $numero_factura . ", por cajero " . $nombre_cajero . "\n ";
     echo "\n";
 
     // inicializo una instancia de interprete para el tipo de doc.
@@ -586,7 +574,7 @@ class invoiceHandler
     $infoFiscalTraducida = $interpreter_nofiscal->translateFiscalInfoArrayCopy($factura_fiscal_actual);
 
     // arreglo de los items de la factura
-    $items_factura = $this->get_invoice_items($conn ,$invoice_id, $tipo_de_factura, $subtotal, $tax, $total);
+    $items_factura = $this->get_invoice_items($conn, $invoice_id, $tipo_de_factura, $subtotal, $tax, $total);
 
     // concateno la informacion fiscal a la de los items de la factura
     $factura_en_contruccion = $infoFiscalTraducida + $items_factura;
@@ -596,14 +584,14 @@ class invoiceHandler
     // $factura_en_contruccion[$index_counter] = "101";
 
     echo "\n";
-    var_dump($factura_en_contruccion) ;
+    var_dump($factura_en_contruccion);
     echo "\n";
-    
+
     // creo el archivo de la factura y lo mando a imprimir
     $Utils = new Utils();
-    $filename = "FA/Factura".$numero_factura.".txt";	
+    $filename = "FA/Factura" . $numero_factura . ".txt";
     $file = $Utils->printFileFromArray($factura_en_contruccion, $filename);
-    
+
     // en caso de que se necesite imprimir o sacar algo de la cola que 
     // se haya quedado pegada. el falso se puede usar para saltar alguno.
     // (en este caso el falso es para poder probar solo con consola)
@@ -621,14 +609,6 @@ class invoiceHandler
     }else{
       echo "la impresora fallo... (hay que colocar los errores en log)\n";
       return "false";
-
     }
-
-
   }
-
-
-
-
 }
-?>
