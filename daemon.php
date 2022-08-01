@@ -191,6 +191,17 @@ while (true) {
         $respuesta_impresora = $Utils->sendCierre(); 
          
        break;
+
+       case "8":// cierre manual de documento caja
+        echo "*********************\n";
+        echo "CIERRE MANUAL     !!!\n";
+        echo "DE DOCUMENTO      !!!\n";
+        echo "*********************\n";
+        
+        $tipo_documento = "Cierre Manual de Documento";
+        $respuesta_impresora = $Utils->sendCierreManualDoc(); 
+         
+       break;
        case "9":// test de impresion
         echo "********************\n";
         echo "TEST DE IMPRESION!!!\n";
