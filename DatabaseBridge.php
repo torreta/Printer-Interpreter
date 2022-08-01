@@ -283,6 +283,9 @@ class DatabaseBridge
       case "7":// cierre de caja
         $tipo_documento = "Cierre";
         break;
+      case "8":// cierre de caja
+        $tipo_documento = "Cierre doc manual";
+        break;
       default: // Documento indeterminado
         die("Documento indeterminado (bridge) ". $documento_imprimiendo["document_type_id"] ); 
     }
@@ -357,6 +360,9 @@ class DatabaseBridge
         break;
       case "7":// cierre de caja
         $tipo_documento = "Cierre";
+        break;
+      case "8":// cierre de caja
+        $tipo_documento = "Cierre Doc manual";
         break;
       default: // Documento indeterminado
         die("Documento indeterminado (bridge) ". $documento_imprimiendo["document_type_id"] ); 
