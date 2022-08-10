@@ -249,7 +249,9 @@ class Utils
         echo("respuesta del estado encendido de la impresora, no esta dentro de los parametros esperados");
         echo($respuesta_fragmentada[1]);
         echo("\n");
-        die("respuesta inesperada, buscar error (cambio API?)"); 
+        echo("respuesta inesperada, buscar error (cambio API?)"); 
+        sleep(3);
+        return "false";
     }
 
   }
@@ -306,8 +308,10 @@ class Utils
               echo("status: ".$respuesta_fragmentada[3]);
               echo("Error: ".$respuesta_fragmentada[5]);
               echo("\n");
-              die("respuesta inesperada al consultar estado, buscar error "); 
-            }
+              // die("respuesta inesperada al consultar estado, buscar error "); 
+              echo("respuesta inesperada al consultar estado, buscar error "); 
+              sleep(3);
+              return ("error de memoria fiscal complejo");            }
           break;
           case "4":
             // modo fiscal
@@ -332,7 +336,10 @@ class Utils
                   echo("error del estado de  impresora, no esta dentro de las respuestas esperadas");
                   echo("error: ". $respuesta_fragmentada[5]);
                   echo("\n");
-                  die("respuesta inesperada al consultar estado, buscar error."); 
+                  // die("respuesta inesperada al consultar estado, buscar error."); 
+                  echo("respuesta inesperada al consultar estado, buscar error."); 
+                  sleep(3);
+                  return "error complejo de respuesta inesperada 5";
               }
           break;
           case "5":
@@ -346,7 +353,10 @@ class Utils
                 echo("error del estado de  impresora, no esta dentro de las respuestas esperadas");
                 echo("error: ". $respuesta_fragmentada[5]);
                 echo("\n");
-                // die("respuesta inesperada al consultar estado, buscar error."); 
+                // echo("respuesta inesperada al consultar estado, buscar error."); 
+                echo("respuesta inesperada al consultar estado, buscar error."); 
+                sleep(3);
+                return "error complejo de respuesta inesperada case true";
             }
           break;
           default: 
@@ -354,6 +364,9 @@ class Utils
             echo("status: ". $respuesta_fragmentada[3]);
             echo("\n");
             // die("respuesta inesperada al consultar estado, buscar error."); 
+            echo("respuesta inesperada al consultar estado, buscar error."); 
+            sleep(3);
+            return "error complejo de respuesta inesperada case default";
         }
 
       break;
@@ -366,14 +379,17 @@ class Utils
             echo("status: ".$respuesta_fragmentada[3]);
             echo("Error: ".$respuesta_fragmentada[5]);
             echo("\n");
-            die("respuesta inesperada al consultar estado, buscar error (cambio API?)"); 
+            return("respuesta inesperada al consultar estado, buscar error (cambio API?)"); 
+            // sleep(3);
           }
       break;
       default: 
         echo("respuesta del estado  impresora, no esta dentro de las respuestas esperadas");
         echo($respuesta_fragmentada[1]);
         echo("\n");
-        die("respuesta inesperada al consultar estado, buscar error (cambio API?)"); 
+        // die("respuesta inesperada al consultar estado, buscar error (cambio API?)"); 
+        return("respuesta inesperada al consultar estado, buscar error (cambio API?)"); 
+        // sleep(3);
     }
 
   }
