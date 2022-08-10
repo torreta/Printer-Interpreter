@@ -491,7 +491,7 @@ class invoiceHandler{
 
     // aqui es donde deberia llamar las respectivas funciones que
     // sincronizan los numeros de factura, corte, etc
-    if ($tipo_de_factura == "fiscal") {
+    if ($tipo_de_factura == "fiscal" && $respuesta_status != "") {
       // sincroniza el numero de factura
       echo "Ultima factura impresa a sincronizar: " . $respuesta_status[3];
       $invoice_number = $respuesta_status[3];

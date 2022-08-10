@@ -168,6 +168,9 @@ class Utils
     }
     
     $filesize = filesize( $filename );
+
+    if($filesize == 0){return "";}
+
     $filetext = fread( $file, $filesize );
     fclose( $file );
     
