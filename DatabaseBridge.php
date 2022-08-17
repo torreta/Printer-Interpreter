@@ -100,9 +100,9 @@ class DatabaseBridge
     $insertar_registro = $conn->prepare($query_a_imprimiendo);
 
     if ($insertar_registro->execute()) {
-      echo "Se ha registrado un documento a imprimiendo \n";
+      echo "\n Se ha movido el documento de pendiente a imprimiendo (current, actual) \n";
     } else {
-      echo "(al insertar a imrpimiendo) Error: " . $query_a_imprimiendo . "\n" . mysqli_error($conn);
+      echo "(al mover de pendiente a imprimiendo (insertar)) Error: " . $query_a_imprimiendo . "\n" . mysqli_error($conn);
     }
 
   }
@@ -211,7 +211,7 @@ class DatabaseBridge
       $borrar_current_registro = $conn->prepare($query_delete_current);
 
     if ($borrar_current_registro->execute()) {
-      echo "Se ha borrado el documeto de la cola de impresion, por haber sido completada. \n";
+      echo "Se ha borrado el documeto de la cola de impresion (actual), por haber sido completada. \n";
     } else {
       echo "(al borrar de current) Error: " . $query_delete_current . "\n" . mysqli_error($conn);
     }
