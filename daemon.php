@@ -21,6 +21,9 @@ include_once ("Utils.php");
 // General Configurations
 include_once ("Configs.php"); // <--- GENERAL SETTINGS
 
+ini_set('mysql.connect_timeout', 300);
+ini_set('default_socket_timeout', 300); 
+
 // armando la conexion a la BD
 $DatabaseBridge =  new DatabaseBridge();
 $Utils =  new Utils();
