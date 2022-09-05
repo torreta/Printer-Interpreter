@@ -134,8 +134,8 @@ class Utils
     // a las carpetas locales del proyecto y asi poder obtener realmente
     // esos valores para usarlos luego 
 
-    echo("\n ----------------------------------------"); 
-    echo("\n        Entro a la llamada status"); 
+    echo("\n----------------------------------------"); 
+    echo("\n        Entro a la llamada status       "); 
     echo("\n----------------------------------------"); 
 
     // en esta linea, llamo al driver a que me obtenga el Status S1
@@ -184,7 +184,83 @@ class Utils
 
     // echo "termino";
     echo("\n----------------------------------------"); 
-    echo("\n       Salgo de la llamada status"); 
+    echo("\n       Salgo de la llamada status       "); 
+    echo("\n----------------------------------------\n"); 
+    
+    // shell_exec('IntTFHKA.exe UploadStatusCmd("S2", "StatusData.txt")');
+    return $S1Printer_status;
+
+  }
+
+
+  function system_status_specified( $Specific_status=""){
+
+    // la idea de este es copiar la info reflejada en C:\IntTFHKA\
+    // a las carpetas locales del proyecto y asi poder obtener realmente
+    // esos valores para usarlos luego 
+
+    if( $Specific_status == ""  ){
+      echo "\n Necesitas especificar un valor o no puedo dar un valor";
+      return false;
+    }
+
+    // DEBO VALIDAR ESTE INPUT
+
+    echo("\n----------------------------------------"); 
+    echo("\n        Entro a la llamada status       "); 
+    echo("\n----------------------------------------"); 
+
+    // en esta linea, llamo al driver a que me obtenga el Status S1
+    shell_exec('IntTFHKA.exe UploadStatusCmd("'.$Specific_status.'", "StatusData.txt")');
+
+    // estas rutas debo meterlas en el archivo de config
+    // pero de momentos pueden estar especificadas aca
+    $ruta='C:\IntTFHKA\Status';
+    $destino='C:\xampp\htdocs\Printer-Interpreter\STATUS\Status';
+    $archivos= glob($ruta.'*.*');
+    
+    // por cada archivo que haga match con el nombre.
+    // copiar y reemplazar
+    foreach ($archivos as $archivo){
+      $archivo_copiar= str_replace($ruta, $destino, $archivo);
+      copy($archivo, $archivo_copiar);
+    }
+
+    // despues de esas llamadas, deberia interpretar y sacarlo a un arreglo
+    // debo hacer lo mismo con S2 y S3 que podrian darme informacion
+    // util tambien
+    
+    // aqui hago la lectura
+    $filename = "./STATUS/Status.txt";
+    $file = fopen( $filename, "r" );
+    
+    if( $file == false ) {
+       echo ( "\nError in opening file" );
+       exit();
+    }
+    
+    $filesize = filesize( $filename );
+
+    if($filesize == 0){return "";}
+
+    $filetext = fread( $file, $filesize );
+    fclose( $file );
+    
+    echo ( "\nFile size : $filesize bytes" );
+    echo ( "\n<pre> $filetext </pre>\n" );
+
+
+    // $Specific_status aqui hago el switch con los interpretes de estados
+
+
+    // aqui cuadro el interpreter de la linea de status 
+    $StatusInterpreter =  new status_interpreter();
+    $S1Printer_status = [];
+    $S1Printer_status = $StatusInterpreter->S1Interpreter($filetext);
+
+    // echo "termino";
+    echo("\n----------------------------------------"); 
+    echo("\n       Salgo de la llamada status       "); 
     echo("\n----------------------------------------\n"); 
     
     // shell_exec('IntTFHKA.exe UploadStatusCmd("S2", "StatusData.txt")');
@@ -580,6 +656,32 @@ class Utils
       // (3) (false)  verifico el mensaje del controlador al imprimir, (condiciones de parseo), si sale un error
       // ... se mantiene la factura en current (sin cambios)
       echo "la impresora fallo... (hay que colocar los errores en log)\n";
+      // ... busco en checkprinter cual puede ser la razon del error.
+      return "false";
+    }
+    
+  }
+
+
+  function sendAnulacionDocManual()
+  {
+
+    // Check connection
+    $sentencia = "IntTFHKA.exe SendCmd(7";
+
+    shell_exec($sentencia);
+    
+    // interpretar la respuesta de la impresora
+    $respuesta_impresora = "true";
+
+    if($respuesta_impresora == "true"){
+      
+      return "true";
+
+    }else{
+      // (3) (false)  verifico el mensaje del controlador al imprimir, (condiciones de parseo), si sale un error
+      // ... se mantiene la factura en current (sin cambios)
+      echo "Le envie a la impresora el comando anular documento... (hay que colocar los errores en log, de ser necesario)\n";
       // ... busco en checkprinter cual puede ser la razon del error.
       return "false";
     }
