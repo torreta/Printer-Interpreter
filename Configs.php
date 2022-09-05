@@ -22,6 +22,9 @@
   error_reporting(E_ALL & ~E_NOTICE);
   define('LOG_KEEP', true);
   define('LOG_FILE', 'daemon.log');
+
+  // VERBOSE EXECUTION
+  define('VERBOSE', false);
   
   function addlog ($message="") {
     error_log( "[" . date("Y-m-d H:i:s") . "] " . $message . PHP_EOL, 3, LOG_FILE );
