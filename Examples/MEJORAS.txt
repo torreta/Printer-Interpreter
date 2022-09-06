@@ -1,0 +1,19 @@
+1. hacer archivo de "pasos" que obliga al demonio a llevar la cuenta de en que paso se "quedo" para que en caso de fallos, nunca se salte un paso.
+
+2. diagramar el spooler completo, para saber en que pasos intervenir o hacer recuperacion.
+
+3. tabla de "acciones" en el ciclo, verificar "acciones, current y pending", por ciclo, para conservando la estructura actual.
+
+4. hacer la recuperacion del status 5. que en lineas generales es verificar, el numero de factura antes de comenzar el ciclo, 
+despues de recibir status 5, verificar si ese numero ha subido (a veces imprime, incluso despues de darte el error...) de ser asi, pasar de documento.
+
+sino cancelar con shell exec(7) (cancelar factura fiscal) y volver a intentar el documento en current.
+
+5. ver si puedo subir el tiempo que php espera a que el .exe del enviar archivo completo espera, antes de seguir el ciclo, puede ser un sleep despues de mandar
+la instruccion (para darle a la impresora chance de imprimir) o una espera mas larga dentro de la ejecucion.
+
+6. logistica de lectura del status 2 (que indica si hay documento fiscales pendiente se en memoria fiscal) para a partir de eso, saber si debermos cancelar el documento en curso
+y enviar el comando 7 o es relevante tomar otra accion.
+
+7. anotar el estado S2 en la bd tambien.
+

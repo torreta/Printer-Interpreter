@@ -1,0 +1,665 @@
+<?php
+
+  include_once ("TfhkaPHP.php"); 
+  include_once ("interpreter.php"); 
+  include_once ("Utils.php"); 
+  include_once ("DBConfig.php"); 
+
+  $itObj = new Tfhka(); // printer api
+
+class DatabaseBridge
+{
+  
+  function connect(){
+    /*** (C) CONNECT DATABASE ***/
+    // Create connection (defined DBConfig.php)
+    // these setting are defined on DBConfig.php
+    // (if file doesnt exist.... make one... copy the example)
+
+    echo("\n Trying to connect or reconnect");
+    
+    // try {
+
+      $conn = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME , DB_PORT);
+
+    // } catch (Exception $e) {
+
+    //   echo 'Excepción capturada: ',  $e->getMessage(), "\n";
+    // }
+
+    // Check connection
+    if ($conn->connect_error) {
+      echo("\n Connection failed: network error on connect al reconectar !!!! \n" . $conn->connect_error . " \n");
+    }
+
+    // cerrando db (FALTA COLOCARLO EN UN MEJOR LUGAR)
+    // $conn->close();
+
+    if(!mysqli_ping($conn)) {
+      echo("\n Ping de reconexion, negativo\n");
+      // var_dump($conn);
+    }else{
+      echo("\n Ping de reconexion, positivo\n");
+      // var_dump($conn);
+    }
+
+    //retorno la conexion
+    return $conn;
+
+  }
+
+  function Reconnect($conn){
+
+    echo("\n Trying to reconnect");
+    // echo("\n ". DB_HOST." ". DB_USER. " ". DB_PASSWORD." ". DB_NAME ." ".DB_PORT);
+    $retry = false;
+    
+    do {
+      if(!mysqli_ping($conn)) {
+        echo("\n intente reconectar... con ping... no funciona funciona todavia....");
+        $retry = true;
+        sleep(LOOP_CYCLE*3);
+        // var_dump($conn);
+      }else{
+        echo("\n segun, ping respondio");
+        $retry = false;
+        sleep(LOOP_CYCLE*3);
+        // var_dump($conn);
+      }
+
+    } while ($retry);
+
+
+    //retorno la conexion
+    return $conn;
+
+  }
+
+
+  // function documentos_imprimiendo($conn, $printer_id="" ){
+
+  //   $reintentar = false;
+  //   $documentos_imprimiendo = [];
+  //   $connretry = $conn;
+
+  //   do {
+  //     // Code
+
+  //     // Reconectar?
+  //     if($reintentar == true){
+  //       sleep(LOOP_CYCLE);
+  //       // $conn->close();
+  //       // $connretry->close();
+  //       // $conn = NULL;
+  //       $connretry = NULL;
+  //       $connretry = $this->Reconnect($conn);
+  //       $conn = $connretry;
+  //       $reintentar = false;
+  //       echo("\n reintento conexión" );
+  //       var_dump($conn);
+  //     }
+
+  //     // Check connection
+  //     if ($conn->connect_error) {
+  //       // die(" (documentos imprimiendo) Connection failed: " . $conn->connect_error);
+  //       echo("\n (documentos imprimiendo) Connection failed: " . $conn->connect_error);
+  //       $reintentar = true;
+  //     }else{
+  //       $reintentar = false;
+  //     }
+      
+  //     if($printer_id == ""){
+  //       // die("valor vacio el identificador de impresora (documentos imprimiendo) \n");
+  //       echo("\n valor vacio el identificador de impresora (documentos imprimiendo) \n");
+  //       $reintentar = true;
+  //     }
+      
+  //     // var_dump(get_object_vars($conn)["client_info"]);
+
+  //     if($conn->client_info == "NULL"){
+  //       echo("\n vacio la info de conexión (imp) \n");
+  //       $reintentar = true;
+  //     }
+
+  //     // if($reintentar == false && !mysqli_ping($conn)) {
+  //     //   $reintentar = true; // re-establish the connection 
+  //     //   $conn-> Reconnect(); // re-establish the connection 
+  //     //   // $GLOBALS['global_connection'] = $connection; // update global connection value
+  //     //   // $result = mysqli_query($conn, $query); // re-query using the new connection
+  //     // }
+
+  //     if ($reintentar == false) {
+  //       $query_documentos_imprimiendo = "SELECT * from dbo_printer_current WHERE printer_id = ".$printer_id.";";
+  //       $conn->stmt_init();
+  //       $conn->prepare($query_documentos_imprimiendo);
+  //       $documentos_imprimiendo = $conn->query($query_documentos_imprimiendo);
+  //       var_dump($documentos_imprimiendo);
+  //     }
+
+  //     // echo(gettype($conn));
+  //     // var_dump($conn);
+      
+  //     if (gettype($documentos_imprimiendo) == "object") {
+  //       $reintentar = false;
+  //     }
+
+  //     if ($reintentar == true && gettype($documentos_imprimiendo) == NULL || gettype($documentos_imprimiendo) == "boolean" || gettype($documentos_imprimiendo) == "string" ) {
+  //       echo("\n conexión db muerta... revisando documentos imprimiendo");
+  //       echo("\n que me trajo a aqui?");
+  //       echo("\n". $reintentar ." es true?");
+  //       echo("\n". gettype($documentos_imprimiendo) . " is null?");
+  //       echo("\n". gettype($documentos_imprimiendo) . " is boolean?");
+  //       echo("\n". gettype($documentos_imprimiendo) . " is string?");
+  //       // var_dump($documentos_imprimiendo);
+  //       // var_dump($conn);
+  //       // var_dump(get_object_vars($conn)["client_info"]);
+
+  //       $reintentar = true;
+  //     }
+
+
+  //   } while ($reintentar);
+
+    
+  //   return  $documentos_imprimiendo;
+
+  // }
+
+
+  function documentos_pendientes($conn, $printer_id="" ){
+
+    $reintentar = false;
+    $documentos_pendientes = [];
+    $connretry = $conn;
+    $validacion = "";
+
+
+    do {
+
+      $reintentar = false;
+      $documentos_pendientes = [];
+
+      // ping falla?
+      if($reintentar == false && !mysqli_ping($conn)) {
+        $reintentar = true; // re-establish the connection 
+      }
+      
+      // Check connection
+      if ((!$reintentar) && $conn->connect_error) {
+        echo("\n (Documentos Pendientes) Conexion Fallida: " . $conn->connect_error ."\n");
+        $reintentar = true;
+      }else{
+        $reintentar = false;
+      }
+
+      if($printer_id == ""){
+        echo("\n Valor vacio el identificador de impresora (Documentos Pendientes) \n");
+        $reintentar = true;
+        // aqui deberia morir ajuro, no deberias tener query sin especificar la factura....
+        die; 
+      }
+      
+      // var_dump(get_object_vars($conn)["client_info"]);
+      if( ($reintentar == false) && $conn->client_info == "NULL"){
+        echo("\n vacio la info de conexión (pend) \n");
+        $reintentar = true;
+      }
+
+      // echo(gettype($conn));
+      // echo(mysqli_ping($conn));
+      if(!mysqli_ping($conn)) {
+        echo("\n intente re-conectar... con ping... no funciona funciona a mitad de función... so....... medio ciclo");
+        $reintentar = true;
+      }else{
+        echo("\n según, ping respondió");
+        if ($reintentar == false) {
+          // var_dump($conn);
+          $query_documentos_pendientes = "SELECT * from dbo_printer_pending WHERE printer_id = ".PRINTER_ID.";";
+          // $conn->stmt_init();
+          $conn->prepare($query_documentos_pendientes);
+          $documentos_pendientes = $conn->query($query_documentos_pendientes);
+          // var_dump($documentos_pendientes);
+        }
+      }
+
+
+      $validacion = gettype($documentos_pendientes);
+
+      if (($reintentar == false) && ($validacion == "object(mysqli)" || $validacion == "object(mysqli_result")) {
+        echo("\n estoy marcando que lo que me esta devolviendo la base de datos es un object");
+        echo("\n ".$validacion);
+        $reintentar = false;
+        break;
+      }
+      
+      
+      // echo("\n antes de entrar a la pregunta............. que es??? ". $validacion ."\n ");
+      // echo("\n lenghts? ". $documentos_pendientes->num_rows ."\n ");
+      
+      if(!empty($documentos_pendientes->num_rows) && $documentos_pendientes->num_rows >= 0){
+        $reintentar = true;
+      }
+
+      if ( ($reintentar == false) && (empty(($documentos_pendientes)) || $validacion == "NULL" || $validacion == "array" || $validacion == "boolean" || $validacion == "string" || $validacion == "object.bool(false)" || $validacion == "bool(false)")) {
+        echo( (VERBOSE == true)? "\n conexión db muerta... checkeando documentos pendientes...." : "?");
+        echo("\n ".$validacion);
+        echo("\n que me trajo a aqui?");
+        echo("\n". $reintentar ." es true?");
+        echo("\n". $validacion . " is null?");
+        echo("\n". $validacion . " is boolean?");
+        echo("\n". $validacion . " is string?");
+        echo("\n". $validacion . " is object.bool(false)?");
+        echo("\n". empty(($documentos_pendientes)) . " is empty? ");
+        echo("\n". $validacion . " is array? \n");
+        // var_dump($documentos_pendientes);
+        // var_dump(get_object_vars($conn)["client_info"]);
+        // mysqli_ping($conn);
+        $reintentar = true;
+      }
+      
+      // Reconectar?
+      if($reintentar == true){
+        sleep(LOOP_CYCLE*3);
+        // $conn->close();
+        // $connretry->close();
+        // $conn = NULL;
+        $connretry = NULL;
+        // $connretry = $this->Reconnect($conn);
+        $connretry = $this->connect();
+        $conn = $connretry;
+        // $reintentar = false;
+        // echo("\n reintento conexión \n" );
+        // var_dump($conn);
+      }
+
+
+    } while ($reintentar);
+
+    echo("\n si termino el PASO DE VERIFICAR SI HAY DOCUMENTOS PENDIENTES...\n");
+
+    return  $documentos_pendientes;
+
+  }
+
+
+  function mover_pendiente_a_imprimiendo($conn, $documento_pendiente ){
+
+    // Check connection
+    if ($conn->connect_error) {
+      die("(mover_pendiente_a_imprimiendo) Connection failed: " . $conn->connect_error);
+    }
+    
+    if($documento_pendiente ==  null){
+      die("objeto vacio (mover_pendiente_a_imprimiendo)\n");
+    }
+
+    $query_a_imprimiendo = 
+      "INSERT INTO dbo_printer_current(
+            document_type_id, 
+            document_id, 
+            printer_id, 
+            user_id, 
+            cashier_name) 
+        VALUES ("
+        .$documento_pendiente["document_type_id"].","
+        .$documento_pendiente["document_id"].", "
+        .$documento_pendiente["printer_id"].", "
+        .$documento_pendiente["user_id"].", '"
+        .$documento_pendiente["cashier_name"]."');";
+    
+      // puedes validar el query aca
+      // echo ( $query_a_imprimiendo );
+
+
+    $insertar_registro = $conn->prepare($query_a_imprimiendo);
+
+    if ($insertar_registro->execute()) {
+      echo "\n Se ha movido el documento de pendiente a imprimiendo (current, actual) \n";
+    } else {
+      echo "(al mover de pendiente a imprimiendo (insertar)) Error: " . $query_a_imprimiendo . "\n" . mysqli_error($conn);
+    }
+
+  }
+
+
+  function eliminar_pendiente($conn, $documento_pendiente ){
+
+    // Check connection
+    if ($conn->connect_error) {
+      die("(eliminar_pendiente) Connection failed: " . $conn->connect_error);
+    }
+    
+    if($documento_pendiente ==  null){
+      die("objeto vacio (eliminar_pendiente)\n");
+    }
+
+    $query_delete_pending = 
+    " DELETE 
+        FROM dbo_printer_pending
+      WHERE
+        document_type_id = ".$documento_pendiente["document_type_id"]." && 
+        document_id = ".$documento_pendiente["document_id"]." &&
+        id = ".$documento_pendiente["id"]." &&  
+        printer_id = ".$documento_pendiente["printer_id"].";
+      ";
+  
+    // puedes validar el query aca
+    // echo ( $query_delete_pending );
+
+    $borrar_pendiente_registro = $conn->prepare($query_delete_pending);
+
+    if ($borrar_pendiente_registro->execute()) {
+      echo "Se ha borrado el documento de pendientes, por haber sido llevada a imprimir. \n";
+    } else {
+      echo "(al borrar de pendientes) Error: " . $query_delete_pending . "\n" . mysqli_error($conn);
+    }
+
+
+  }
+
+
+  function mover_a_historico($conn, $documento_imprimiendo ){
+
+    // Check connection
+    if ($conn->connect_error) {
+      die("(mover_a_historico) Connection failed: " . $conn->connect_error);
+    }
+    
+    if($documento_imprimiendo ==  null){
+      die("objeto vacio (mover_a_historico)\n");
+    }
+
+    // ... se toma el individuo en current y se copia a history.
+    $query_a_historico = 
+      "INSERT INTO dbo_printer_history(
+            document_type_id, 
+            document_id, 
+            printer_id, 
+            user_id, 
+            cashier_name) 
+        VALUES ("
+        .$documento_imprimiendo["document_type_id"].","
+        .$documento_imprimiendo["document_id"].", "
+        .$documento_imprimiendo["printer_id"].", "
+        .$documento_imprimiendo["user_id"].", '"
+        .$documento_imprimiendo["cashier_name"]."');";
+    
+      // puedes validar el query aca
+      // echo ( $query_a_historico );
+
+      $insertar_registro = $conn->prepare($query_a_historico);
+
+    if ($insertar_registro->execute()) {
+      echo "Se ha registrado el documento en el historial de impresos \n";
+    } else {
+      echo "(al insertar a historial) Error: " . $query_a_historico . "\n" . mysqli_error($conn);
+    }
+
+  }
+
+
+  function borrar_imprimiendo($conn, $documento_imprimiendo ){
+
+    // Check connection
+    if ($conn->connect_error) {
+      die("(borrar_imprimiendo) Connection failed: " . $conn->connect_error);
+    }
+    
+    if($documento_imprimiendo ==  null){
+      die("objeto vacio (borrar_imprimiendo)\n");
+    }
+
+    // ... se borra de current
+    $query_delete_current = 
+      " DELETE 
+          FROM dbo_printer_current 
+        WHERE
+          document_type_id = ".$documento_imprimiendo["document_type_id"]." && 
+          document_id = ".$documento_imprimiendo["document_id"]." && 
+          printer_id = ".$documento_imprimiendo["printer_id"].";
+        ";
+    
+      // puedes validar el query aca
+      // echo ( $query_delete_current );
+
+      $borrar_current_registro = $conn->prepare($query_delete_current);
+
+    if ($borrar_current_registro->execute()) {
+      echo "Se ha borrado el documeto de la cola de impresion (actual), por haber sido completada. \n";
+    } else {
+      echo "(al borrar de current) Error: " . $query_delete_current . "\n" . mysqli_error($conn);
+    }
+
+
+  }
+
+
+  function marcar_impreso($conn, $documento_imprimiendo ){
+
+    // Check connection
+    if ($conn->connect_error) {
+      die("(marcar_impreso) Connection failed: " . $conn->connect_error);
+    }
+    
+    if($documento_imprimiendo ==  null){
+      die("objeto vacio (marcar_impreso)\n");
+    }
+
+    // query indenpotente... (no hace nada particular...)
+    $query_mark_printed = "SELECT * from `dbo_administration_invoices`;";
+
+
+    switch ($documento_imprimiendo["document_type_id"]) {
+      case "1": // Factura (unico caso de momento)
+        $tipo_documento = "factura";
+
+        // tomo el id de la factura
+        $invoice_id = $documento_imprimiendo["document_id"];
+        
+        // ... marcar como impreso
+        $query_mark_printed = 
+        "UPDATE`dbo_administration_invoices` 
+          SET `printed` = 1 
+          WHERE `id` = ".$invoice_id.";";
+        
+          // puedes validar el query aca
+          // echo ( $query_mark_printed );
+
+        $marcar_current_registro = $conn->prepare($query_mark_printed);
+
+        if ($marcar_current_registro->execute()) {
+          echo "Se ha marcado el documento como impreso.. \n";
+        } else {
+          echo "(marcar_impreso) Error: " . $query_mark_printed . "\n" . mysqli_error($conn);
+        }
+
+
+        break;
+      case "2":// Nota de Credito
+        $tipo_documento = "Nota de Credito";
+
+        // tomo el id de la NotadeCredito (nota de credito)
+        $creditnote_id = $documento_imprimiendo["document_id"];
+        
+        // envio al "manejador" respectivo
+
+        break;
+        break;
+      case "3":// Nota de Entrega
+        break;
+      case "4":// Nota no Fiscal
+        break;
+      case "5":// nota de entrega
+        break;
+      case "6":// corte de caja
+        $tipo_documento = "Corte";
+        break;
+      case "7":// cierre de caja
+        $tipo_documento = "Cierre";
+        break;
+      case "8":// cierre de caja
+        $tipo_documento = "Cierre doc manual";
+        break;
+      default: // Documento indeterminado
+        die("Documento indeterminado (bridge) ". $documento_imprimiendo["document_type_id"] ); 
+    }
+
+
+  }
+
+
+  function sincronizar_numero($conn, $documento_imprimiendo ){
+    // la intencion de esta funcion, es dado un id de factura y un numero de factura, verificar si estan alineados,
+    // sino, modificar el numero de factura y asi mantener sincronia con el POS Strix
+
+    // ESTE SEGMENTO AUN NO ESTA EN USO.
+
+    // Check connection
+    if ($conn->connect_error) {
+      die("(marcar_impreso) Connection failed: " . $conn->connect_error);
+    }
+    
+    if($documento_imprimiendo ==  null){
+      die("objeto vacio (marcar_impreso)\n");
+    }
+
+    // query indenpotente... (no hace nada particular...)
+    $query_mark_printed = "SELECT * from `dbo_administration_invoices`;";
+
+
+    switch ($documento_imprimiendo["document_type_id"]) {
+      case "1": // Factura (unico caso de momento)
+        $tipo_documento = "factura";
+
+        // tomo el id de la factura
+        $invoice_id = $documento_imprimiendo["document_id"];
+        
+        // ... marcar como impreso
+        $query_mark_printed = 
+        "UPDATE`dbo_administration_invoices` 
+          SET `printed` = 1 
+          WHERE `id` = ".$invoice_id.";";
+        
+          // puedes validar el query aca
+          // echo ( $query_mark_printed );
+
+        $marcar_current_registro = $conn->prepare($query_mark_printed);
+
+        if ($marcar_current_registro->execute()) {
+          echo "Se ha marcado el documento como impreso.. \n";
+        } else {
+          echo "(marcar_impreso) Error: " . $query_mark_printed . "\n" . mysqli_error($conn);
+        }
+
+
+        break;
+      case "2":// Nota de Credito
+        $tipo_documento = "Nota de Credito";
+
+        // tomo el id de la NotadeCredito (nota de credito)
+        $creditnote_id = $documento_imprimiendo["document_id"];
+        
+        // envio al "manejador" respectivo
+
+        break;
+        break;
+      case "3":// Nota de Entrega
+        break;
+      case "4":// Nota no Fiscal
+        break;
+      case "5":// nota de entrega
+        break;
+      case "6":// corte de caja
+        $tipo_documento = "Corte";
+        break;
+      case "7":// cierre de caja
+        $tipo_documento = "Cierre";
+        break;
+      case "8":// cierre de caja
+        $tipo_documento = "Cierre Doc manual";
+        break;
+      default: // Documento indeterminado
+        die("Documento indeterminado (bridge) ". $documento_imprimiendo["document_type_id"] ); 
+    }
+
+
+  }
+
+
+  function logWithDoc($conn, $message, $documento_imprimiendo, $print_error){
+
+    // Check connection
+    if ($conn->connect_error) {
+      die("(logWithDoc) Connection failed: " . $conn->connect_error);
+    }
+    
+    if($documento_imprimiendo ==  null){
+      die("objeto vacio (logWithDoc)\n");
+    }
+
+    if($message ==  ""){
+      die("mensaje vacio (logWithDoc)\n");
+    }
+
+    $query_update_message = 
+      "INSERT dbo_printer_messages(
+        id, 
+        message, 
+        printer_id, 
+        user_id, 
+        cashier_name) 
+      VALUES ("
+        .$documento_imprimiendo["printer_id"].",'"
+        .$message."', "
+        .$documento_imprimiendo["printer_id"].", "
+        .$documento_imprimiendo["user_id"].", '"
+        .$documento_imprimiendo["cashier_name"]."')
+      ON DUPLICATE KEY UPDATE 
+        message = '".$message."'
+      ;";
+
+    // puedes validar el query aca
+    // echo ( $query_update_message );
+
+    $actualizar_mensaje_impresora = $conn->prepare($query_update_message);
+
+    if ($actualizar_mensaje_impresora->execute()) {
+      echo "se ha actualizado el mensaje de la impresora. \n";
+    } else {
+      echo "(al actualizar mensaje de la impresora) Error: " . $query_update_message . "\n" . mysqli_error($conn);
+    }
+
+    // esta comprovacion evita que se repitan los errores en el log historico una vez falle una vez
+    if(!$print_error){
+
+        $query_log_message = 
+        "INSERT INTO dbo_printer_log(
+          message, 
+          printer_id, 
+          user_id, 
+          cashier_name) 
+        VALUES ('"
+        .$message."', "
+        .$documento_imprimiendo["printer_id"].", "
+        .$documento_imprimiendo["user_id"].", '"
+        .$documento_imprimiendo["cashier_name"]."');";
+
+        // puedes validar el query aca
+        // echo ( $query_log_message );
+
+        $actualizar_mensaje_impresora = $conn->prepare($query_log_message);
+
+        if ($actualizar_mensaje_impresora->execute()) {
+        echo "se ha escrito un registro nuevo en log de impresiones.  \n";
+        
+      } else {
+        echo "(al actualizar mensaje de la impresora)(error impresion)Error: " . $query_log_message . "\n" . mysqli_error($conn);
+      }
+    }
+
+  }
+
+
+
+}
+?>
