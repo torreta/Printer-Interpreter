@@ -122,6 +122,12 @@ $sentencia = "IntTFHKA.exe SendFileCmd(".$ruta;
 $rep = ""; 
 $rep = shell_exec($sentencia);
 
+// esto es para darle chance a la impresora de imprimir
+sleep(LOOP_CYCLE * 3);
+
+// esta parte deberia estar activa para saber que respondio el demonio fiscal
+// si esta activo en una impresora real.
+
 // $repuesta = file('Retorno.txt');
 // $lineas = count($repuesta);
 // for($i=0; $i < $lineas; $i++)
