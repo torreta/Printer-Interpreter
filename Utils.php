@@ -426,6 +426,21 @@ class Utils
             switch ($respuesta_fragmentada[5]) {
               case "0": 
                 // Retorno: TRUE Status: 5 Error: 0         // error de formato de linea
+                
+                // puedes validar el query aca
+                echo ( "-------********************************------ \n");
+                echo ( "-------                                ------ \n");
+                echo ( "-------         CORRECTO!!!            ------ \n");
+                echo ( "-------            424                 ------ \n");
+                echo ( "-------   (  estoy en la deteccion  )  ------ \n");
+                echo ( "-------   (  ahora solo me toca  )     ------ \n");
+                echo ( "-------   (  reproducir con  )         ------ \n");
+                echo ( "-------   (    consistencia  )         ------ \n");
+                echo ( "-------                                ------ \n");
+                echo ( "-------                                ------ \n");
+                echo ( "-------                                ------ \n");
+                echo ( "-------********************************------ \n");
+
                 return  "Error de formato de linea a imprimir (comando).";
               break;
               default: 
