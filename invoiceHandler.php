@@ -260,6 +260,11 @@ class invoiceHandler{
       while ($descuento = $items_descuentos->fetch_assoc()) {
         // verifico que el descuento sea mayor a cero para reflejarlo
         if (floatval($descuento["discount_total"]) > 0) {
+          
+          // subtotalizo
+          $factura_en_contruccion[$index_counter] = "3" . "\n";
+          $index_counter++; 
+
           $factura_en_contruccion[$index_counter] = $interpreter->translateLineDescuento($descuento["discount_total"]) . "\n";
           $index_counter++;
         }
