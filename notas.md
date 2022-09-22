@@ -35,3 +35,13 @@ Cesta Ticket
 Saldo
 Credito
 Pago Movil
+
+
+estado facturas dias 19-20 del 09/ 22
+IntTFHKA.exe UploadReportCmd(U4f02209190220920 retorno.txt
+
+reimprimir factura 15973
+IntTFHKA.exe SendCmd(RF00159730015973
+
+reimprimir Z de estos dias... 19-09-2022
+IntTFHKA.exe SendCmd(Rz02209190220919
