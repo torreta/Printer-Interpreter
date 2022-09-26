@@ -678,6 +678,34 @@ class Utils
   }
 
 
+  function sendReimpresionZs($intervalo=""){
+  {
+    // ejemplo:
+    // IntTFHKA.exe SendCmd(Rz02209190220919
+
+    // Check connection
+    $sentencia = "IntTFHKA.exe SendCmd(Rz0".$intervalo;
+
+    shell_exec($sentencia);
+    
+    // interpretar la respuesta de la impresora
+    $respuesta_impresora = "true";
+
+    if($respuesta_impresora == "true"){
+      
+      return "true";
+
+    }else{
+      // (3) (false)  verifico el mensaje del controlador al imprimir, (condiciones de parseo), si sale un error
+      // ... se mantiene la factura en current (sin cambios)
+      echo "la impresora fallo... (hay que colocar los errores en log)\n";
+      // ... busco en checkprinter cual puede ser la razon del error.
+      return "false";
+    }
+    
+  }
+
+
   function sendAnulacionDocManual()
   {
 
