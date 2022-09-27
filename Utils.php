@@ -686,6 +686,8 @@ class Utils
     $sentencia = "IntTFHKA.exe SendCmd(Rz0".$intervalo;
 
     shell_exec($sentencia);
+
+    echo($sentencia."\n");
     
     // interpretar la respuesta de la impresora
     $respuesta_impresora = "true";
