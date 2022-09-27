@@ -679,7 +679,6 @@ class Utils
 
 
   function sendReimpresionZs($intervalo=""){
-  {
     // ejemplo:
     // IntTFHKA.exe SendCmd(Rz02209190220919
 
