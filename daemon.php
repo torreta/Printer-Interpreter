@@ -230,6 +230,25 @@ while (true) {
          
        break;
 
+       case "10":// test de impresion
+            // documento nulo de caja
+            // reimprimir intervalo de fechas
+            echo "********************\n";
+            echo "RESUMEN POR FECHAS!!!\n";
+            echo "*********************\n";
+          
+          $tipo_documento = "Resumen por fechas";
+  
+          // interpreto el nombre del cajero que es quien trae el dato.
+          $nombre_cajero_oculto = $documento_imprimiendo["cashier_name"];
+  
+          $nombres_separados = explode(" ",$nombre_cajero_oculto); 
+  
+          $respuesta_impresora = $Utils->sendResumenZs($nombres_separados[1]); 
+          // IntTFHKA.exe SendCmd(Rz02209190220919
+  
+       break;
+
       default: // Documento indeterminado
         die("Documento indeterminado: (daemon) ". $documento_imprimiendo["document_type_id"] ); 
 

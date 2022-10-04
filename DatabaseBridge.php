@@ -270,12 +270,14 @@ class DatabaseBridge
         // envio al "manejador" respectivo
 
         break;
-        break;
       case "3":// Nota de Entrega
+        $tipo_documento = "Nota de Credito";
         break;
       case "4":// Nota no Fiscal
+        $tipo_documento = "Copia";
         break;
-      case "5":// nota de entrega
+      case "5":// Reimpresion por fechas
+        $tipo_documento = "Reimpresion por fechas";
         break;
       case "6":// corte de caja
         $tipo_documento = "Corte";
@@ -285,6 +287,12 @@ class DatabaseBridge
         break;
       case "8":// cierre de caja
         $tipo_documento = "Cierre doc manual";
+        break;
+      case "9":// test de impresion
+        $tipo_documento = "Test Impresion";
+        break;
+      case "10":// Resumen por fechas
+        $tipo_documento = "Resumen por fechas";
         break;
       default: // Documento indeterminado
         die("Documento indeterminado (bridge) ". $documento_imprimiendo["document_type_id"] ); 
@@ -348,12 +356,14 @@ class DatabaseBridge
         // envio al "manejador" respectivo
 
         break;
-        break;
       case "3":// Nota de Entrega
+        $tipo_documento = "Nota de Credito";
         break;
       case "4":// Nota no Fiscal
+        $tipo_documento = "Copia";
         break;
-      case "5":// nota de entrega
+      case "5":// Reimpresion por fechas
+        $tipo_documento = "Reimpresion por fechas";
         break;
       case "6":// corte de caja
         $tipo_documento = "Corte";
@@ -362,7 +372,13 @@ class DatabaseBridge
         $tipo_documento = "Cierre";
         break;
       case "8":// cierre de caja
-        $tipo_documento = "Cierre Doc manual";
+        $tipo_documento = "Cierre doc manual";
+        break;
+      case "9":// test de impresion
+        $tipo_documento = "Test Impresion";
+        break;
+      case "10":// Resumen por fechas
+        $tipo_documento = "Resumen por fechas";
         break;
       default: // Documento indeterminado
         die("Documento indeterminado (bridge) ". $documento_imprimiendo["document_type_id"] ); 
