@@ -27,15 +27,18 @@ class interpreter{
       //echo "Exento\n";
       $comando = " ";
       break;
+      case "IVA 8%":
+        //echo "Tasa 1\n";
+        $comando = "\"";
+      break;
       case "IVA 16%":
       //echo "Tasa 1\n";
       $comando = "!";
+      break;
       case "IVA 31%":
-      //echo "Tasa 2\n";
-      $comando = "\"";
-      case "IVA 8%":
-      //echo "Tasa 1\n";
+      //echo "Tasa 3\n";
       $comando = "#";
+      break;
       case "!":
       //echo "Tasa 1\n";
       $comando = "!";
