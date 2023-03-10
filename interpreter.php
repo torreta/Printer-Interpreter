@@ -30,6 +30,12 @@ class interpreter{
       case "IVA 16%":
       //echo "Tasa 1\n";
       $comando = "!";
+      case "IVA 31%":
+      //echo "Tasa 2\n";
+      $comando = "\"";
+      case "IVA 8%":
+      //echo "Tasa 1\n";
+      $comando = "#";
       case "!":
       //echo "Tasa 1\n";
       $comando = "!";
