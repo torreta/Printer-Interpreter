@@ -12,7 +12,7 @@
   // CHECK on main proyect database to set this if theres more than one to watch
   // 1 daemon checks one printer....
   // this daemon can run on multiple system paths (check pwd)
-  define('PRINTER_ID', 2); //la impresora en uso (numerada en BD)
+  define('PRINTER_ID', 7); //la impresora en uso (numerada en BD)
 
   // Cycle (how ofter the daemon check the database)
   define('LOOP_CYCLE', 1); // Ciclo determinado en segundos, en este caso cada segundo
@@ -31,10 +31,10 @@
   }
 
   // PRINER MODEL (a way to check if we can configure these variables by default)
-  $Printer_model = "EMULATOR"; // <---- Check switch to set this
+  $Printer_model = "HK80_VE_IGTF"; // <---- Check switch to set this
 
   // IGTF 3% ACTIVE?
-  $IGTF = false;
+  $IGTF = true;
 
 
   // DEFAULT VALUES
@@ -158,6 +158,29 @@
       $discounts_decimals = "00";
       $discounts_decimals_quantity = 2;
       $discounts_integer_quantity = 15;
+    break;
+    case "HK80_VE_IGTF":
+      // prices
+      $price_decimals = "00";
+      $price_decimals_quantity = 2;
+      $price_integer_quantity = 8;
+      // Payments
+      $payments_decimals = "00";
+      $payments_decimals_quantity = 2;
+      $payments_integer_quantity = 10;
+      // quantity
+      $quantity_decimals = "000";
+      $quantity_decimals_quantity = 3;
+      $quantity_integer_quantity = 5;
+      // texts
+      $max_characters_description = 20;
+      $max_characters_text = 40;
+      $max_characters_info = 40;
+      $max_characters_comments = 40;
+      // discounts
+      $discounts_decimals = "00";
+      $discounts_decimals_quantity = 2;
+      $discounts_integer_quantity = 7;
     break;
     case "LOSCOCOS": //CUSTOM
       // prices
