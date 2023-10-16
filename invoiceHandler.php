@@ -440,6 +440,9 @@ class invoiceHandler{
     // ...(hago una instancia del interprete del tipo de doc)
     $interpreter = new interpreter();
     $interpreter_nofiscal = new interpreter_nofiscal();
+    
+    // Archivo de utilidades (status, print, etc)
+    $Utils = new Utils();
 
     // counter for translation
     $factura_en_contruccion = array();
@@ -452,6 +455,11 @@ class invoiceHandler{
 
       // arreglo de los items de la factura
       $items_factura = $this->get_invoice_items($conn, $invoice_id, $tipo_de_factura, $subtotal, $tax, $total);
+
+      // consulto la información para comparar después de intentar imprimir
+      $respuesta_status_preoperacion = $Utils->system_status();
+      $invoice_number_preoperacion = $respuesta_status_preoperacion[3];
+
     } else {
       // consultar informacion fiscal de la factura antes de armarla
       $infoFiscalTraducida = $interpreter_nofiscal->translateFiscalInfoArray($factura_fiscal_actual);
@@ -471,8 +479,7 @@ class invoiceHandler{
     var_dump($factura_en_contruccion);
     echo "\n";
 
-    // creo el archivo de la factura y lo mando a imprimir
-    $Utils = new Utils();
+    // ubicacion del archivo a imprimir
     $filename = "FA/Factura" . $numero_factura . ".txt";
     $file = $Utils->printFileFromArray($factura_en_contruccion, $filename);
 
@@ -505,6 +512,20 @@ class invoiceHandler{
       // estados de la impresora, debe existir tabla previamente
       $this->syncronize_status($conn, $respuesta_status);
     }
+
+
+    // caso extremo de compatibilidad (caso que aveces se queda pegada la misma impresion)
+    if ($tipo_de_factura == "fiscal" && $respuesta_status != "") {
+      // si da la casualidad que el numero de factura "subio" respecto al numero previo
+      // asi la impresora haya dicho "false", coloco que la impresion fue exitosa
+
+      if(intval($invoice_number) > intval($invoice_number_preoperacion)){
+        // si es mayor, forzo a decir que la impresion fue exitosa
+        $respuesta_impresora = "true";
+      }
+
+    }
+
 
     // linea para emular impresion exitosa.
     // $respuesta_impresora = "true";
