@@ -335,7 +335,8 @@ class creditnoteHandler
     // $respuesta_impresora = "true";
 
     if ($respuesta_impresora == "true") {
-
+      $DatabaseBridge = new DatabaseBridge();
+      $DatabaseBridge->insertDataOnLedger($conn, $documento_imprimiendo["document_id"], $documento_imprimiendo["document_type_id"]);
       return "true";
     } else {
       echo "la impresora fallo... (hay que colocar los errores en log)\n";
