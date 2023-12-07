@@ -512,8 +512,6 @@ class invoiceHandler{
       // estados de la impresora, debe existir tabla previamente
       $this->syncronize_status($conn, $respuesta_status);
 
-      $DatabaseBridge = new DatabaseBridge();
-      $DatabaseBridge->insertDataOnLedger($conn, $documento_imprimiendo["document_id"], $documento_imprimiendo["document_type_id"]);
     }
 
 

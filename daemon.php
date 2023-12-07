@@ -261,6 +261,13 @@ while (true) {
 
       // ... se toma el individuo en current y se copia a history.
       $DatabaseBridge->mover_a_historico( $conn, $documento_imprimiendo );
+      if(
+        $documento_imprimiendo["document_type_id"] == 1 ||
+        $documento_imprimiendo["document_type_id"] == 2
+      ){
+        $DatabaseBridge = new DatabaseBridge();
+        $DatabaseBridge->insertDataOnLedger($conn, $documento_imprimiendo["document_id"], $documento_imprimiendo["document_type_id"]);
+      }
 
       // ... se borra de current
       $DatabaseBridge->borrar_imprimiendo( $conn, $documento_imprimiendo );
