@@ -461,6 +461,104 @@ class DatabaseBridge
 
   }
 
+  function insertDataOnLedger($conn, $documentId, $documentType){
+    
+    if ($conn->connect_error) {
+      die("(insertDataOnLedger) Connection failed: " . $conn->connect_error);
+    }
+    if (!$documentId) {
+      die("dato vital vacio (insertDataOnLedger)\n");
+    }
+    if (!$documentType) {
+        die("dato vital vacio (insertDataOnLedger)\n");
+    }
+
+    $checkDocumentPendingQueries = "SELECT document_id, document_type FROM dbo_printer_ledger_pending";
+    $checkDocumentPending = mysqli_query($conn, $checkDocumentPendingQueries);
+
+    $arrayRequest = array();
+
+    if ($checkDocumentPending) {
+        while($row = mysqli_fetch_assoc($checkDocumentPending)){
+            $arrayRequest[] = $row;
+        }
+    } else {
+        echo "No hay datos en la tabla temporal";
+    }
+
+    $arrayDocumentCurrent = array("document_id" => $documentId, "document_type" => $documentType);
+    array_push($arrayRequest, $arrayDocumentCurrent);
+
+    $countRequest = count($arrayRequest);
+
+    for ($i = 0; $i < $countRequest; $i++) {
+        $arrayParams = $arrayRequest[$i];
+        $request = json_encode($arrayParams);
+        $construct_url = array(
+          "startUrl" => "http://",
+          "host" => DB_HOST,
+          "endUrl" => ":3000/api/ledger/sales/printer_record"
+        );
+        $url = $construct_url["startUrl"] . $construct_url["host"] . $construct_url["endUrl"];
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+    
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $request);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    
+        curl_exec($curl);
+        $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        echo "status petición http: ".$status."\n";
+    
+        
+        if ($status == 200){
+            echo "Se ha insertado la factura en el libro de ventas\n";
+
+            $checkDocumentPendingSQL = "SELECT * FROM dbo_printer_ledger_pending WHERE document_id = '{$arrayParams["document_id"]}' AND document_type = '{$arrayParams["document_type"]}'";
+            $checkDocumentPendingQueries = $conn->query($checkDocumentPendingSQL);
+
+            if($checkDocumentPendingQueries->num_rows > 0){
+                $documentPending = $checkDocumentPendingQueries->fetch_assoc();
+                $deleteDocumentRecordedSQL = "DELETE FROM dbo_printer_ledger_pending WHERE id = {$documentPending['id']}";
+
+                $deleteDocumentRecorded = $conn->prepare($deleteDocumentRecordedSQL);
+
+                if ($deleteDocumentRecorded->execute()) {
+                    echo "Se ha borrado el documento de pendientes, al haberse creado el registro en el libro de ventas\n";
+                } else {
+                    echo "(al borrar de pendientes) Error: " . $deleteDocumentRecorded . "\n" . mysqli_error($conn);
+                }
+            }
+
+            curl_close($curl);
+        } else {
+          $recordExistsSQL = "SELECT COUNT(*) AS count_records FROM dbo_printer_ledger_pending WHERE document_id = '{$arrayParams["document_id"]}' AND document_type = '{$arrayParams["document_type"]}'";
+          
+          $recordExistsQuery = $conn->query($recordExistsSQL);
+          $recordExists = $recordExistsQuery->fetch_assoc();
+          
+          if ($recordExists["count_records"] > 0) {
+              echo "No se registró en el libro de Ventas. Ya se encontraba registrada en la tabla pending\n";
+              continue;
+          }
+          $sql = "INSERT INTO dbo_printer_ledger_pending (document_id, document_type) VALUES ({$arrayParams["document_id"]}, {$arrayParams["document_type"]})";    
+          $stmt = $conn->prepare($sql);
+          
+          if ($stmt->execute()) {
+              echo "Datos insertados en la tabla temporal\n";
+          } else {
+              echo "Error al insertar datos: " . $stmt->error."\n";
+          }
+          
+          $stmt->close();
+          
+      }
+    }
+    
+  }
+
 
 
 }

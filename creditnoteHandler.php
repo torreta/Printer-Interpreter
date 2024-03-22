@@ -66,7 +66,7 @@ class creditnoteHandler
         dbo_system_users.name as user_name,
         dbo_system_users.last_name as user_lastname,
         dbo_system_users.rol_id,
-      	'Z00000001' as printer_serial
+        'Z00000001' as printer_serial
       FROM
         dbo_finance_creditnotes
       left join dbo_sales_clients on dbo_finance_creditnotes.client_id = dbo_sales_clients.id
@@ -335,7 +335,6 @@ class creditnoteHandler
     // $respuesta_impresora = "true";
 
     if ($respuesta_impresora == "true") {
-
       return "true";
     } else {
       echo "la impresora fallo... (hay que colocar los errores en log)\n";

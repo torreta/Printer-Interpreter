@@ -169,7 +169,6 @@ class invoiceHandler{
         dbo_administration_invoices_items.invoice_id,
         dbo_administration_invoices_items.price,
         dbo_administration_invoices_items.quantity, 
-        dbo_administration_invoices_items.weight_quantity, 
         dbo_administration_invoices_items.tax_id,
         dbo_administration_invoices_items.tax_base,
         ROUND(dbo_administration_invoices_items.tax_base / dbo_administration_invoices_items.quantity, 2) as real_base_check,
@@ -206,10 +205,8 @@ class invoiceHandler{
       // echo "price: " . $item["price"]. " - quantity: " . $item["quantity"]. ", description " . $item["description"];
       // echo "\n";
 
-      // cuando se da el caso que producto es por peso
-      $item["quantity"] = ($item["weight_quantity"] && $item["weight_quantity"] > 0)? $item["weight_quantity"]: $item["quantity"];
-
       // para dejar constancia, antes era real base lo que se pasaba por parametros
+
       if ($tipo_de_factura == "fiscal") {
         // proximamente al interpreter
         // .. el tax rate, deberia pasarse en texto (ya, pero se llama observation en el query, esta en string)
@@ -514,6 +511,7 @@ class invoiceHandler{
 
       // estados de la impresora, debe existir tabla previamente
       $this->syncronize_status($conn, $respuesta_status);
+
     }
 
 
