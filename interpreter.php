@@ -368,6 +368,7 @@ class interpreter{
     // 14: divisa
     // 15: tarjeta 3
     // 16+ - 24 : no definidos
+    // 20: divisas con igtf
 
     $codigo = "";
 
