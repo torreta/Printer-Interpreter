@@ -334,11 +334,79 @@ class creditnoteHandler
     // linea para emular impresion exitosa.
     // $respuesta_impresora = "true";
 
+    $respuesta_status = $Utils->system_status();
+
+    // aqui es donde deberia llamar las respectivas funciones que
+    // sincronizan los numeros de factura, corte, etc
+    if ($tipo_de_nota == "fiscal" && $respuesta_status != "") {
+      echo "Ultima nota de crédito impresa a sincronizar: " . $respuesta_status[7];
+      $creditnote_number = $respuesta_status[7];
+      $this->syncronize_creditnote($conn, $creditnote_id, $creditnote_number);
+      $this->syncronize_status($conn, $respuesta_status);
+
+    }
+
     if ($respuesta_impresora == "true") {
       return "true";
     } else {
       echo "la impresora fallo... (hay que colocar los errores en log)\n";
       return "false";
+    }
+  }
+
+  function syncronize_creditnote($conn, $creditnote_id, $creditnote_number)
+  {
+
+    // Check connection
+    if ($conn->connect_error) {
+      die("(syncronize_creditnote) Connection failed: " . $conn->connect_error);
+    }
+
+    if ($creditnote_id ==  null || $creditnote_id ==  "") {
+      die("dato vital vacio (syncronize_creditnote) (creditnote_id)\n");
+    }
+
+    if ($creditnote_number ==  null || $creditnote_number ==  "") {
+      die("dato vital vacio (syncronize_creditnote) (creditnote_number)\n");
+    }
+
+    // cambiar los datos fiscales de las facturas.
+    $query_sincronizar_nro_creditnote = "UPDATE dbo_finance_creditnotes SET creditnote_number = " . $creditnote_number . " WHERE id = " . $creditnote_id;
+
+    $cambiar_registro = $conn->prepare($query_sincronizar_nro_creditnote);
+
+    if ($cambiar_registro->execute()) {
+      echo "Se ha cambiado el nro nota de crédito un del a imprimiendo (sync)\n";
+    } else {
+      echo "(al cambiar el registro de numero de nota de crédito) Error: " . $query_sincronizar_nro_creditnote . "\n" . mysqli_error($conn);
+    }
+  }
+
+
+  function syncronize_status($conn, $printer_status)
+  {
+
+    // Check connection
+    if ($conn->connect_error) {
+      die("(syncronize_status) Connection failed: " . $conn->connect_error);
+    }
+
+    if ($printer_status ==  null || $printer_status ==  "") {
+      die("dato vital vacio (syncronize_status) (printer_status)\n");
+    }
+
+
+    // cambiar los datos fiscales de las facturas.
+    $query_sincronizar_estados_impresora = 
+    "INSERT INTO printer_status_data ( status_code, cashregister_user_number, total_daily_invoices, last_invoice_number, daily_invoice_quantity, last_debitnote_number, daily_debitnote_quantity, last_creditnote_number, daily_creditnote_quantity, last_nonfiscal_document_number, daily_nonfiscal_documents_quantity, daily_fiscal_memory_reports, daily_closes_counter, registered_enterprise_fiscal_document_number, printer_register_number, printer_current_time, printer_current_date, update_date) 
+    VALUES('".$printer_status[0]."', '".$printer_status[1]."', '".$printer_status[2]."', '".$printer_status[3]."', '".$printer_status[4]."', '".$printer_status[5]."', '".$printer_status[6]."', '".$printer_status[7]."', '".$printer_status[8]."', '".$printer_status[9]."', '".$printer_status[10]."', '".$printer_status[11]."', '".$printer_status[12]."', '".$printer_status[13]."', '".$printer_status[14]."', '".$printer_status[15]."', '".$printer_status[16]."', NOW());";
+
+    $cambiar_registro = $conn->prepare($query_sincronizar_estados_impresora);
+
+    if ($cambiar_registro->execute()) {
+      echo "Se ha GUARDADO LOS ESTADOS EXTRAIDOS DE LA IMPRESORA\n";
+    } else {
+      echo "( Error: GUARDANDO LOS ESTADOS EXTRAIDOS DE LA IMPRESORA)  " . $query_sincronizar_estados_impresora . "\n" . mysqli_error($conn);
     }
   }
 }

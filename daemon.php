@@ -261,13 +261,6 @@ while (true) {
 
       // ... se toma el individuo en current y se copia a history.
       $DatabaseBridge->mover_a_historico( $conn, $documento_imprimiendo );
-      if(
-        $documento_imprimiendo["document_type_id"] == 1 ||
-        $documento_imprimiendo["document_type_id"] == 2
-      ){
-        $DatabaseBridge = new DatabaseBridge();
-        $DatabaseBridge->insertDataOnLedger($conn, $documento_imprimiendo["document_id"], $documento_imprimiendo["document_type_id"]);
-      }
 
       // ... se borra de current
       $DatabaseBridge->borrar_imprimiendo( $conn, $documento_imprimiendo );
@@ -278,6 +271,14 @@ while (true) {
       // ... se sobrescribe el mensaje para la impresora de mensajes 
       $mensaje_al_log = "la ".$tipo_documento .": " . $numero_documento .", por cajero ". $nombre_cajero. ", ha impreso con exito.";
       $DatabaseBridge->logWithDoc( $conn, $mensaje_al_log, $documento_imprimiendo, $print_error );
+
+      if(
+        $documento_imprimiendo["document_type_id"] == 1 ||
+        $documento_imprimiendo["document_type_id"] == 2
+      ){
+        $DatabaseBridge = new DatabaseBridge();
+        $DatabaseBridge->insertDataOnLedger($conn, $documento_imprimiendo["document_id"], $documento_imprimiendo["document_type_id"]);
+      }
 
     }else{
       // (3) (false)  verifico el mensaje del controlador al imprimir, (condiciones de parseo), si sale un error
