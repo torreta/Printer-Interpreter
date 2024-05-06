@@ -378,6 +378,30 @@ class Utils
       case "TRUE": 
         // encendida
         switch ($respuesta_fragmentada[3]) {
+          case "1": 
+            // modo no fiscal
+            if($respuesta_fragmentada[5] == "0"){
+              // Nota de credito en cero???
+              // Retorno: TRUE     Status: 1       Error: 0
+              echo ( "-------********************************------ \n");
+              echo ( "-------                                ------ \n");
+              echo ( "-------         DOCUMENTO !            ------ \n");
+              echo ( "-------       VALORES EN CERO          ------ \n");
+              echo ( "-------       NOTA DE CREDITO          ------ \n");
+              echo ( "-------                                ------ \n");
+              echo ( "-------********************************------ \n");
+              return  "Montos en el Documento en CEROS!.";
+
+            }else{
+              echo("respuesta del estado  impresora, no esta dentro de las respuestas esperadas");
+              echo("status: ".$respuesta_fragmentada[3]);
+              echo("Error: ".$respuesta_fragmentada[5]);
+              echo("\n");
+              // die("respuesta inesperada al consultar estado, buscar error "); 
+              echo("respuesta inesperada al consultar estado, buscar error "); 
+              sleep(3);
+              return ("error de memoria fiscal complejo");            }
+          break;
           case "3": 
             // modo no fiscal
             if($respuesta_fragmentada[5] == "100"){
@@ -477,6 +501,90 @@ class Utils
             // sleep(3);
           }
       break;
+
+      case "0":
+        // modo fiscal
+        switch ($respuesta_fragmentada[3]) {
+          case "0":
+            // no consigo documento a imprimir 
+            // Retorno: 0      Status: 0       Error: 153  
+            echo ( "-------********************************------ \n");
+            echo ( "-------                                ------ \n");
+            echo ( "-------         DOCUMENTO !            ------ \n");
+            echo ( "-------         A IMPRIMIR             ------ \n");
+            echo ( "-------        NO ENCONTRADO           ------ \n");
+            echo ( "-------   (  estoy en la deteccion  )  ------ \n");
+            echo ( "-------                                ------ \n");
+            echo ( "-------********************************------ \n");
+
+            return  "Error de formato de linea a imprimir (comando).";
+          break;
+          default: 
+            echo("error del estado de  impresora, no esta dentro de las respuestas esperadas");
+            echo("CASOS DOCUMENTOS CON ERRORES");
+            echo("error: ". $respuesta_fragmentada[5]);
+            echo("\n");
+            // echo("respuesta inesperada al consultar estado, buscar error."); 
+            echo("respuesta inesperada al consultar estado, buscar error."); 
+            sleep(3);
+            return "error complejo de respuesta inesperada case true";
+        }
+      break;
+      case "15":
+        // modo fiscal
+        switch ($respuesta_fragmentada[3]) {
+          case "0":
+            // nota de credito impresa sim problemas
+            // Retorno: 15     Status: 0       Error: 0
+        
+            echo ( "-------********************************------ \n");
+            echo ( "-------                                ------ \n");
+            echo ( "-------         DOCUMENTO !            ------ \n");
+            echo ( "-------         A IMPRIMIR             ------ \n");
+            echo ( "-------   (  nota de credito?  )       ------ \n");
+            echo ( "-------                                ------ \n");
+            echo ( "-------********************************------ \n");
+
+            return  "Error de formato de linea a imprimir (comando).";
+          break;
+          default: 
+            echo("error del estado de  impresora, no esta dentro de las respuestas esperadas");
+            echo("CASOS DOCUMENTOS CON ERRORES");
+            echo("error: ". $respuesta_fragmentada[5]);
+            echo("\n");
+            // echo("respuesta inesperada al consultar estado, buscar error."); 
+            echo("respuesta inesperada al consultar estado, buscar error."); 
+            sleep(3);
+            return "error complejo de respuesta inesperada case true";
+        }
+      break;
+      case "11":
+        // modo fiscal
+        switch ($respuesta_fragmentada[3]) {
+          case "0":
+            // Nota de credito en cero???
+            // Retorno: 11     Status: 0       Error: 128
+            echo ( "-------********************************------ \n");
+            echo ( "-------                                ------ \n");
+            echo ( "-------         DOCUMENTO !            ------ \n");
+            echo ( "-------       VALORES EN CERO          ------ \n");
+            echo ( "-------                                ------ \n");
+            echo ( "-------********************************------ \n");
+
+            return  "Error de formato de linea a imprimir (comando).";
+          break;
+          default: 
+            echo("error del estado de  impresora, no esta dentro de las respuestas esperadas");
+            echo("CASOS DOCUMENTOS CON ERRORES");
+            echo("error: ". $respuesta_fragmentada[5]);
+            echo("\n");
+            // echo("respuesta inesperada al consultar estado, buscar error."); 
+            echo("respuesta inesperada al consultar estado, buscar error."); 
+            sleep(3);
+            return "error complejo de respuesta inesperada case true";
+        }
+      break;
+
       default: 
         echo("respuesta del estado  impresora, no esta dentro de las respuestas esperadas");
         echo($respuesta_fragmentada[1]);
