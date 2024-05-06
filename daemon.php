@@ -192,7 +192,7 @@ while (true) {
 
       case "6":// corte de caja
         echo "********************\n";
-        echo "CORTE ENDEMONIADO!!!\n";
+        echo "CORTE IMPRESORA FISCAL !!!\n";
         echo "*********************\n";
 
         $tipo_documento = "Corte de Caja";
@@ -202,7 +202,7 @@ while (true) {
 
        case "7":// cierre de caja
         echo "********************\n";
-        echo "CIERRE ENDEMONIADO!!!\n";
+        echo "CIERRE IMPRESORA FISCAL !!!\n";
         echo "*********************\n";
         
         $tipo_documento = "Cierre de Caja";
