@@ -282,6 +282,7 @@ class invoiceHandler{
           dbo_administration_invoices.saleorder_number,
           dbo_administration_invoices.total as invoice_total,
           dbo_administration_invoices.real_total as invoice_real_total,
+          dbo_administration_invoices.real_total_add_igtf as invoice_real_total_add_igtf,
           dbo_finance_payments.amount as payment_amount,
           ROUND(if(dbo_config_currencies.name = 'Dolar',dbo_finance_payments.amount * dbo_config_exchange_rates.exchange_rate, dbo_finance_payments.amount),2)   as payment_translated,
           dbo_config_exchange_rates.exchange_rate as exchange_rate ,
@@ -331,7 +332,7 @@ class invoiceHandler{
             $sumador_de_pagos =  $sumador_de_pagos + floatval($pago["payment_translated"]);
 
             // verificando que mi pago no exceda el total de factura (sino, debo romper el ciclo y colocar ese pago como pago total)
-            if (floatval($pago["invoice_real_total"]) < $sumador_de_pagos) {
+            if (floatval($pago["invoice_real_total_add_igtf"]) < $sumador_de_pagos) {
               $factura_en_contruccion[$index_counter] = $interpreter->translateLinePagoTotal($pago["payment_type"]) . "\n";
               break;
             }

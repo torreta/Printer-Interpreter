@@ -286,7 +286,7 @@ class creditnoteHandler
         //cierre de factura (viene despues de los items)
         // $factura_en_contruccion[$index_counter] = "105";
         if (D_IGTF == true) {
-         $cierre[3] = "199";
+          $cierre[3] = "199";
         }
 
         $creditnote_en_contruccion = $infoFiscalTraducida +  $items_nota_extra + $cierre;
