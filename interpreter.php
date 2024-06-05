@@ -155,44 +155,44 @@ class interpreter{
     switch ($tasa) {
       case "Sin IVA":
       //echo "Exento\n";
-      $comando = "‘0";
+      $comando = "`0";
       break;
       case "":
       //echo "Exento\n";
-      $comando = "‘0";
+      $comando = "`0";
       break;
       case " ":
       //echo "Exento\n";
-      $comando = "‘0";
+      $comando = "`0";
       break;
       case "IVA 16%":
       //echo "Tasa 1\n";
-      $comando = "‘1";
+      $comando = "`1";
       break;
       case "!":
       //echo "Tasa 1\n";
-      $comando = "‘1";
+      $comando = "`1";
       break;
       case "Tasa 2":
       //echo "Tasa 2\n";
-      $comando = "‘2";
+      $comando = "`2";
       break;
       case "\"":
       //echo "Tasa 2\n";
-      $comando = "‘2";
+      $comando = "`2";
       break;
       case "Tasa 3":
       //echo "Tasa 3\n";
-      $comando = "‘3";
+      $comando = "`3";
       break;
       case "#":
       //echo "Tasa 3\n";
-      $comando = "‘3";
+      $comando = "`3";
       break;
       default:
       //echo "Tasa no reconocida\n";
       $comando = false;
-      $tasas = ["‘0","‘1","‘2","‘3"];
+      $tasas = ["`0","`1","`2","`3"];
       $tasa = $tasas[array_rand($tasas, 1)];
       $comando = $tasa;
     }
