@@ -267,6 +267,20 @@ class interpreter_nofiscal{
 
   }
 
+  function translateLineDebito($tasa="", $precio = "", $cant = "", $desc = ""){
+  
+    $Utils = new Utils();
+    
+    $titulo = $this->translateDescription($desc). $this->translateTasa($tasa);
+
+    $numero = "Bs".$this->translatePrecio($precio);
+
+    $comando = "80*".$Utils->formal_padding($titulo, $numero, 42);
+
+    return  $comando;
+
+  }
+
 
   function separador(){
   
