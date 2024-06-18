@@ -7,22 +7,22 @@ if (PHP_SAPI != "cli") {
 }
 
 // DB Connection
-include_once ("DatabaseBridge.php"); 
-include_once ("DBConfig.php"); 
+include_once ("DatabaseBridge.php");
+include_once ("DBConfig.php");
 
 // Documents Handlers
-include_once ("invoiceHandler.php"); 
-include_once ("creditnoteHandler.php"); 
-include_once ("debitnoteHandler.php"); 
+include_once ("invoiceHandler.php");
+include_once ("creditnoteHandler.php");
+include_once ("debitnoteHandler.php");
 
 // Utilities
-include_once ("Utils.php"); 
+include_once ("Utils.php");
 
 // General Configurations
 include_once ("Configs.php"); // <--- GENERAL SETTINGS
 
 ini_set('mysql.connect_timeout', 300);
-ini_set('default_socket_timeout', 300); 
+ini_set('default_socket_timeout', 300);
 
 // armando la conexion a la BD
 $DatabaseBridge =  new DatabaseBridge();
@@ -119,7 +119,7 @@ while (true) {
         // envio al "manejador" respectivo
         $creditnoteHandler =  new creditnoteHandler();
 
-        // // numero del documento
+        // numero del documento
         // $numero_documento = $creditnoteHandler->get_creditnote_info($conn, $creditnote_id);
         // $numero_documento = $numero_documento["credinote_number"];
 
@@ -135,7 +135,7 @@ while (true) {
         // envio al "manejador" respectivo
         $debitnoteHandler =  new debitnoteHandler();
 
-        // // numero del documento
+        // numero del documento
         // $numero_documento = $debitnoteHandler->get_debitnote_info($conn, $debitnote_id);
         // $numero_documento = $numero_documento["debitnote_number"];
 
@@ -145,7 +145,7 @@ while (true) {
         break;
       case "4":// Nota de entrega (solo items) // COPIA!
 
-        // nota de cualquier otro tipo, 
+        // nota de cualquier otro tipo
         $tipo_documento = "Copia";
 
         // tomo el id de la factura
@@ -171,10 +171,10 @@ while (true) {
         $respuesta_impresora = $invoiceHandler->printCopy($conn,$documento_imprimiendo);
 
         break;
-      case "5": 
+      case "5":
             // documento nulo de caja
             // reimprimir intervalo de fechas
-          echo "********************\n";
+          echo "*********************\n";
           echo "REIMPRESION POR FECHAS!!!\n";
           echo "*********************\n";
         
@@ -185,10 +185,10 @@ while (true) {
 
         $nombres_separados = explode(" ",$nombre_cajero_oculto); 
 
-        $respuesta_impresora = $Utils->sendReimpresionZs($nombres_separados[1]); 
+        $respuesta_impresora = $Utils->sendReimpresionZs($nombres_separados[1]);
         // IntTFHKA.exe SendCmd(Rz02209190220919
 
-       break;
+        break;
 
       case "6":// corte de caja
         echo "********************\n";
@@ -196,41 +196,41 @@ while (true) {
         echo "*********************\n";
 
         $tipo_documento = "Corte de Caja";
-        $respuesta_impresora = $Utils->sendCorte(); 
+        $respuesta_impresora = $Utils->sendCorte();
 
-       break;
+        break;
 
-       case "7":// cierre de caja
+      case "7":// cierre de caja
         echo "********************\n";
         echo "CIERRE IMPRESORA FISCAL !!!\n";
         echo "*********************\n";
         
         $tipo_documento = "Cierre de Caja";
-        $respuesta_impresora = $Utils->sendCierre(); 
-         
-       break;
+        $respuesta_impresora = $Utils->sendCierre();
 
-       case "8":// cierre manual de documento caja
+        break;
+
+      case "8":// cierre manual de documento caja
         echo "*********************\n";
         echo "CIERRE MANUAL     !!!\n";
         echo "DE DOCUMENTO      !!!\n";
         echo "*********************\n";
         
         $tipo_documento = "Cierre Manual de Documento";
-        $respuesta_impresora = $Utils->sendCierreManualDoc(); 
-         
-       break;
-       case "9":// test de impresion
+        $respuesta_impresora = $Utils->sendCierreManualDoc();
+
+        break;
+      case "9":// test de impresion
         echo "********************\n";
         echo "TEST DE IMPRESION!!!\n";
         echo "*********************\n";
         
         $tipo_documento = "Test de Impresion";
-        $respuesta_impresora = $Utils->sendTest(); 
-         
-       break;
+        $respuesta_impresora = $Utils->sendTest();
 
-       case "10":// test de impresion
+        break;
+
+      case "10":// test de impresion
             // documento nulo de caja
             // reimprimir intervalo de fechas
             echo "********************\n";
@@ -242,15 +242,15 @@ while (true) {
           // interpreto el nombre del cajero que es quien trae el dato.
           $nombre_cajero_oculto = $documento_imprimiendo["cashier_name"];
   
-          $nombres_separados = explode(" ",$nombre_cajero_oculto); 
+          $nombres_separados = explode(" ",$nombre_cajero_oculto);
   
-          $respuesta_impresora = $Utils->sendResumenZs($nombres_separados[1]); 
+          $respuesta_impresora = $Utils->sendResumenZs($nombres_separados[1]);
           // IntTFHKA.exe SendCmd(Rz02209190220919
   
-       break;
+        break;
 
       default: // Documento indeterminado
-        die("Documento indeterminado: (daemon) ". $documento_imprimiendo["document_type_id"] ); 
+        die("Documento indeterminado: (daemon) ". $documento_imprimiendo["document_type_id"] );
 
     }
 
@@ -268,7 +268,7 @@ while (true) {
       // ... se marca documento impreso
       $DatabaseBridge->marcar_impreso( $conn, $documento_imprimiendo );
 
-      // ... se sobrescribe el mensaje para la impresora de mensajes 
+      // ... se sobrescribe el mensaje para la impresora de mensajes
       $mensaje_al_log = "la ".$tipo_documento .": " . $numero_documento .", por cajero ". $nombre_cajero. ", ha impreso con exito.";
       $DatabaseBridge->logWithDoc( $conn, $mensaje_al_log, $documento_imprimiendo, $print_error );
 
@@ -292,14 +292,14 @@ while (true) {
       $DatabaseBridge->logWithDoc( $conn, $mensaje_al_log, $documento_imprimiendo, $print_error );
         // ...si habia un mensaje de error, ahora que se pudo imprimir, deja volver a imprimir mensajes de error
         $print_error = true;
-    } 
+    }
   
-  }else{ 
+  }else{
     // (1) (false) de no haber, busco en pendientes (2)
     // ... reviso que no haya documentos en pendientes
     $documentos_pendientes = $DatabaseBridge->documentos_pendientes($conn, PRINTER_ID);
 
-     // (2) (true) de haber en pendientes (para la impresora especificada), 
+     // (2) (true) de haber en pendientes (para la impresora especificada)
      // ...tomo el siguiente en orden FIFO de la cola
     if ($documentos_pendientes->num_rows > 0) {
     
