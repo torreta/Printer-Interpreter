@@ -959,7 +959,7 @@ class interpreter{
     var_dump($InfoFiscal);
 
     // -9 => "iS*Pedro Mendez\n", // mombre persona
-    $linea_sin_caracteres_especiales = "Nro Nota: ".$InfoFiscal["creditnote_number"];
+    $linea_sin_caracteres_especiales = "Nro Nota: ".$InfoFiscal["debitnote_number"];
     $linea_sin_caracteres_especiales = $Utils->cleanSpecialChars($linea_sin_caracteres_especiales); //solo acepta caracteres normales
     $InfoFiscalTraducida[$contador] =  substr("iS*".$InfoFiscal["name"].$InfoFiscal["last_name"],0,$max_caracteres)."\n";
     $contador++;
@@ -967,7 +967,11 @@ class interpreter{
     // -8 => "iR*12.345.678\n", // rif
     $InfoFiscalTraducida[$contador] = "iR*".$InfoFiscal["complete_identification"]."\n";
     $contador++;
-    
+
+    // -7 => "iF*0000001\n",//factura asociadaj
+    $InfoFiscalTraducida[$contador] = "iF*".$InfoFiscal["invoice_number"]."\n";
+    $contador++;
+
     // -6 => "iI*Z4A1234567\n",// serial de la impresora fiscal
     $InfoFiscalTraducida[$contador] = "iI*".$InfoFiscal["printer_serial"]."\n";
     $contador++;

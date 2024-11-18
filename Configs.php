@@ -12,7 +12,7 @@
   // CHECK on main proyect database to set this if theres more than one to watch
   // 1 daemon checks one printer....
   // this daemon can run on multiple system paths (check pwd)
-  define('PRINTER_ID', 7); //la impresora en uso (numerada en BD)
+  define('PRINTER_ID', 5); //la impresora en uso (numerada en BD)
 
   // Cycle (how ofter the daemon check the database)
   define('LOOP_CYCLE', 1); // Ciclo determinado en segundos, en este caso cada segundo

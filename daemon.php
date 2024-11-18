@@ -81,6 +81,7 @@ while (true) {
     var_dump($documento_imprimiendo);
 
     $nombre_cajero = $documento_imprimiendo["cashier_name"];
+    $numero_documento;
 
     // segun el tipo de documento (solo facturas de momentos)
     switch ($documento_imprimiendo["document_type_id"]) {
