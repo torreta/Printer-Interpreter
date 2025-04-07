@@ -96,6 +96,8 @@ while (true) {
 
         // numero del documento
         $info_factura = $invoiceHandler->get_invoice_info($conn, $invoice_id);
+        if($info_factura["printed"])
+          break;
 
         // objeto de los datos de la factura.
         $factura_actual = $info_factura->fetch_assoc();
